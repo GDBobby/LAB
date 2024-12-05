@@ -6,78 +6,9 @@
 #include <concepts>
 
 namespace Linear_Algebra {
-	//F short for floating point, can be double or float, D is short for dimensions
-	template<std::floating_point F, std::uint8_t D> requires((D > 0) && (D <= 4))
+	//F short for floating point, can be double or float, Dimensions is short for dimensions
+	template<std::floating_point F, std::uint8_t Dimensions> requires((Dimensions > 1) && (Dimensions <= 4))
 	struct Vector;
-
-	template<std::floating_point F>
-	struct Vector<F, 1> {
-		F x;
-		constexpr Vector() {}
-		constexpr Vector(F x) : x{ x } {
-
-		}
-
-		constexpr F& operator[](uint8_t row) {
-			static_assert(row < 1);
-			return *(&x + row);
-		}
-
-
-		constexpr void operator += (Vector const& other) {
-			x += other.x;
-		}
-		constexpr Vector operator+(Vector const& other) {
-			Vector ret = *this;
-			ret += other;
-			return ret;
-		}
-		constexpr void operator-=(Vector const& other) {
-			x -= x;
-		}
-		constexpr Vector operator-(Vector const& other) {
-			Vector ret = *this;
-			ret -= other;
-			return ret;
-		}
-		constexpr void operator *=(F multiplier) {
-			x *= multiplier;
-		}
-		constexpr Vector operator*(F multiplier) {
-			Vector ret = *this;
-			ret *= multiplier;
-			return ret;
-		}
-		constexpr void operator /=(F divisor) {
-			x /= divisor;
-		}
-		constexpr Vector operator /(F divisor) {
-			Vector ret = *this;
-			ret /= divisor;
-			return ret;
-		}
-		
-
-		constexpr F SquaredMagnitude() {
-			return x * x;
-		}
-
-		constexpr F Magnitude() {
-#if 1//PSEUDO BRANCHING
-			return x * ((x < 0.f) * -1.f);
-#else
-			if constexpr (x < 0.f) {
-				return x * -1.f;
-			}
-			return x;
-#endif
-		}
-
-		constexpr void Normalize() {
-			const auto mag = Magnitude();
-			x /= mag;
-		}
-	};
 
 	template<std::floating_point F>
 	struct Vector<F, 2> {
@@ -93,20 +24,23 @@ namespace Linear_Algebra {
 		}
 
 
-		constexpr void operator += (Vector const& other) {
+		constexpr bool operator==(Vector const other) const {
+			return (x == other.x) && (y == other.y);
+		}
+		constexpr void operator += (Vector const other) {
 			x += other.x;
 			y += other.y;
 		}
-		constexpr Vector operator+(Vector const& other) {
+		constexpr Vector operator+(Vector const other) const {
 			Vector ret = *this;
 			ret += other;
 			return ret;
 		}
-		constexpr void operator-=(Vector const& other) {
+		constexpr void operator-=(Vector const other) {
 			x -= x;
 			y -= y;
 		}
-		constexpr Vector operator-(Vector const& other) {
+		constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
@@ -115,7 +49,7 @@ namespace Linear_Algebra {
 			x *= multiplier;
 			y *= multiplier;
 		}
-		constexpr Vector operator*(F multiplier) {
+		constexpr Vector operator*(F multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
@@ -124,17 +58,17 @@ namespace Linear_Algebra {
 			x /= divisor;
 			y /= divisor;
 		}
-		constexpr Vector operator /(F divisor) {
+		constexpr Vector operator /(F divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
 		
-		constexpr F SquaredMagnitude() {
+		constexpr F SquaredMagnitude() const {
 			return x * x + y * y;
 		}
 
-		constexpr F Magnitude() {
+		constexpr F Magnitude() const {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
@@ -160,22 +94,25 @@ namespace Linear_Algebra {
 		}
 
 
-		constexpr void operator += (Vector const& other) {
+		constexpr bool operator==(Vector const other) const {
+			return (x == other.x) && (y == other.y) && (z == other.z);
+		}
+		constexpr void operator += (Vector const other) {
 			x += other.x;
 			y += other.y;
 			z += other.z;
 		}
-		constexpr Vector operator+(Vector const& other) {
+		constexpr Vector operator+(Vector const other) const {
 			Vector ret = *this;
 			ret += other;
 			return ret;
 		}
-		constexpr void operator-=(Vector const& other) {
+		constexpr void operator-=(Vector const other) {
 			x -= x;
 			y -= y;
 			z -= z;
 		}
-		constexpr Vector operator-(Vector const& other) {
+		constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
@@ -185,7 +122,7 @@ namespace Linear_Algebra {
 			y *= multiplier;
 			z *= multiplier;
 		}
-		constexpr Vector operator*(F multiplier) {
+		constexpr Vector operator*(F multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
@@ -195,17 +132,17 @@ namespace Linear_Algebra {
 			y /= divisor;
 			z /= divisor;
 		}
-		constexpr Vector operator /(F divisor) {
+		constexpr Vector operator /(F divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
 		
-		constexpr F SquaredMagnitude() {
+		constexpr F SquaredMagnitude() const {
 			return x * x + y * y + z * z;
 		}
 
-		constexpr F Magnitude() {
+		constexpr F Magnitude() const {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
@@ -229,26 +166,27 @@ namespace Linear_Algebra {
 			static_assert(row < 4);
 			return *(&x + row);
 		}
-
-
-		constexpr void operator += (Vector const& other) {
+		constexpr bool operator==(Vector const other) const {
+			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
+		}
+		constexpr void operator+=(Vector const other) {
 			x += other.x;
 			y += other.y;
 			z += other.z;
 			w += other.w;
 		}
-		constexpr Vector operator+(Vector const& other) {
+		constexpr Vector operator+(Vector const other) const {
 			Vector ret = *this;
 			ret += other;
 			return ret;
 		}
-		constexpr void operator-=(Vector const& other) {
+		constexpr void operator-=(Vector const other) {
 			x -= x;
 			y -= y;
 			z -= z;
 			w -= w;
 		}
-		constexpr Vector operator-(Vector const& other) {
+		constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
@@ -259,7 +197,7 @@ namespace Linear_Algebra {
 			z *= multiplier;
 			w *= multiplier;
 		}
-		constexpr Vector operator*(F multiplier) {
+		constexpr Vector operator*(F multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
@@ -270,17 +208,17 @@ namespace Linear_Algebra {
 			z /= divisor;
 			w /= divisor;
 		}
-		constexpr Vector operator/(F divisor) {
+		constexpr Vector operator/(F divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
 
-		constexpr F SquaredMagnitude() {
+		constexpr F SquaredMagnitude() const {
 			return x * x + y * y + z * z + w * w;
 		}
 
-		constexpr F Magnitude() {
+		constexpr F Magnitude() const {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
@@ -289,5 +227,56 @@ namespace Linear_Algebra {
 			operator/=(mag);
 		}
 	};
+
+	template<std::floating_point F, uint8_t Dimensions>
+	constexpr F DimensionsotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+		F sum = first.x * second.x + first.y * second.y;
+		if constexpr (Dimensions >= 3) {
+			sum += first.z * second.z;
+		}
+		if constexpr (Dimensions >= 4) {
+			sum += first.w * second.w;
+		}
+		return sum;
+	}
+	//according to my testing, this is 28% faster than a conventional Dimensionsot(Normalize, Normalize)
+	template<std::floating_point F, uint8_t Dimensions>
+	constexpr F NormalizedDimensionsotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+		const F combinedMagSquared = first.SquaredMagitude() * second.SquaredMagnitude();
+		if (combinedMagSquared != F(0)) {
+			const F numerator = first.x * second.x + first.y * second.y;
+			if constexpr (Dimensions >= 3) {
+				numerator += first.z * second.z;
+			}
+			if constexpr (Dimensions >= 4) {
+				numerator += first.w * second.w;
+			}
+			if (numerator > F(0)) {
+				return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+			}
+			else if (numerator < F(0)) {
+				return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+			}
+		}
+		return F(0);
+	}
+
+
+	template<std::floating_point F>
+	constexpr F CrossProduct(Vector<F, 2> const first, Vector<F, 2> const second) {
+		return first.x * second.y - first.y * second.x;
+	}
+
+	template<std::floating_point F>
+	constexpr Vector<F, 3> CrossProduct(Vector<F, 3> const first, Vector<F, 3> const second) {
+		//inlining matrix
+		return Vector{
+			first.y * second.z - first.z * first.y,
+			first.z * second.x - first.x * second.z,
+			first.x * second.y - first.y * second.x
+		};
+	}
+
+	//look up https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process for the 4th dimensional Orthogonal
 }
 
