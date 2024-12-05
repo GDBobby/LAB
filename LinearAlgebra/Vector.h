@@ -13,55 +13,52 @@ namespace Linear_Algebra {
 	template<std::floating_point F>
 	struct Vector<F, 1> {
 		F x;
-		Vector() {}
-		Vector(F x) : x{ x } {
+		constexpr Vector() {}
+		constexpr Vector(F x) : x{ x } {
 
 		}
 
-		{//artificial scope, for code editors
-		//operators in this scope
-		// doing operators for a 1 dimensional vectors seems somewhat pointless
-			constexpr F& operator[](uint8_t row) {
-				static_assert(row < D);
-				return *(&x + row);
-			}
-
-
-			constexpr void operator += (Vector const& other) {
-				x += other.x;
-			}
-			constexpr Vector operator+(Vector const& other) {
-				Vector ret = *this;
-				ret += other;
-				return ret;
-			}
-			constexpr void operator-=(Vector const& other) {
-				x -= x;
-			}
-			constexpr Vector operator-(Vector const& other) {
-				Vector ret = *this;
-				ret -= other;
-				return ret;
-			}
-			constexpr void operator *=(F multiplier) {
-				x *= multiplier;
-			}
-			constexpr Vector operator*(F multiplier) {
-				Vector ret = *this;
-				ret *= multiplier;
-				return ret;
-			}
-			constexpr void operator /=(F divisor) {
-				x /= divisor;
-			}
-			constexpr Vector operator /(F divisor) {
-				Vector ret = *this;
-				ret /= divisor;
-				return ret;
-			}
+		constexpr F& operator[](uint8_t row) {
+			static_assert(row < 1);
+			return *(&x + row);
 		}
 
-		constexpr F SqrMagnitude() {
+
+		constexpr void operator += (Vector const& other) {
+			x += other.x;
+		}
+		constexpr Vector operator+(Vector const& other) {
+			Vector ret = *this;
+			ret += other;
+			return ret;
+		}
+		constexpr void operator-=(Vector const& other) {
+			x -= x;
+		}
+		constexpr Vector operator-(Vector const& other) {
+			Vector ret = *this;
+			ret -= other;
+			return ret;
+		}
+		constexpr void operator *=(F multiplier) {
+			x *= multiplier;
+		}
+		constexpr Vector operator*(F multiplier) {
+			Vector ret = *this;
+			ret *= multiplier;
+			return ret;
+		}
+		constexpr void operator /=(F divisor) {
+			x /= divisor;
+		}
+		constexpr Vector operator /(F divisor) {
+			Vector ret = *this;
+			ret /= divisor;
+			return ret;
+		}
+		
+
+		constexpr F SquaredMagnitude() {
 			return x * x;
 		}
 
@@ -86,67 +83,64 @@ namespace Linear_Algebra {
 	struct Vector<F, 2> {
 		F x;
 		F y;
-		Vector() {}
-		Vector(F x, F y) : x{ x }, y{ y } {}
-		Vector(F all) : x{ all }, y{ all } {}
+		constexpr Vector() {}
+		constexpr Vector(F x, F y) : x{ x }, y{ y } {}
+		constexpr Vector(F all) : x{ all }, y{ all } {}
 
-
-		{//artificial scope, for code editors
-		//operators in this scope
-			constexpr F& operator[](uint8_t row) {
-				static_assert(row < D);
-				return *(&x + row);
-			}
-
-
-			constexpr void operator += (Vector const& other) {
-				x += other.x;
-				y += other.y;
-			}
-			constexpr Vector operator+(Vector const& other) {
-				Vector ret = *this;
-				ret += other;
-				return ret;
-			}
-			constexpr void operator-=(Vector const& other) {
-				x -= x;
-				y -= y;
-			}
-			constexpr Vector operator-(Vector const& other) {
-				Vector ret = *this;
-				ret -= other;
-				return ret;
-			}
-			constexpr void operator *=(F multiplier) {
-				x *= multiplier;
-				y *= multiplier;
-			}
-			constexpr Vector operator*(F multiplier) {
-				Vector ret = *this;
-				ret *= multiplier;
-				return ret;
-			}
-			constexpr void operator /=(F divisor) {
-				x /= divisor;
-				y /= divisor;
-			}
-			constexpr Vector operator /(F divisor) {
-				Vector ret = *this;
-				ret /= divisor;
-				return ret;
-			}
+		constexpr F& operator[](uint8_t row) {
+			static_assert(row < 2);
+			return *(&x + row);
 		}
-		constexpr F SqrMagnitude() {
+
+
+		constexpr void operator += (Vector const& other) {
+			x += other.x;
+			y += other.y;
+		}
+		constexpr Vector operator+(Vector const& other) {
+			Vector ret = *this;
+			ret += other;
+			return ret;
+		}
+		constexpr void operator-=(Vector const& other) {
+			x -= x;
+			y -= y;
+		}
+		constexpr Vector operator-(Vector const& other) {
+			Vector ret = *this;
+			ret -= other;
+			return ret;
+		}
+		constexpr void operator *=(F multiplier) {
+			x *= multiplier;
+			y *= multiplier;
+		}
+		constexpr Vector operator*(F multiplier) {
+			Vector ret = *this;
+			ret *= multiplier;
+			return ret;
+		}
+		constexpr void operator /=(F divisor) {
+			x /= divisor;
+			y /= divisor;
+		}
+		constexpr Vector operator /(F divisor) {
+			Vector ret = *this;
+			ret /= divisor;
+			return ret;
+		}
+		
+		constexpr F SquaredMagnitude() {
 			return x * x + y * y;
 		}
 
 		constexpr F Magnitude() {
-			return sqrt(SqrtMagnitude());
+			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
 		constexpr void Normalize() {
 			const auto mag = Magnitude();
-			x /= mag;
+			operator/=(mag);
 		}
 	};
 
@@ -156,65 +150,68 @@ namespace Linear_Algebra {
 		F x;
 		F y;
 		F z;
-		Vector() {}
-		Vector(F x, F y, F z) : x{ x }, y{ y }, z{ z } {}
-		Vector(F all) : x{ all }, y{ all }, z{ all } {}
+		constexpr Vector() {}
+		constexpr Vector(F x, F y, F z) : x{ x }, y{ y }, z{ z } {}
+		constexpr Vector(F all) : x{ all }, y{ all }, z{ all } {}
 
-		{//artificial scope, for code editors
-		//operators in this scope
-			constexpr F& operator[](uint8_t row) {
-				static_assert(row < D);
-				return *(&x + row);
-			}
-
-
-			constexpr void operator += (Vector const& other) {
-				x += other.x;
-				y += other.y;
-				z += other.z;
-			}
-			constexpr Vector operator+(Vector const& other) {
-				Vector ret = *this;
-				ret += other;
-				return ret;
-			}
-			constexpr void operator-=(Vector const& other) {
-				x -= x;
-				y -= y;
-				z -= z;
-			}
-			constexpr Vector operator-(Vector const& other) {
-				Vector ret = *this;
-				ret -= other;
-				return ret;
-			}
-			constexpr void operator *=(F multiplier) {
-				x *= multiplier;
-				y *= multiplier;
-				z *= multiplier;
-			}
-			constexpr Vector operator*(F multiplier) {
-				Vector ret = *this;
-				ret *= multiplier;
-				return ret;
-			}
-			constexpr void operator /=(F divisor) {
-				x /= divisor;
-				y /= divisor;
-				z /= divisor;
-			}
-			constexpr Vector operator /(F divisor) {
-				Vector ret = *this;
-				ret /= divisor;
-				return ret;
-			}
+		constexpr F& operator[](uint8_t row) {
+			static_assert(row < 3);
+			return *(&x + row);
 		}
-		constexpr F SqrMagnitude() {
+
+
+		constexpr void operator += (Vector const& other) {
+			x += other.x;
+			y += other.y;
+			z += other.z;
+		}
+		constexpr Vector operator+(Vector const& other) {
+			Vector ret = *this;
+			ret += other;
+			return ret;
+		}
+		constexpr void operator-=(Vector const& other) {
+			x -= x;
+			y -= y;
+			z -= z;
+		}
+		constexpr Vector operator-(Vector const& other) {
+			Vector ret = *this;
+			ret -= other;
+			return ret;
+		}
+		constexpr void operator *=(F multiplier) {
+			x *= multiplier;
+			y *= multiplier;
+			z *= multiplier;
+		}
+		constexpr Vector operator*(F multiplier) {
+			Vector ret = *this;
+			ret *= multiplier;
+			return ret;
+		}
+		constexpr void operator /=(F divisor) {
+			x /= divisor;
+			y /= divisor;
+			z /= divisor;
+		}
+		constexpr Vector operator /(F divisor) {
+			Vector ret = *this;
+			ret /= divisor;
+			return ret;
+		}
+		
+		constexpr F SquaredMagnitude() {
 			return x * x + y * y + z * z;
 		}
 
 		constexpr F Magnitude() {
-			return sqrt(SqrtMagnitude());
+			return SupportingMath::Sqrt(SquaredMagnitude());
+		}
+
+		constexpr void Normalize() {
+			const auto mag = Magnitude();
+			operator/=(mag);
 		}
 	};
 
@@ -224,14 +221,12 @@ namespace Linear_Algebra {
 		F y;
 		F z;
 		F w;
-		Vector() {}
-		Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
-		Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
+		constexpr Vector() {}
+		constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
+		constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 
-{//artificial scope, for code editors
-//operators in this scope
 		constexpr F& operator[](uint8_t row) {
-			static_assert(row < D);
+			static_assert(row < 4);
 			return *(&x + row);
 		}
 
@@ -258,7 +253,7 @@ namespace Linear_Algebra {
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator *=(F multiplier) {
+		constexpr void operator*=(F multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 			z *= multiplier;
@@ -269,24 +264,29 @@ namespace Linear_Algebra {
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator /=(F divisor) {
+		constexpr void operator/=(F divisor) {
 			x /= divisor;
 			y /= divisor;
 			z /= divisor;
 			w /= divisor;
 		}
-		constexpr Vector operator /(F divisor) {
+		constexpr Vector operator/(F divisor) {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
-}
-		constexpr F SqrMagnitude() {
+
+		constexpr F SquaredMagnitude() {
 			return x * x + y * y + z * z + w * w;
 		}
 
 		constexpr F Magnitude() {
-			return sqrt(SqrtMagnitude());
+			return SupportingMath::Sqrt(SquaredMagnitude());
+		}
+
+		constexpr void Normalize() {
+			const auto mag = Magnitude();
+			operator/=(mag);
 		}
 	};
 }
