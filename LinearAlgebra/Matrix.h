@@ -6,7 +6,7 @@
 namespace Linear_Algebra {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows> requires((Rows <= 4) && (Rows > 1) && (Columns <= 4) && (Columns > 1))
 		struct Matrix {
-		std::array<F, Rows * Columns> data;
+		F data[Rows * Columns];
 
 		constexpr F& At(const uint8_t column, const uint8_t row) {
 			assert((column < Columns) && (row < Rows));

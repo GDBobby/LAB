@@ -2,14 +2,29 @@
 #include <concepts>
 #include <cstdint>
 
+#define USING_CMATH
+
+#ifdef USING_CMATH
+#include <cmath>
+#else
+	#error "alternative math backend not implemented"
+#endif
+
+
 namespace Linear_Algebra{
 	namespace SupportingMath {
 		template <std::floating_point F>
 		constexpr F Sqrt(F input) {
-
+#ifdef USING_CMATH
+			return std::sqrt(input);
+#else
+#endif
 		}
 		constexpr float Sqrt(float input) {
-			return 0.f;
+#ifdef USING_CMATH
+			return std::sqrt(input);
+#else
+#endif
 
 
 			//int x_exp = input.get_exponent();
@@ -21,7 +36,9 @@ namespace Linear_Algebra{
 			//}
 		}
 		constexpr double Sqrt(double input) {
-			return 0.0;
+#ifdef USING_CMATH
+			return std::sqrt(input);
+#endif
 		}
 
 	}
