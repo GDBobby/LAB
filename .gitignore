@@ -6,3 +6,8 @@
 x64/
 userdatadir/
 build/
+
+#executables, my linux executables dont have extensions
+LinearAlgebra-debug
+LinearAlgebra
+*.exe
