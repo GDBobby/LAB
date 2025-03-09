@@ -23,18 +23,18 @@ namespace Linear_Algebra{
 #endif
 		}
 #ifdef USING_CMATH
-		constexpr float Sqrt(float input) {
+		float Sqrt(float input) {
 			return std::sqrt(input);
 #else
-		float Sqrt(float input) {
+		constexpr float Sqrt(float input) {
 			return 0.f;
 #endif
 		}
 #ifdef USING_CMATH
-		constexpr double Sqrt(double input) {
+		double Sqrt(double input) {
 			return std::sqrt(input);
 #else
-		double Sqrt(double input) {
+		constexpr double Sqrt(double input) {
 			return std::sqrt(input);
 
 #endif
