@@ -4,20 +4,19 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Install LLVM (Latest Clang)
-        run: |
-          sudo apt update -yqq
-          sudo apt install -yqq wget lsb-release
-          wget https://apt.llvm.org/llvm.sh
-          chmod +x llvm.sh
-          sudo ./llvm.sh latest
-          sudo apt install -yqq clang-format clang-tidy ninja-build g++-13
-          
-      - name: Verify Clang Version
-        run: clang --version
+      - uses: actions/checkout@v2
+      - name: init
+        run: sudo apt update -yqq && sudo apt install -yqq ninja-build g++-13 clang-18
+      - name: configure gcc
+        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13
+      - name: configure clang
+        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18
+      - name: build gcc
+        run: cmake --build build --config=Release
+      - name: build clang
+        run: cmake --build clang --config=Release
+      - name: test
+        run: cd build && ctest -C Release
   build-windows:
     runs-on: windows-latest
     steps:
