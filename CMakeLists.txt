@@ -2,10 +2,18 @@ cmake_minimum_required(VERSION 3.23)
 
 project(LinearAlgebra)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
+# going for 26 so that cmath is constexpr
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    set(CMAKE_CXX_STANDARD 26)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+    add_compile_options(-std=c++2c)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
+    add_compile_options(/std:c++latest)
+else()
+    set(CMAKE_CXX_STANDARD 26)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
 
 set(is_project_root OFF)
 
