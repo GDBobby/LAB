@@ -13,6 +13,8 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
 else()
     set(CMAKE_CXX_STANDARD 26)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+    add_compile_options(-std=c++2c)  # GCC flag for C++26
 endif()
 
 #header only lib maybe?
