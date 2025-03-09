@@ -2,6 +2,7 @@
 
 #include "Vector.h"
 #include <cassert>
+#include <concepts>
 
 namespace Linear_Algebra {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows> requires((Rows <= 4) && (Rows > 1) && (Columns <= 4) && (Columns > 1))

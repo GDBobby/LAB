@@ -15,11 +15,11 @@ namespace Linear_Algebra {
 		F x;
 		F y;
 		constexpr Vector() {}
-		constexpr Vector(F x, F y) : x{ x }, y{ y } {}
-		constexpr Vector(F all) : x{ all }, y{ all } {}
+		constexpr Vector(F const x, F const y) : x{ x }, y{ y } {}
+		constexpr Vector(F const all) : x{ all }, y{ all } {}
 
-		constexpr F& operator[](uint8_t row) {
-			static_assert(row < 2);
+		constexpr F& operator[](uint8_t const row) {
+			//static_assert(row < 2);
 			return *(&x + row);
 		}
 
@@ -27,7 +27,7 @@ namespace Linear_Algebra {
 		constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y);
 		}
-		constexpr void operator += (Vector const other) {
+		constexpr void operator+= (Vector const other) {
 			x += other.x;
 			y += other.y;
 		}
@@ -37,28 +37,28 @@ namespace Linear_Algebra {
 			return ret;
 		}
 		constexpr void operator-=(Vector const other) {
-			x -= x;
-			y -= y;
+			x -= other.x;
+			y -= other.y;
 		}
 		constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator *=(F multiplier) {
+		constexpr void operator *=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 		}
-		constexpr Vector operator*(F multiplier) const {
+		constexpr Vector operator*(F const multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator /=(F divisor) {
+		constexpr void operator /=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 		}
-		constexpr Vector operator /(F divisor) const {
+		constexpr Vector operator /(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
@@ -85,11 +85,11 @@ namespace Linear_Algebra {
 		F y;
 		F z;
 		constexpr Vector() {}
-		constexpr Vector(F x, F y, F z) : x{ x }, y{ y }, z{ z } {}
-		constexpr Vector(F all) : x{ all }, y{ all }, z{ all } {}
+		constexpr Vector(F const x, F const y, F const z) : x{ x }, y{ y }, z{ z } {}
+		constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
-		constexpr F& operator[](uint8_t row) {
-			static_assert(row < 3);
+		constexpr F& operator[](uint8_t const row) {
+			//static_assert(row < 3);
 			return *(&x + row);
 		}
 
@@ -108,31 +108,31 @@ namespace Linear_Algebra {
 			return ret;
 		}
 		constexpr void operator-=(Vector const other) {
-			x -= x;
-			y -= y;
-			z -= z;
+			x -= other.x;
+			y -= other.y;
+			z -= other.z;
 		}
 		constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator *=(F multiplier) {
+		constexpr void operator *=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 			z *= multiplier;
 		}
-		constexpr Vector operator*(F multiplier) const {
+		constexpr Vector operator*(F const multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator /=(F divisor) {
+		constexpr void operator /=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 			z /= divisor;
 		}
-		constexpr Vector operator /(F divisor) const {
+		constexpr Vector operator /(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
@@ -162,8 +162,8 @@ namespace Linear_Algebra {
 		constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
 		constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 
-		constexpr F& operator[](uint8_t row) {
-			static_assert(row < 4);
+		constexpr F& operator[](uint8_t const row) {
+			//static_assert(row < 4);
 			return *(&x + row);
 		}
 		constexpr bool operator==(Vector const other) const {
@@ -181,34 +181,34 @@ namespace Linear_Algebra {
 			return ret;
 		}
 		constexpr void operator-=(Vector const other) {
-			x -= x;
-			y -= y;
-			z -= z;
-			w -= w;
+			x -= other.x;
+			y -= other.y;
+			z -= other.z;
+			w -= other.w;
 		}
 		constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator*=(F multiplier) {
+		constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 			z *= multiplier;
 			w *= multiplier;
 		}
-		constexpr Vector operator*(F multiplier) const {
+		constexpr Vector operator*(F const multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator/=(F divisor) {
+		constexpr void operator/=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 			z /= divisor;
 			w /= divisor;
 		}
-		constexpr Vector operator/(F divisor) const {
+		constexpr Vector operator/(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
@@ -229,7 +229,7 @@ namespace Linear_Algebra {
 	};
 
 	template<std::floating_point F, uint8_t Dimensions>
-	constexpr F DimensionsotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	constexpr F DimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		F sum = first.x * second.x + first.y * second.y;
 		if constexpr (Dimensions >= 3) {
 			sum += first.z * second.z;
@@ -239,12 +239,12 @@ namespace Linear_Algebra {
 		}
 		return sum;
 	}
-	//according to my testing, this is 28% faster than a conventional Dimensionsot(Normalize, Normalize)
+	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
 	template<std::floating_point F, uint8_t Dimensions>
-	constexpr F NormalizedDimensionsotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	constexpr F NormalizedDimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagitude() * second.SquaredMagnitude();
-		if (combinedMagSquared != F(0)) {
-			const F numerator = first.x * second.x + first.y * second.y;
+		if (combinedMagSquared != F(0)) {	
+			F numerator = first.x * second.x + first.y * second.y;
 			if constexpr (Dimensions >= 3) {
 				numerator += first.z * second.z;
 			}
