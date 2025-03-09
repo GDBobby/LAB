@@ -14,30 +14,29 @@
 namespace Linear_Algebra{
 	namespace SupportingMath {
 		template <std::floating_point F>
+#ifdef USING_CMATH
+		F Sqrt(F input) {
+			return std::sqrt(input);
+#else
 		constexpr F Sqrt(F input) {
-#ifdef USING_CMATH
-			return std::sqrt(input);
-#else
+			return 0.f;
 #endif
 		}
+#ifdef USING_CMATH
 		constexpr float Sqrt(float input) {
-#ifdef USING_CMATH
 			return std::sqrt(input);
 #else
+		float Sqrt(float input) {
+			return 0.f;
 #endif
-
-
-			//int x_exp = input.get_exponent();
-			//int mantissa = bits.get_mantissa();
-
-			//if (bits.is_subnormal) {
-			//	++x_exp; //ensure x_exp is the correct exponent of one bit
-			//	normalize_float(x_exp, x_mant);
-			//}
 		}
-		constexpr double Sqrt(double input) {
 #ifdef USING_CMATH
+		constexpr double Sqrt(double input) {
 			return std::sqrt(input);
+#else
+		double Sqrt(double input) {
+			return std::sqrt(input);
+
 #endif
 		}
 
