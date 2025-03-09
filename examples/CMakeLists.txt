@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #header only lib maybe?
 file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${CMAKE_SOURCE_DIR}/include

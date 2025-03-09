@@ -5,9 +5,10 @@
 #include <concepts>
 
 namespace Linear_Algebra {
-	template<std::floating_point F, uint8_t Columns, uint8_t Rows> requires((Rows <= 4) && (Rows > 1) && (Columns <= 4) && (Columns > 1))
+	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = (sizeof(float) * Rows)> requires((Rows <= 4) && (Rows > 1) && (Columns <= 4) && (Columns > 1) && (ColumnAlignment >= (Rows * sizeof(float))))
 		struct Matrix {
-		F data[Rows * Columns];
+
+		F data[ColumnAlignment / sizeof(float) * Columns];
 
 		constexpr F& At(const uint8_t column, const uint8_t row) {
 			assert((column < Columns) && (row < Rows));
@@ -51,9 +52,9 @@ namespace Linear_Algebra {
 		(FillColumn(mat, col++, std::forward<Vectors>(vectors)), ...);
 	}
 
-	template<std::floating_point F, uint8_t Rows, typename... Vectors>
+	template<std::floating_point F, uint8_t Rows, uint8_t Alignment, typename... Vectors>
 	constexpr auto CreateMatrix(const Vector<F, Rows> vec1, Vectors&&... vectors) {
-		Matrix<F, 1 + sizeof...(vectors), Rows> ret;
+		Matrix<F, 1 + sizeof...(vectors), Rows, Alignment> ret;
 
 		FillColumn(ret, 0, vec1);
 
