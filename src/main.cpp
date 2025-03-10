@@ -62,11 +62,17 @@ int main() {
 		constexpr auto intermediate = mat1 * mat2;
 		constexpr auto intermediateReverse = mat2 * mat1;
 		static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
-
+#ifdef _MSC_VER
+		std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
+#elif defined(__GNUC__)
+		std::ofstream outFile{ "gcc_output.txt", std::ios::binary };
+#elif defined(__clang__)
+		std::ofstream outFile{ "clang_output.txt", std::ios::binary };
+#endif
 #ifdef _WIN32
-		std::ofstream outFile{ "windows_output.txt", std::ios::binary };
+		
 #elif __unix__
-		std::ofstream outFile{ "linux_output.txt", std::ios::binary };
+		
 #endif
 		if (!outFile.is_open()) {
 			return EXIT_FAILURE;

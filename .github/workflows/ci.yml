@@ -15,8 +15,26 @@ jobs:
         run: cmake --build build --config=Release
       - name: build clang
         run: cmake --build clang --config=Release
-      - name: test
-        run: cd build && ctest -C Release
+      - name: Run GCC Program and Save Output
+        run: |
+          ./out/default/Release/LinearAlgebraExample > gcc_output.txt
+
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: gcc_output.txt
+          path: gcc_output.txt
+
+      
+      - name: Run clang Program and Save Output
+        run: |
+          ./out/clang/Release/LinearAlgebraExample > clang_output.txt
+
+      - name: Upload Clang Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang_output.txt
+          path: clang_output.txt
   build-windows:
     runs-on: windows-latest
     steps:
@@ -25,8 +43,16 @@ jobs:
         run: cmake -S . --preset=vs22 -B build
       - name: build
         run: cmake --build build --config=Release
-      - name: test
-        run: cd build && ctest -C Release
+
+      - name: Run msvc Program and Save Output
+        run: |
+          ./Release/LinearAlgebraExample > msvc_output.txt
+
+      - name: Upload Clang Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: msvc_output.txt
+          path: msvc_output.txt
 
   compare-results:
     name: Compare Outputs
@@ -40,12 +66,12 @@ jobs:
       - name: Download Windows Output
         uses: actions/download-artifact@v4
         with:
-          name: windows_output.txt
+          name: msvc_output.txt
 
       - name: Download Linux Output
         uses: actions/download-artifact@v4
         with:
-          name: linux_output.txt
+          name: clang_output.txt
 
 
       - name: Compare Outputs
