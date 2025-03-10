@@ -9,12 +9,8 @@ jobs:
         run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
       - name: configure gcc
         run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13
-      - name: configure clang
-        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18
       - name: build gcc
         run: cmake --build build --config=Release
-      - name: build clang
-        run: cmake --build clang --config=Release
       - name: Run GCC Program and Save Output
         run: |
           ./build/Release/LinearAlgebraExample
@@ -26,6 +22,10 @@ jobs:
           path: gcc_output.txt
 
       
+      - name: configure clang
+        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18
+      - name: build clang
+        run: cmake --build clang --config=Release
       - name: Run clang Program and Save Output
         run: |
           ./build/Release/LinearAlgebraExample
