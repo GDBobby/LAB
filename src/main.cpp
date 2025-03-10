@@ -64,9 +64,9 @@ int main() {
 		static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
 
 #ifdef _WIN32
-		std::ofstream outFile{ "windows_output.txt" };
-#elif __linux__
-		std::ofstream outFile{ "linux_output.txt" };
+		std::ofstream outFile{ "windows_output.txt", std::ios::binary };
+#elif __unix__
+		std::ofstream outFile{ "linux_output.txt", std::ios::binary };
 #endif
 		if (!outFile.is_open()) {
 			return EXIT_FAILURE;
