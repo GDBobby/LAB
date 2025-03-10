@@ -15,31 +15,30 @@ namespace Linear_Algebra{
 	namespace SupportingMath {
 		template <std::floating_point F>
 #ifdef USING_CMATH
-		F Sqrt(F input) {
+		F Sqrt(F const input) {
 			return std::sqrt(input);
+		}
+
+		template<std::floating_point F>
+		F Cos(F const input) {
+			return std::cos(input);
+		}
+
+		template<std::floating_point F>
+		F Sin(F const input) {
+			return std::sin(input);
+		}
 #else
 		constexpr F Sqrt(F input) {
 			return 0.f;
-#endif
 		}
-#ifdef USING_CMATH
-		float Sqrt(float input) {
-			return std::sqrt(input);
-#else
 		constexpr float Sqrt(float input) {
 			return 0.f;
-#endif
 		}
-#ifdef USING_CMATH
-		double Sqrt(double input) {
-			return std::sqrt(input);
-#else
 		constexpr double Sqrt(double input) {
 			return std::sqrt(input);
-
-#endif
 		}
-
+#endif
 	}
 }
 

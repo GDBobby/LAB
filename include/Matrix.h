@@ -12,6 +12,27 @@ namespace Linear_Algebra {
 
 		constexpr Matrix() : data{} {}
 
+		template<bool Identity = false> requires((!Identity) || (Identity && (Rows == Columns)))
+		Matrix(F const initValue) {
+			if constexpr (Identity) {
+				for (uint8_t y = 0; y < Rows; y++) {
+					for (uint8_t x = 0; x < Columns; x++) {
+						At(y, x) = (F)0;
+					}
+				}
+				for (uint8_t i = 0; i < Columns; i++) {
+					At(i, i) = initValue;
+				}
+			}
+			else {
+				for (uint8_t y = 0; y < Rows; y++) {
+					for (uint8_t x = 0; x < Columns; x++) {
+						At(y, x) = initValue;
+					}
+				}
+			}
+		}
+
 		constexpr F& At(const uint8_t column, const uint8_t row) {
 			assert((column < Columns) && (row < Rows));
 			return data[column * Rows + row];

@@ -75,6 +75,17 @@ namespace Linear_Algebra {
 			const auto mag = Magnitude();
 			operator/=(mag);
 		}
+
+		constexpr F DotProduct(Vector const& other) const {
+			return x * other.x + y * other.y;
+		}
+
+		constexpr static Vector Forward() {
+			return { F(1), F(0) };
+		}
+		constexpr static Vector Up() {
+			return { F(0), F(1) };
+		}
 	};
 
 
@@ -148,6 +159,19 @@ namespace Linear_Algebra {
 		constexpr void Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
+		}
+		constexpr F DotProduct(Vector const& other) const {
+			return x * other.x + y * other.y + z * other.z;
+		}
+
+		constexpr static Vector Forward() {
+			return { F(1), F(0), F(0) };
+		}
+		constexpr static Vector Up() {
+			return { F(0), F(0), F(1) };
+		}
+		constexpr static Vector Right() {
+			return { F(0), F(1), F(0) };
 		}
 	};
 
@@ -225,6 +249,23 @@ namespace Linear_Algebra {
 			const auto mag = Magnitude();
 			operator/=(mag);
 		}
+
+		constexpr F DotProduct(Vector const& other) const {
+			return x * other.x + y * other.y + z * other.z + w * other.w;
+		}
+
+		constexpr static Vector Forward() {
+			return { F(1), F(0), F(0), F(0) };
+		}
+		constexpr static Vector Up() {
+			return { F(0), F(0), F(1), F(0) };
+		}
+		constexpr static Vector Right() {
+			return { F(0), F(1), F(0), F(0) };
+		}
+		constexpr static Vector Ahead() {
+			return { F(0), F(0), F(0), F(1) };
+		}
 	};
 
 	template<std::floating_point F, uint8_t Dimensions>
@@ -243,18 +284,32 @@ namespace Linear_Algebra {
 	constexpr F NormalizedDimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagitude() * second.SquaredMagnitude();
 		if (combinedMagSquared != F(0)) {	
-			F numerator = first.x * second.x + first.y * second.y;
+			if constexpr (Dimensions == 2) {
+				const F numerator = first.x * second.x + first.y * second.y;
+				if (numerator > F(0)) {
+					return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				}
+				else if (numerator < F(0)) {
+					return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				}
+			}
 			if constexpr (Dimensions >= 3) {
-				numerator += first.z * second.z;
+				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z;
+				if (numerator > F(0)) {
+					return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				}
+				else if (numerator < F(0)) {
+					return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				}
 			}
 			if constexpr (Dimensions >= 4) {
-				numerator += first.w * second.w;
-			}
-			if (numerator > F(0)) {
-				return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
-			}
-			else if (numerator < F(0)) {
-				return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
+				if (numerator > F(0)) {
+					return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				}
+				else if (numerator < F(0)) {
+					return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+				}
 			}
 		}
 		return F(0);

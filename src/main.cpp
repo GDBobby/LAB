@@ -2,8 +2,6 @@
 #include "Matrix.h"
 #include "Transform.h"
 
-#include <cstring>
-
 #include <cstdio>
 
 int main() {
