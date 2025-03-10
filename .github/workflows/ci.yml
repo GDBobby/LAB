@@ -71,9 +71,25 @@ jobs:
       - name: Download Linux Output
         uses: actions/download-artifact@v4
         with:
-          name: clang_output.txt
+          name: gcc_output.txt
 
 
       - name: Compare Outputs
         run: |
-          diff -u gcc_output.txt msvc_output.txt || (echo "Mismatch detected!" && exit 1)
+          diff -u gcc_output.txt msvc_output.txt || (echo "Mismatch detected between gcc and msvc!" && exit 1)
+      
+          
+      - name: Download Linux Output
+        uses: actions/download-artifact@v4
+        with:
+          name: clang_output.txt
+      
+      
+      - name: Compare Outputs
+        run: |
+          diff -u clang_output.txt msvc_output.txt || (echo "Mismatch detected between clang and msvc!" && exit 1)
+      
+      
+      - name: Compare Outputs
+        run: |
+          diff -u clang_output.txt gcc_output.txt || (echo "Mismatch detected between clang and gcc!" && exit 1)
