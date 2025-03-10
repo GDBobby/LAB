@@ -27,3 +27,26 @@ jobs:
         run: cmake --build build --config=Release
       - name: test
         run: cd build && ctest -C Release
+
+  compare-results:
+    name: Compare Outputs
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Linux Output
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-output
+
+      - name: Download Windows Output
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-output
+
+      - name: Compare Outputs
+        run: |
+          diff -u linux_output.txt windows_output.txt || (echo "Mismatch detected!" && exit 1)
