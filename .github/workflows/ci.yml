@@ -63,33 +63,33 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Windows Output
+      - name: Download Windows msvc Output
         uses: actions/download-artifact@v4
         with:
           name: msvc_output.txt
 
-      - name: Download Linux Output
+      - name: Download Linux gcc Output
         uses: actions/download-artifact@v4
         with:
           name: gcc_output.txt
 
 
-      - name: Compare Outputs
+      - name: Compare gcc and msvc Outputs
         run: |
           diff -u gcc_output.txt msvc_output.txt || (echo "Mismatch detected between gcc and msvc!" && exit 1)
       
           
-      - name: Download Linux Output
+      - name: Download Linux clang Output
         uses: actions/download-artifact@v4
         with:
           name: clang_output.txt
       
       
-      - name: Compare Outputs
+      - name: Compare clang msvc Outputs
         run: |
           diff -u clang_output.txt msvc_output.txt || (echo "Mismatch detected between clang and msvc!" && exit 1)
       
       
-      - name: Compare Outputs
+      - name: Compare clang gcc Outputs
         run: |
           diff -u clang_output.txt gcc_output.txt || (echo "Mismatch detected between clang and gcc!" && exit 1)
