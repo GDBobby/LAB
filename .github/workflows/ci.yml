@@ -17,7 +17,7 @@ jobs:
         run: cmake --build clang --config=Release
       - name: Run GCC Program and Save Output
         run: |
-          ./out/default/Release/LinearAlgebraExample > gcc_output.txt
+          ./Release/LinearAlgebraExample
 
       - name: Upload Output
         uses: actions/upload-artifact@v4
@@ -28,7 +28,7 @@ jobs:
       
       - name: Run clang Program and Save Output
         run: |
-          ./out/clang/Release/LinearAlgebraExample > clang_output.txt
+          ./Release/LinearAlgebraExample
 
       - name: Upload Clang Output
         uses: actions/upload-artifact@v4
@@ -48,7 +48,7 @@ jobs:
         run: |
           ./build/Release/LinearAlgebraExample.exe
 
-      - name: Upload Clang Output
+      - name: Upload Windows
         uses: actions/upload-artifact@v4
         with:
           name: msvc_output.txt
