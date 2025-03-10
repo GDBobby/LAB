@@ -76,4 +76,4 @@ jobs:
 
       - name: Compare Outputs
         run: |
-          diff -u linux_output.txt windows_output.txt || (echo "Mismatch detected!" && exit 1)
+          diff -u gcc_output.txt msvc_output.txt || (echo "Mismatch detected!" && exit 1)

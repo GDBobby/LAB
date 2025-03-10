@@ -64,15 +64,10 @@ int main() {
 		static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
 #ifdef _MSC_VER
 		std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
-#elif defined(__GNUC__)
-		std::ofstream outFile{ "gcc_output.txt", std::ios::binary };
 #elif defined(__clang__)
 		std::ofstream outFile{ "clang_output.txt", std::ios::binary };
-#endif
-#ifdef _WIN32
-		
-#elif __unix__
-		
+#elif defined(__GNUC__)
+		std::ofstream outFile{ "gcc_output.txt", std::ios::binary };
 #endif
 		if (!outFile.is_open()) {
 			return EXIT_FAILURE;
