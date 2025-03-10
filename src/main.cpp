@@ -52,9 +52,6 @@ int main() {
 	}
 
 	{
-		constexpr Linear_Algebra::Vector<float, 3> vec0{0.f};
-		constexpr Linear_Algebra::Vector<float, 3> vec1{1.f};
-		constexpr Linear_Algebra::Vector<float, 3> vec2{2.f};
 		
 		constexpr auto mat1 = Linear_Algebra::CreateMatrix<float, 3, 16>(Linear_Algebra::Vector<float, 3>(0.f, 1.f, 2.f), Linear_Algebra::Vector<float, 3>(2.f, 3.f, 4.f), Linear_Algebra::Vector<float, 3>(3.f, 4.f, 5.f));
 		constexpr auto mat2 = Linear_Algebra::CreateMatrix<float, 3, 12>(Linear_Algebra::Vector<float, 3>(10.f, 11.f, 12.f), Linear_Algebra::Vector<float, 3>(22.f, 23.f, 24.f), Linear_Algebra::Vector<float, 3>(33.f, 34.f, 35.f));
