@@ -2,6 +2,8 @@
 #include "Matrix.h"
 #include "Transform.h"
 
+#include <cstring>
+
 #include <cstdio>
 
 int main() {
@@ -39,6 +41,32 @@ int main() {
 		static_assert(transform.scale.x == mat.At(1, 0));
 		static_assert(transform.scale.y == mat.At(1, 1));
 		static_assert(transform.rotation == mat.At(2, 0));
+	}
+	{
+		constexpr Linear_Algebra::Transform<float, 2> transform{Linear_Algebra::Vector<float, 2>{1.f, 0.f}, Linear_Algebra::Vector<float, 2>{1.1f, 1.2f}, 0.f};
+
+		constexpr auto mat = transform.ToMatrix<16>();
+		static_assert(transform.translation.x == mat.At(0, 0));
+		static_assert(transform.translation.y == mat.At(0, 1));
+		static_assert(transform.scale.x == mat.At(1, 0));
+		static_assert(transform.scale.y == mat.At(1, 1));
+		static_assert(transform.rotation == mat.At(2, 0));
+	}
+
+	{
+		constexpr Linear_Algebra::Vector<float, 3> vec0{0.f};
+		constexpr Linear_Algebra::Vector<float, 3> vec1{1.f};
+		constexpr Linear_Algebra::Vector<float, 3> vec2{2.f};
+		
+		constexpr auto mat1 = Linear_Algebra::CreateMatrix<float, 3, 16>(Linear_Algebra::Vector<float, 3>(0.f, 1.f, 2.f), Linear_Algebra::Vector<float, 3>(2.f, 3.f, 4.f), Linear_Algebra::Vector<float, 3>(3.f, 4.f, 5.f));
+		constexpr auto mat2 = Linear_Algebra::CreateMatrix<float, 3, 12>(Linear_Algebra::Vector<float, 3>(10.f, 11.f, 12.f), Linear_Algebra::Vector<float, 3>(22.f, 23.f, 24.f), Linear_Algebra::Vector<float, 3>(33.f, 34.f, 35.f));
+
+		static_assert(mat1.At(0, 0) == 0.f);
+		constexpr auto intermediate = mat1 * mat2;
+		constexpr auto intermediateReverse = mat2 * mat1;
+		static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
+
+		
 	}
 	printf("made it to the end\n");
 }

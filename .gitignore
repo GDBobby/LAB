@@ -11,3 +11,4 @@ build/
 LinearAlgebra-debug
 LinearAlgebra
 *.exe
+out/
