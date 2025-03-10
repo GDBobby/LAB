@@ -46,7 +46,7 @@ jobs:
 
       - name: Run msvc Program and Save Output
         run: |
-          ./Release/LinearAlgebraExample > msvc_output.txt
+          ./Release/LinearAlgebraExample
 
       - name: Upload Clang Output
         uses: actions/upload-artifact@v4
