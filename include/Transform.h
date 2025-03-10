@@ -20,7 +20,7 @@ namespace Linear_Algebra {
         constexpr Transform() : translation{F(0)}, scale{F(1)}, rotation{F(0)} {}
         constexpr Transform(Vector<F, 2> const translation) : translation{translation}, scale{F(1)}, rotation{F(0)}{}
         constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale) : translation{translation}, scale{scale}, rotation{F(0)}{}
-        constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{}{}
+        constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{rotation}{}
 
         
         template<uint8_t Alignment = 12> requires(Alignment >= 12)
