@@ -40,12 +40,12 @@ jobs:
       - name: Download Linux Output
         uses: actions/download-artifact@v4
         with:
-          name: linux-output
+          name: linux-output.txt
 
       - name: Download Windows Output
         uses: actions/download-artifact@v4
         with:
-          name: windows-output
+          name: windows-output.txt
 
       - name: Compare Outputs
         run: |
