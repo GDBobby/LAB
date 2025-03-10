@@ -19,7 +19,7 @@ add_library(${PROJECT_NAME}-compile-options INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME}-compile-options ALIAS LinearAlgebra-compile-options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU)
-  target_compile_options(noiz-compile-options INTERFACE
+  target_compile_options(${PROJECT_NAME}-compile-options INTERFACE
     -Wall 
     -Wextra 
     -Wpedantic 
@@ -29,7 +29,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     $<$<NOT:$<CONFIG:Debug>>:-Werror>
   )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
-  target_compile_options(noiz-compile-options INTERFACE
+  target_compile_options(${PROJECT_NAME}-compile-options INTERFACE
     $<$<NOT:$<CONFIG:Debug>>:/WX>
   )
 endif()
