@@ -4,9 +4,10 @@
 
 #include <concepts>
 
-namespace Linear_Algebra {
+namespace LAB {
 	//F short for floating point, can be double or float, Dimensions is short for dimensions
-	template<std::floating_point F, std::uint8_t Dimensions> requires((Dimensions > 1) && (Dimensions <= 4))
+	template<std::floating_point F, std::uint8_t Dimensions> 
+		requires((Dimensions > 1) && (Dimensions <= 4))
 	struct Vector{};
 
 	template<std::floating_point F>
@@ -282,7 +283,7 @@ namespace Linear_Algebra {
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
 	template<std::floating_point F, uint8_t Dimensions>
 	constexpr F NormalizedDimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
-		const F combinedMagSquared = first.SquaredMagitude() * second.SquaredMagnitude();
+		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();
 		if (combinedMagSquared != F(0)) {	
 			if constexpr (Dimensions == 2) {
 				const F numerator = first.x * second.x + first.y * second.y;
@@ -293,7 +294,7 @@ namespace Linear_Algebra {
 					return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
 				}
 			}
-			if constexpr (Dimensions >= 3) {
+			else if constexpr (Dimensions == 3) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z;
 				if (numerator > F(0)) {
 					return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
@@ -302,7 +303,7 @@ namespace Linear_Algebra {
 					return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
 				}
 			}
-			if constexpr (Dimensions >= 4) {
+			else if constexpr (Dimensions == 4) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
 				if (numerator > F(0)) {
 					return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);

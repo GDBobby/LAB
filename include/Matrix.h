@@ -5,16 +5,19 @@
 #include <concepts>
 #include <utility>
 
-namespace Linear_Algebra {
-	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = (sizeof(float) * Rows)> requires((Rows <= 4) && (Rows > 1) && (Columns <= 4) && (Columns > 1) && (ColumnAlignment >= (Rows * sizeof(float))))
+namespace LAB {
+	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = (sizeof(F) * Rows)> 
+		requires((Rows <= 4) && (Rows > 1) && 
+			(Columns <= 4) && (Columns > 1) && 
+			(ColumnAlignment >= (Rows * sizeof(F))) && (ColumnAlignment % sizeof(F) == 0))
 		struct Matrix {
 
-		F data[ColumnAlignment / sizeof(float) * Columns];
+		F data[ColumnAlignment / sizeof(F) * Columns];
 
 		constexpr Matrix() : data{} {}
 
 		template<bool Identity = false> requires((!Identity) || (Identity && (Rows == Columns)))
-		Matrix(F const initValue) {
+		constexpr Matrix(F const initValue) {
 			if constexpr (Identity) {
 				for (uint8_t y = 0; y < Rows; y++) {
 					for (uint8_t x = 0; x < Columns; x++) {

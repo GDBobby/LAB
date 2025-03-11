@@ -7,7 +7,8 @@
 
 namespace Linear_Algebra {
 
-    template<std::floating_point F, std::uint8_t Dimensions> requires((Dimensions > 1) && (Dimensions <= 4))
+    template<std::floating_point F, std::uint8_t Dimensions> 
+	requires((Dimensions > 1) && (Dimensions <= 4))
     struct Transform{};
 
     template<std::floating_point F>
@@ -23,7 +24,7 @@ namespace Linear_Algebra {
         constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{rotation}{}
 
     
-		template<uint8_t Alignment = 12> requires((Alignment >= 12) && (Alignment % sizeof(float) == 0))
+		template<uint8_t Alignment = 12> requires((Alignment >= (sizeof(F) * 3)) && (Alignment % sizeof(F) == 0))
 		constexpr Matrix<F, 3, 3, Alignment> ToMatrix() const{
 			const float cosine = SupportingMath::Cos(rotation);
 			const float sine = SupportingMath::Sin(rotation);
@@ -43,7 +44,7 @@ namespace Linear_Algebra {
 			return ret;
 		}
 	
-		template<uint8_t Alignment = 12> requires((Alignment >= 12) && (Alignment % sizeof(float) == 0))
+		template<uint8_t Alignment = 12> requires((Alignment >= (sizeof(F) * 3)) && (Alignment % sizeof(F) == 0))
 		constexpr Matrix<F, 3, 3, Alignment> ToMatrixNoRotation() const {
 			//const float cosine = glm::cos(rotation);
 			//const float sine = glm::sin(rotation);
@@ -66,8 +67,14 @@ namespace Linear_Algebra {
         Vector<F, 3> scale;
         Vector<F, 3> rotation;
 
-		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(float) == 0))
-		constexpr Matrix<float, 4, 4, Alignment> GetRotationXMatrix() {
+
+		constexpr Transform() : translation{ F(0) }, scale{ F(1) }, rotation{ F(0) } {}
+		constexpr Transform(Vector<F, 3> const translation) : translation{ translation }, scale{ F(1) }, rotation{ F(0) } {}
+		constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale) : translation{ translation }, scale{ scale }, rotation{ F(0) } {}
+		constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale, Vector<F, 3> const rotation) : translation{ translation }, scale{ scale }, rotation{ rotation } {}
+
+		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
+		constexpr Matrix<F, 4, 4, Alignment> GetRotationXMatrix() const {
 			Matrix<float, 4, 4> ret{ 0.f };
 
 			ret.At(0, 0) = 1;
@@ -85,8 +92,8 @@ namespace Linear_Algebra {
 			return ret;
 		}
 
-		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(float) == 0))
-		constexpr Matrix<float, 4, 4, Alignment> GetRotationYMatrix() {
+		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
+		constexpr Matrix<F, 4, 4, Alignment> GetRotationYMatrix() const {
 			Matrix<float, 4, 4> ret{ 0.f };
 			ret.At(1, 1) = 1;
 			ret.At(3, 3) = 1;
@@ -102,8 +109,8 @@ namespace Linear_Algebra {
 			return ret;
 		}
 
-		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(float) == 0))
-		constexpr Matrix<float, 4, 4, Alignment> GetRotationZMatrix() {
+		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
+		constexpr Matrix<F, 4, 4, Alignment> GetRotationZMatrix() const {
 			Matrix<float, 4, 4> ret{ 0.f };
 			ret.At(2, 2) = 1;
 			ret.At(3, 3) = 1;
@@ -117,9 +124,9 @@ namespace Linear_Algebra {
 			ret.At(1, 1) = cosRet;
 		}
 
-		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(float) == 0))
-		constexpr Matrix<float, 4, 4> GetScaleMatrix() {
-			Matrix<float, 4, 4, Alignment> ret;
+		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
+		constexpr Matrix<F, 4, 4> GetScaleMatrix() const {
+			Matrix<F, 4, 4, Alignment> ret;
 			ret.At(0, 0) = scale.x;
 			ret.At(1, 1) = scale.y;
 			ret.At(2, 2) = scale.z;

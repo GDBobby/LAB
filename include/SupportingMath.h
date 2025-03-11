@@ -12,10 +12,10 @@
 #endif
 
 
-namespace Linear_Algebra{
+namespace LAB{
 	namespace SupportingMath {
-		template <std::floating_point F>
 #ifdef USING_CMATH
+		template <std::floating_point F>
 		F Sqrt(F const input) {
 			return std::sqrt(input);
 		}
@@ -31,6 +31,7 @@ namespace Linear_Algebra{
 			return std::sin(input);
 		}
 #else
+		template<std::floating_point F>
 		constexpr F Sqrt(F const input) {
 			return input;
 		}
