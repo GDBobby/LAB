@@ -15,33 +15,6 @@
 	#define LA_static_assert static_assert
 #endif
 
-template<bool cond, typename U>
-using resolvedType = typename std::enable_if<std::is_constant_evaluated()>::type;
-
-template <typename MatrixType>
-constexpr bool CheckEqual(const MatrixType& mat1, const MatrixType& mat2,
-	typename std::enable_if_t<std::is_constant_evaluated()>::type* = nullptr) {
-	for (uint8_t x = 0; x < 4; x++) {
-		for (uint8_t y = 0; y < 4; y++) {
-			static_assert(mat1.At(x, y) == mat2.At(x, y), "Matrix elements must be equal at compile-time.");
-		}
-	}
-	return true;
-}
-
-// 2. **Runtime Version (Fallback using SFINAE)**
-template <typename MatrixType>
-constexpr bool CheckEqual(const MatrixType& mat1, const MatrixType& mat2,
-	typename std::enable_if_t<!std::is_constant_evaluated()>::type* = nullptr) {
-	for (uint8_t x = 0; x < 4; x++) {
-		for (uint8_t y = 0; y < 4; y++) {
-			if (mat1.At(x, y) != mat2.At(x, y)) {
-				return false;
-			}
-		}
-	}
-	return true;
-}
 
 
 
@@ -104,7 +77,25 @@ int main() {
 		constexpr LAB::Matrix<float, 4, 4, 16> identityMat{LAB::Matrix<float, 4, 4, 16>::Identity(1.f)};
 		LA_static_assert(scaleMat.data[0] == 1.f);
 		LA_static_assert(identityMat.data[0] == 1.f);
-		CheckEqual(scaleMat, identityMat);
+		LA_static_assert(scaleMat.data[0] == identityMat.data[0]);
+		LA_static_assert(scaleMat.data[1] == identityMat.data[1]);
+		LA_static_assert(scaleMat.data[2] == identityMat.data[2]);
+		LA_static_assert(scaleMat.data[3] == identityMat.data[3]);
+
+		LA_static_assert(scaleMat.data[4] == identityMat.data[4]);
+		LA_static_assert(scaleMat.data[5] == identityMat.data[5]);
+		LA_static_assert(scaleMat.data[6] == identityMat.data[6]);
+		LA_static_assert(scaleMat.data[7] == identityMat.data[7]);
+
+		LA_static_assert(scaleMat.data[8] == identityMat.data[8]);
+		LA_static_assert(scaleMat.data[9] == identityMat.data[9]);
+		LA_static_assert(scaleMat.data[10] == identityMat.data[10]);
+		LA_static_assert(scaleMat.data[11] == identityMat.data[11]);
+
+		LA_static_assert(scaleMat.data[12] == identityMat.data[12]);
+		LA_static_assert(scaleMat.data[13] == identityMat.data[13]);
+		LA_static_assert(scaleMat.data[14] == identityMat.data[14]);
+		LA_static_assert(scaleMat.data[15] == identityMat.data[15]);
 	}
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;
