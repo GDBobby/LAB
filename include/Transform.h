@@ -22,28 +22,42 @@ namespace Linear_Algebra {
         constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale) : translation{translation}, scale{scale}, rotation{F(0)}{}
         constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{rotation}{}
 
-        
-        template<uint8_t Alignment = 12> requires(Alignment >= 12)
-        constexpr Matrix<F, 3, 3, Alignment> ToMatrix() const {
-            //if Y up and Z forward
+    
+		template<uint8_t Alignment = 12> requires((Alignment >= 12) && (Alignment % sizeof(float) == 0))
+		constexpr Matrix<F, 3, 3, Alignment> ToMatrix() const{
+			const float cosine = SupportingMath::Cos(rotation);
+			const float sine = SupportingMath::Sin(rotation);
+			Matrix<F, 3, 3, Alignment> ret;
+			ret.At(0, 0) = scale.x * cosine;
+			ret.At(0, 1) = scale.x * sine;
+			ret.At(0, 2) = 0.f;
 
-            //this is temp just for debugging the templates
-            Matrix<F, 3, 3, Alignment> ret;
-            ret.At(0, 0) = translation.x;
-            ret.At(0, 1) = translation.y;
-            ret.At(0, 2) = 0.f;
+			ret.At(1, 0) = scale.y * -sine;
+			ret.At(1, 1) = scale.y * cosine;
+			ret.At(1, 2) = 0.f;
 
-            ret.At(1, 0) = scale.x;
-            ret.At(1, 1) = scale.y;
-            ret.At(1, 2) = 0.f;
+			ret.At(2, 0) = translation.x;
+			ret.At(2, 1) = translation.y;
+			ret.At(2, 2) = 1.f;
 
-            ret.At(2, 0) = rotation;
-            ret.At(2, 1) = 0.f;
-            ret.At(2, 2) = 1.f;
+			return ret;
+		}
+	
+		template<uint8_t Alignment = 12> requires((Alignment >= 12) && (Alignment % sizeof(float) == 0))
+		constexpr Matrix<F, 3, 3, Alignment> ToMatrixNoRotation() const {
+			//const float cosine = glm::cos(rotation);
+			//const float sine = glm::sin(rotation);
+			Matrix<F, 3, 3, Alignment> ret{0.f};
+			ret.At(0, 0) = scale.x;
 
-            return ret;
-        }
-        
+			ret.At(1, 1) = scale.y;
+
+			ret.At(2, 0) = translation.x;
+			ret.At(2, 1) = translation.y;
+			ret.At(2, 2) = 1.f;
+
+        	return ret;
+    	}
     };
 
     template<std::floating_point F>
@@ -109,6 +123,23 @@ namespace Linear_Algebra {
 			ret.At(0, 0) = scale.x;
 			ret.At(1, 1) = scale.y;
 			ret.At(2, 2) = scale.z;
+			ret.At(3, 3) = 1.f;
+
+			ret.At(0, 1) = 0.f;
+			ret.At(0, 2) = 0.f;
+			ret.At(0, 3) = 0.f;
+
+			ret.At(1, 0) = 0.f;
+			ret.At(1, 2) = 0.f;
+			ret.At(1, 3) = 0.f;
+			
+			ret.At(2, 0) = 0.f;
+			ret.At(2, 1) = 0.f;
+			ret.At(2, 3) = 0.f;
+
+			ret.At(3, 0) = 0.f;
+			ret.At(3, 1) = 0.f;
+			ret.At(3, 2) = 0.f;
 			return ret;
 		}
     };

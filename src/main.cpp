@@ -5,6 +5,14 @@
 #include <cstdio>
 #include <fstream>
 
+#define STATIC_ASSERT_DEBUGGING
+
+#ifdef STATIC_ASSERT_DEBUGGING
+	#define LA_static_assert assert
+#else
+	#define LA_static_assert static_assert
+#endif
+
 int main() {
 	{
 		constexpr Linear_Algebra::Vector<float, 2> checkVec1(1.f, 2.f);
@@ -15,53 +23,20 @@ int main() {
 
 		constexpr auto checkMat = Linear_Algebra::CreateMatrix<float, 2, 8>(checkVec1, checkVec3);
 
-		static_assert(checkMat.At(1, 1) == checkVec3.y);
+		LA_static_assert(checkMat.At(1, 1) == checkVec3.y);
 
 		Linear_Algebra::Vector<float, 2> myVec{ 1.f, 2.f };
-		//printf("myVec sqrMag result : %.2f\n", myVec.SquaredMagnitude());
 		myVec /= 2.f;
-		//printf("myVec /= result - %.2f:%.2f\n", myVec.x, myVec.y);
-	}
-	{
-		constexpr Linear_Algebra::Transform<float, 2> transform{};
-
-		constexpr auto mat = transform.ToMatrix<12>();
-		static_assert(transform.translation.x == mat.At(0, 0));
-		static_assert(transform.translation.y == mat.At(0, 1));
-		static_assert(transform.scale.x == mat.At(1, 0));
-		static_assert(transform.scale.y == mat.At(1, 1));
-		static_assert(transform.rotation == mat.At(2, 0));
-	}
-	{
-		constexpr Linear_Algebra::Transform<float, 2> transform{Linear_Algebra::Vector<float, 2>{1.f, 0.f}, Linear_Algebra::Vector<float, 2>{1.1f, 1.2f}, 0.f};
-
-		constexpr auto mat = transform.ToMatrix<12>();
-		static_assert(transform.translation.x == mat.At(0, 0));
-		static_assert(transform.translation.y == mat.At(0, 1));
-		static_assert(transform.scale.x == mat.At(1, 0));
-		static_assert(transform.scale.y == mat.At(1, 1));
-		static_assert(transform.rotation == mat.At(2, 0));
-	}
-	{
-		constexpr Linear_Algebra::Transform<float, 2> transform{Linear_Algebra::Vector<float, 2>{1.f, 0.f}, Linear_Algebra::Vector<float, 2>{1.1f, 1.2f}, 0.f};
-
-		constexpr auto mat = transform.ToMatrix<16>();
-		static_assert(transform.translation.x == mat.At(0, 0));
-		static_assert(transform.translation.y == mat.At(0, 1));
-		static_assert(transform.scale.x == mat.At(1, 0));
-		static_assert(transform.scale.y == mat.At(1, 1));
-		static_assert(transform.rotation == mat.At(2, 0));
 	}
 
 	{
-		
 		constexpr auto mat1 = Linear_Algebra::CreateMatrix<float, 3, 16>(Linear_Algebra::Vector<float, 3>(0.f, 1.f, 2.f), Linear_Algebra::Vector<float, 3>(2.f, 3.f, 4.f), Linear_Algebra::Vector<float, 3>(3.f, 4.f, 5.f));
 		constexpr auto mat2 = Linear_Algebra::CreateMatrix<float, 3, 12>(Linear_Algebra::Vector<float, 3>(10.f, 11.f, 12.f), Linear_Algebra::Vector<float, 3>(22.f, 23.f, 24.f), Linear_Algebra::Vector<float, 3>(33.f, 34.f, 35.f));
 
-		static_assert(mat1.At(0, 0) == 0.f);
+		LA_static_assert(mat1.At(0, 0) == 0.f);
 		constexpr auto intermediate = mat1 * mat2;
 		constexpr auto intermediateReverse = mat2 * mat1;
-		static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
+		LA_static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
 #ifdef _MSC_VER
 		std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
 #elif defined(__clang__)
@@ -72,8 +47,14 @@ int main() {
 		if (!outFile.is_open()) {
 			return EXIT_FAILURE;
 		}
-		outFile.write(reinterpret_cast<const char*>(intermediate.data), sizeof(float) * 12);
-		outFile.write(reinterpret_cast<const char*>(intermediateReverse.data), sizeof(float) * 9);
+		for(uint8_t x = 0; x < 3; x++){
+			for(uint8_t y = 0; y < 3; y++){
+				const float first = intermediate.At(x, y);
+				const float second = intermediateReverse.At(x, y);
+				outFile.write(reinterpret_cast<const char*>(&first), sizeof(float));
+				outFile.write(reinterpret_cast<const char*>(&second), sizeof(float));
+			}
+		}
 		
 		outFile.close();
 	}
