@@ -75,10 +75,10 @@ namespace LAB {
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
 		constexpr Matrix<F, 4, 4, Alignment> GetRotationXMatrix() const {
-			Matrix<float, 4, 4> ret{ 0.f };
+			Matrix<F, 4, 4, Alignment> ret{ F(0) };
 
-			ret.At(0, 0) = 1;
-			ret.At(3, 3) = 1;
+			ret.At(0, 0) = F(1);
+			ret.At(3, 3) = F(1);
 
 			const F sinRet = SupportingMath::Sin(rotation.x);
 			const F cosRet = SupportingMath::Cos(rotation.x);
@@ -94,8 +94,8 @@ namespace LAB {
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
 		constexpr Matrix<F, 4, 4, Alignment> GetRotationYMatrix() const {
-			Matrix<float, 4, 4> ret{ 0.f };
-			ret.At(1, 1) = 1;
+			Matrix<F, 4, 4> ret{ F(0) };
+			ret.At(1, 1) = F(1);
 			ret.At(3, 3) = 1;
 
 			const F sinRet = SupportingMath::Sin(rotation.y);
@@ -111,8 +111,8 @@ namespace LAB {
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
 		constexpr Matrix<F, 4, 4, Alignment> GetRotationZMatrix() const {
-			Matrix<float, 4, 4> ret{ 0.f };
-			ret.At(2, 2) = 1;
+			Matrix<F, 4, 4> ret{ F(0) };
+			ret.At(2, 2) = F(1);
 			ret.At(3, 3) = 1;
 
 			const F sinRet = SupportingMath::Sin(rotation.z);
@@ -122,6 +122,8 @@ namespace LAB {
 			ret.At(1, 0) = -sinRet;
 			ret.At(0, 1) = sinRet;
 			ret.At(1, 1) = cosRet;
+			
+			return ret;
 		}
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))

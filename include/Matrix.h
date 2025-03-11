@@ -101,6 +101,17 @@ namespace LAB {
 
 			return ret;
 		}
+
+		constexpr bool operator==(Matrix const& other) const{
+			for(uint8_t y = 0; y < Rows; y++){
+				for(uint8_t x = 0; x < Columns; x++){
+					if(At(x, y) != other.At(x, y)){
+						return false;
+					}
+				}
+			}
+			return true;	
+		}
 	};
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>

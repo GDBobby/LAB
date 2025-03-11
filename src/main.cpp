@@ -77,25 +77,40 @@ int main() {
 		constexpr LAB::Matrix<float, 4, 4, 16> identityMat{LAB::Matrix<float, 4, 4, 16>::Identity(1.f)};
 		LA_static_assert(scaleMat.data[0] == 1.f);
 		LA_static_assert(identityMat.data[0] == 1.f);
-		LA_static_assert(scaleMat.data[0] == identityMat.data[0]);
-		LA_static_assert(scaleMat.data[1] == identityMat.data[1]);
-		LA_static_assert(scaleMat.data[2] == identityMat.data[2]);
-		LA_static_assert(scaleMat.data[3] == identityMat.data[3]);
 
-		LA_static_assert(scaleMat.data[4] == identityMat.data[4]);
-		LA_static_assert(scaleMat.data[5] == identityMat.data[5]);
-		LA_static_assert(scaleMat.data[6] == identityMat.data[6]);
-		LA_static_assert(scaleMat.data[7] == identityMat.data[7]);
+		LA_static_assert(scaleMat == identityMat);
+	}
+	{
+		constexpr LAB::Transform<float, 3> transformX{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{std::numbers::pi_v<float>, 0.f, 0.f}};
+		constexpr LAB::Transform<float, 3> transformY{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, std::numbers::pi_v<float>, 0.f}};
+		constexpr LAB::Transform<float, 3> transformZ{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, 0.f, std::numbers::pi_v<float>}};
 
-		LA_static_assert(scaleMat.data[8] == identityMat.data[8]);
-		LA_static_assert(scaleMat.data[9] == identityMat.data[9]);
-		LA_static_assert(scaleMat.data[10] == identityMat.data[10]);
-		LA_static_assert(scaleMat.data[11] == identityMat.data[11]);
+		constexpr auto rotXMat = transformX.GetRotationXMatrix();
+		constexpr auto rotYMat = transformY.GetRotationYMatrix();
+		constexpr auto rotZMat = transformZ.GetRotationZMatrix();
 
-		LA_static_assert(scaleMat.data[12] == identityMat.data[12]);
-		LA_static_assert(scaleMat.data[13] == identityMat.data[13]);
-		LA_static_assert(scaleMat.data[14] == identityMat.data[14]);
-		LA_static_assert(scaleMat.data[15] == identityMat.data[15]);
+		LA_static_assert(rotXMat.At(1, 1) == rotYMat.At(0, 0));
+		LA_static_assert(rotXMat.At(2, 1) == rotYMat.At(0, 2));
+		LA_static_assert(rotXMat.At(1, 2) == rotYMat.At(2, 0));
+		LA_static_assert(rotXMat.At(2, 2) == rotYMat.At(2, 2));
+
+		LA_static_assert(rotZMat.At(0, 0) == rotYMat.At(0, 0));
+		LA_static_assert(rotZMat.At(1, 0) == rotYMat.At(0, 2));
+		LA_static_assert(rotZMat.At(0, 1) == rotYMat.At(2, 0));
+		LA_static_assert(rotZMat.At(1, 1) == rotYMat.At(2, 2));
+
+		for(uint8_t x = 0; x < 3; x++){
+			for(uint8_t y = 0; y < 3; y++){
+				const float xval = rotXMat.At(x, y);
+				const float yval = rotYMat.At(x, y);
+				const float zval = rotZMat.At(x, y);
+				outFile.write(reinterpret_cast<const char*>(&xval), sizeof(float));
+				outFile.write(reinterpret_cast<const char*>(&yval), sizeof(float));
+				outFile.write(reinterpret_cast<const char*>(&zval), sizeof(float));
+			}
+		}
+
+
 	}
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;
