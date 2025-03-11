@@ -4,6 +4,8 @@
 
 #include <cstdio>
 #include <fstream>
+#include <concepts>
+#include <type_traits>
 
 //#define STATIC_ASSERT_DEBUGGING
 
@@ -12,28 +14,35 @@
 #else
 	#define LA_static_assert static_assert
 #endif
-/*
-constexpr bool CheckEqual(LAB::Matrix<float, 4, 4, 16> const& mat1, LAB::Matrix<float, 4, 4, 16> const& mat2) {
-	if constexpr (std::is_constant_evaluated()) {
-		for (uint8_t x = 0; x < 4; x++) {
-			for (uint8_t y = 0; y < 4; y++) {
-				LA_static_assert(mat1.At(x, y) == mat2.At(x, y));
-			}
+
+template<bool cond, typename U>
+using resolvedType = typename std::enable_if<std::is_constant_evaluated()>::type;
+
+template <typename MatrixType>
+constexpr bool CheckEqual(const MatrixType& mat1, const MatrixType& mat2,
+	typename std::enable_if_t<std::is_constant_evaluated()>::type* = nullptr) {
+	for (uint8_t x = 0; x < 4; x++) {
+		for (uint8_t y = 0; y < 4; y++) {
+			static_assert(mat1.At(x, y) == mat2.At(x, y), "Matrix elements must be equal at compile-time.");
 		}
-		return true;
 	}
-	else {
-		for (uint8_t x = 0; x < 4; x++) {
-			for (uint8_t y = 0; y < 4; y++) {
-				if (mat1.At(x, y) != mat2.At(x, y)) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+	return true;
 }
-*/
+
+// 2. **Runtime Version (Fallback using SFINAE)**
+template <typename MatrixType>
+constexpr bool CheckEqual(const MatrixType& mat1, const MatrixType& mat2,
+	typename std::enable_if_t<!std::is_constant_evaluated()>::type* = nullptr) {
+	for (uint8_t x = 0; x < 4; x++) {
+		for (uint8_t y = 0; y < 4; y++) {
+			if (mat1.At(x, y) != mat2.At(x, y)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 
 
 int main() {
@@ -61,9 +70,12 @@ int main() {
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
-		//constexpr float nDP = LAB::NormalizedDimensionsDotProduct(checkVec1, checkVec2);
+		constexpr float nDP = LAB::NormalizedDimensionsDotProduct(checkVec1, checkVec2);
 
-		//outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
+		printf("nDP : %.2f\n", nDP);
+
+		static_assert(LAB::Vector<float, 2>::Forward().x == LAB::Vector<float, 2>::Up().y);
 	}
 
 	{
@@ -89,8 +101,10 @@ int main() {
 	{
 		constexpr LAB::Transform<float, 3> transform{};
 		constexpr auto scaleMat = transform.GetScaleMatrix<16>();
-		constexpr auto identityMat = LAB::Matrix<float, 4, 4, 16>::Matrix<true>(1.f);
-		//CheckEqual(scaleMat, identityMat);
+		constexpr LAB::Matrix<float, 4, 4, 16> identityMat{LAB::Matrix<float, 4, 4, 16>::Identity(1.f)};
+		LA_static_assert(scaleMat.data[0] == 1.f);
+		LA_static_assert(identityMat.data[0] == 1.f);
+		CheckEqual(scaleMat, identityMat);
 	}
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;

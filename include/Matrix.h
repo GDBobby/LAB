@@ -4,6 +4,7 @@
 #include <cassert>
 #include <concepts>
 #include <utility>
+#include <type_traits>
 
 namespace LAB {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = (sizeof(F) * Rows)> 
@@ -16,41 +17,40 @@ namespace LAB {
 
 		constexpr Matrix() : data{} {}
 
-		template<bool Identity = false> requires((!Identity) || (Identity && (Rows == Columns)))
 		constexpr Matrix(F const initValue) {
-			if constexpr (Identity) {
-				for (uint8_t y = 0; y < Rows; y++) {
-					for (uint8_t x = 0; x < Columns; x++) {
-						At(y, x) = (F)0;
-					}
-				}
-				for (uint8_t i = 0; i < Columns; i++) {
-					At(i, i) = initValue;
+			for (uint8_t y = 0; y < Rows; y++) {
+				for (uint8_t x = 0; x < Columns; x++) {
+					At(y, x) = initValue;
 				}
 			}
-			else {
-				for (uint8_t y = 0; y < Rows; y++) {
-					for (uint8_t x = 0; x < Columns; x++) {
-						At(y, x) = initValue;
-					}
-				}
-			}
+			
 		}
-
 		constexpr F& At(const uint8_t column, const uint8_t row) {
 			assert((column < Columns) && (row < Rows));
 			return data[column * Rows + row];
 		}
+		constexpr F At(const uint8_t column, const uint8_t row) const {
+			assert((column < Columns) && (row < Rows));
+			return data[column * Rows + row];
+		}
+		
+		static constexpr typename std::enable_if<(Rows == Columns), Matrix>::type Identity(F const initVal) {
+			//static_assert(Rows == Columns && "can not use Identity unless rows and Columns are equal");
+			Matrix ret{ 0.f };
+
+			for (uint8_t i = 0; i < Columns; i++) {
+				ret.At(i, i) = initVal;
+			}
+
+			return ret;
+		}
+
 		constexpr F& operator[](const uint8_t index) {
 			constexpr uint8_t row = index % Rows;
 			constexpr uint8_t column = (index - row) / Rows;
 			assert((column < Columns) && (row < Rows));
 
 			return At(column, row);
-		}
-		constexpr F At(const uint8_t column, const uint8_t row) const {
-			assert((column < Columns) && (row < Rows));
-			return data[column * Rows + row];
 		}
 		constexpr F operator[](const uint8_t index) const {
 			constexpr uint8_t row = index % Rows;
