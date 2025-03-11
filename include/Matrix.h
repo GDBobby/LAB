@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include <cassert>
 #include <concepts>
+#include <utility>
 
 namespace Linear_Algebra {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = (sizeof(float) * Rows)> requires((Rows <= 4) && (Rows > 1) && (Columns <= 4) && (Columns > 1) && (ColumnAlignment >= (Rows * sizeof(float))))
