@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <fstream>
 
-#define STATIC_ASSERT_DEBUGGING
+//#define STATIC_ASSERT_DEBUGGING
 
 #ifdef STATIC_ASSERT_DEBUGGING
 	#define LA_static_assert assert
