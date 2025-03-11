@@ -2,6 +2,7 @@
 #include <concepts>
 #include <cstdint>
 #include <numbers>
+#include <bit>
 
 //#define USING_CMATH
 
@@ -32,8 +33,26 @@ namespace LAB{
 		}
 #else
 		template<std::floating_point F>
+		constexpr F InverseSqrt(F const input){
+			//copied from wikipedia
+			if constexpr(std::is_same_v<F, float>){
+				const auto y = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(input) >> 1));
+				const float refined = y * (1.5f - (input * 0.5f * y * y));
+				return refined * (1.5f - (input * 0.5f * refined * refined));
+			}
+			else if constexpr(std::is_same_v<F, double>){
+				const auto y = std::bit_cast<double>(0x5fe6eb50c7b537a9 - (std::bit_cast<std::uint64_t>(input) >> 1));
+				const double refined = y * (1.5 - (input * 0.5 * y * y));
+				return refined * (1.5 - (input * 0.5 * refined * refined));
+			}
+			else{
+				static_assert(false);
+			}
+		}
+
+		template<std::floating_point F>
 		constexpr F Sqrt(F const input) {
-			return input;
+			return F(1) / InverseSqrt(input);
 		}
 
 		//im literally just ripping this from QT
