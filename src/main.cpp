@@ -35,6 +35,7 @@ constexpr bool CheckEqual(LAB::Matrix<float, 4, 4, 16> const& mat1, LAB::Matrix<
 }
 */
 
+
 int main() {
 #ifdef _MSC_VER
 	std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
@@ -86,9 +87,9 @@ int main() {
 		outFile.close();
 	}
 	{
-		//constexpr LAB::Transform<float, 3> transform{};
-		//constexpr auto scaleMat = transform.GetScaleMatrix<16>();
-		//constexpr auto identityMat = LAB::Matrix<float, 4, 4, 16>::Matrix<true>(1.f);
+		constexpr LAB::Transform<float, 3> transform{};
+		constexpr auto scaleMat = transform.GetScaleMatrix<16>();
+		constexpr auto identityMat = LAB::Matrix<float, 4, 4, 16>::Matrix<true>(1.f);
 		//CheckEqual(scaleMat, identityMat);
 	}
 	printf("made it to the end\n");
