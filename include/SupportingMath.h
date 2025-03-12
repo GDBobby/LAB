@@ -33,6 +33,11 @@ namespace LAB{
 		}
 #else
 		template<std::floating_point F>
+		constexpr F Abs(F const input){
+			return input * (F(1) - F(2) * (input < F(0)));
+		}
+
+		template<std::floating_point F>
 		constexpr F InverseSqrt(F const input){
 			//copied from wikipedia
 			if constexpr(std::is_same_v<F, float>){
@@ -114,6 +119,40 @@ namespace LAB{
 			else{
 				static_assert(false);
 			}
+		}
+
+
+		template<std::floating_point F>
+		constexpr F ArcCos(F const input){
+			//https://developer.download.nvidia.com/cg/index_stdlib.html
+			F negate = F(input < 0);
+			input = Abs(input);
+			F ret = F(-0.0187293);
+			ret *= input;
+			ret += F(0.0742610);
+			ret *= input;
+			ret -= F(0.2121144);
+			ret *= input;
+			ret += F(1.5707288);
+			ret *= Sqrt(F(1.0) - input);
+			ret -= F(2) * negate * ret;
+			return negate * std::numbers::pi_v<F> + ret;
+		}
+		template<std::floating_point F>
+		constexpr F ArcSin(F const input){
+			//https://developer.download.nvidia.com/cg/index_stdlib.html
+			F negate = F(input < 0);
+			input = Abs(input);
+			F ret = F(-0.0187293);
+			ret *= input;
+			ret += F(0.0742610);
+			ret *= input;
+			ret -= F(0.2121144);
+			ret *= input;
+
+			ret += F(1.5707288);
+			ret = std::numbers::pi_v<F> / F(2) - sqrt(F(1.0) - input) * ret;
+			return ret - F(2) * negate * ret;
 		}
 
 		template<std::floating_point F>

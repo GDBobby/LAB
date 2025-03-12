@@ -68,37 +68,58 @@ namespace LAB{
     }
     
     template<std::floating_point F>
-    constexpr Matrix<F, 4, 4, 16> CreateViewMatrix(Vector<float, 3> const position, Vector<float, 3> forward){
+    constexpr Matrix<F, 4, 4, 16> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
         Matrix<F, 4, 4, 16> ret;
+        const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
+        const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 
-        if constexpr(CoordinateSystem::coordinateSystem == CoordinateSystem::GLSL_XRightYDownZBackward){
-            const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
-            const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
-
+        if constexpr(CoordinateSystem::forward == CoordinateSystem::XPos){
             ret.At(0, 0) = right.x;
             ret.At(1, 0) = right.y;
             ret.At(2, 0) = right.z;
+            ret.At(3, 0) = -position.DotProduct(right);
+        }
+        else if constexpr(CoordinateSystem::forward == CoordinateSystem::XPos){
+            ret.At(0, 0) = -right.x;
+            ret.At(1, 0) = -right.y;
+            ret.At(2, 0) = -right.z;
+            ret.At(3, 0) = position.DotProduct(right);
+        }
+        //other forward directions
 
+
+        if constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
             ret.At(0, 1) = -up.x;
             ret.At(1, 1) = -up.x;
             ret.At(2, 1) = -up.x;
+            ret.At(3, 1) = position.DotProduct(up);
+        }
+        else if constexpr (CoordinateSystem::up == CoordinateSystem::YNeg){
+            ret.At(0, 1) = up.x;
+            ret.At(1, 1) = up.x;
+            ret.At(2, 1) = up.x;
+            ret.At(3, 1) = -position.DotProduct(up);
+        }
+        //other up directions
 
+        if constexpr (CoordinateSystem::right == CoordinateSystem::ZPos){
             ret.At(0, 2) = -forward.x;
             ret.At(1, 2) = -forward.y;
             ret.At(2, 2) = -forward.z;
-
-            ret.At(3, 0) = -position.DotProduct(right);
-            ret.At(3, 1) = position.DotProduct(up);
             ret.At(3, 2) = position.DotProduct(forward);
+        }
+        else if constexpr (CoordinateSystem::right == CoordinateSystem::ZNeg){
+            ret.At(0, 2) = forward.x;
+            ret.At(1, 2) = forward.y;
+            ret.At(2, 2) = forward.z;
+            ret.At(3, 2) = -position.DotProduct(forward);
+        }
+        //other right directions
             
-            ret.At(0, 3) = 0.f;
-            ret.At(1, 3) = 0.f;
-            ret.At(2, 3) = 0.f;
-            ret.At(3, 3) = 1.f;
-        }
-        else{
-            static_assert(false && "other coordinate systems not supported yet");
-        }
+        ret.At(0, 3) = F(0);
+        ret.At(1, 3) = F(0);
+        ret.At(2, 3) = F(0);
+        ret.At(3, 3) = F(1);
 
         return ret;
     }

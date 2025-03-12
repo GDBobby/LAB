@@ -46,7 +46,7 @@ int main() {
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
-		constexpr float nDP = LAB::NormalizedDimensionsDotProduct(checkVec1, checkVec2);
+		constexpr float nDP = LAB::NormalizedDotProduct(checkVec1, checkVec2);
 
 		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
 		//printf("nDP : %.2f\n", nDP);
@@ -138,7 +138,7 @@ int main() {
 		printf("tan comparison : (%.10f) - (%.10f)\n", tanRet, std::tan(trigInput));
 	}
 	{
-		LAB::CreateViewMatrix(LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>::Forward());
+		constexpr auto viewMat = LAB::CreateViewMatrix(LAB::Vector<float, 3>(0.f), LAB::Vector<float, 3>::Forward());
 	}
 
 	printf("made it to the end\n");

@@ -1,4 +1,4 @@
-
+#pragma once
 namespace LAB{
     namespace CoordinateSystem{
         enum Enum : int {
@@ -28,9 +28,9 @@ namespace LAB{
         };
 
         constexpr Enum coordinateSystem = GLSL_XRightYDownZBackward;
-        constexpr Enum forward = ZNeg;
-        constexpr Enum right = XPos;
-        constexpr Enum up = ZNeg;
+        constexpr Enum forward = XPos;
+        constexpr Enum right = ZPos;
+        constexpr Enum up = YPos;
 
     }
 }

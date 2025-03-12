@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SupportingMath.h"
+#include "CoordinateSystems.h"
 
 #include <concepts>
 
@@ -82,10 +83,41 @@ namespace LAB {
 		}
 
 		constexpr static Vector Forward() {
-			return { F(1), F(0) };
+			if constexpr (CoordinateSystem::forward == CoordinateSystem::XPos){
+				return { F(1), F(0) };
+			}
+			else if constexpr(CoordinateSystem::forward == CoordinateSystem::XNeg){
+				return {F(-1), F(0)};
+			}
+			else if constexpr(CoordinateSystem::forward == CoordinateSystem::YPos){
+				return {F(0), F(1)};
+			}
+			else if constexpr(CoordinateSystem::forward == CoordinateSystem::YNeg){
+				return {F(0), F(-1)};
+			}
+			else{
+				static_assert(false && "idk how to rectify Z forward/back/up/down in 2 dimensions yet. I'm aware 3D environments will frequently use 2 dimensional vectors");
+			}
 		}
 		constexpr static Vector Up() {
-			return { F(0), F(1) };
+			//switch constexpr where pls
+			//i read that i could potentially expect it to look the same as if constexpr, but it's not guaranteed, and I'm relying on compiler optimization
+
+			if constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
+				return { F(0), F(1) };
+			}
+			else if constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
+				return {F(0), F(-1)};
+			}
+			else if constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
+				return {F(1), F(0)};
+			}
+			else if constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
+				return {F(-1), F(0)};
+			}
+			else{
+				static_assert(false && "idk how to rectify Z forward/back/up/down in 2 dimensions yet. I'm aware 3D environments will frequently use 2 dimensional vectors");
+			}
 		}
 	};
 
@@ -108,7 +140,7 @@ namespace LAB {
 		constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z);
 		}
-		constexpr void operator += (Vector const other) {
+		constexpr void operator +=(Vector const other) {
 			x += other.x;
 			y += other.y;
 			z += other.z;
@@ -128,7 +160,7 @@ namespace LAB {
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator *=(F const multiplier) {
+		constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 			z *= multiplier;
@@ -138,12 +170,12 @@ namespace LAB {
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator /=(F const divisor) {
+		constexpr void operator/=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 			z /= divisor;
 		}
-		constexpr Vector operator /(F const divisor) const {
+		constexpr Vector operator/(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
@@ -157,9 +189,10 @@ namespace LAB {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
-		constexpr void Normalize() {
+		constexpr Vector& Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
+			return *this;
 		}
 		constexpr F DotProduct(Vector const& other) const {
 			return x * other.x + y * other.y + z * other.z;
@@ -270,7 +303,7 @@ namespace LAB {
 	};
 
 	template<std::floating_point F, uint8_t Dimensions>
-	constexpr F DimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		F sum = first.x * second.x + first.y * second.y;
 		if constexpr (Dimensions >= 3) {
 			sum += first.z * second.z;
@@ -281,9 +314,9 @@ namespace LAB {
 		return sum;
 	}
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
-	//that test was before i knew reverse square root was faster than square root i guess. should be faster now
+	//that test was before i knew reverse square root was faster than square root. should be faster now
 	template<std::floating_point F, uint8_t Dimensions>
-	constexpr F NormalizedDimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	constexpr F NormalizedDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();
 		if (combinedMagSquared != F(0)) {	
 			if constexpr (Dimensions == 2) {
