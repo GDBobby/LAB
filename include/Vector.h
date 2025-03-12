@@ -330,7 +330,7 @@ namespace LAB {
 	template<std::floating_point F>
 	constexpr Vector<F, 3> CrossProduct(Vector<F, 3> const first, Vector<F, 3> const second) {
 		//inlining matrix
-		return Vector{
+		return Vector<F, 3>{
 			first.y * second.z - first.z * first.y,
 			first.z * second.x - first.x * second.z,
 			first.x * second.y - first.y * second.x

@@ -102,7 +102,9 @@ namespace LAB {
 			return ret;
 		}
 
-		constexpr bool operator==(Matrix const& other) const{
+
+		template<uint8_t Alignment>
+		constexpr bool operator==(Matrix<F, Columns, Rows, Alignment> const& other) const{
 			for(uint8_t y = 0; y < Rows; y++){
 				for(uint8_t x = 0; x < Columns; x++){
 					if(At(x, y) != other.At(x, y)){

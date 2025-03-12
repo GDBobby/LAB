@@ -1,7 +1,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "Transform.h"
-#include "BiggerFunctions.h"
+#include "Camera.h"
 
 #include <cstdio>
 #include <fstream>
@@ -136,6 +136,9 @@ int main() {
 		printf("cos comparison : (%.10f) - (%.10f)\n", cosRet, std::cos(trigInput));
 		printf("sin comparison : (%.10f) - (%.10f)\n", sinRet, std::sin(trigInput));
 		printf("tan comparison : (%.10f) - (%.10f)\n", tanRet, std::tan(trigInput));
+	}
+	{
+		LAB::CreateViewMatrix(LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>::Forward());
 	}
 
 	printf("made it to the end\n");
