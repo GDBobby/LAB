@@ -1,4 +1,9 @@
 #include <cstdint>
+
+    //im literally just ripping this from QT
+    //https://codebrowser.dev/qt5/qtbase/src/corelib/kernel/qmath.cpp.html#qt_sine_table
+    //they have an LGPL license, which I'll have to copy
+
 namespace LAB {
     namespace QT_Sine_Table {
 

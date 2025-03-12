@@ -8,6 +8,8 @@
 #include <concepts>
 #include <type_traits>
 
+#include <cmath>
+
 //#define STATIC_ASSERT_DEBUGGING
 
 #ifdef STATIC_ASSERT_DEBUGGING
@@ -121,6 +123,21 @@ int main() {
 			}
 		}
 	}
+	{
+		constexpr float trigInput = 50.f;
+		constexpr auto cosRet = LAB::SupportingMath::Cos(trigInput);
+		constexpr auto sinRet = LAB::SupportingMath::Sin(trigInput);
+		constexpr auto tanRet = LAB::SupportingMath::Tan(trigInput);
+
+		outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
+
+		printf("cos comparison : (%.10f) - (%.10f)\n", cosRet, std::cos(trigInput));
+		printf("sin comparison : (%.10f) - (%.10f)\n", sinRet, std::sin(trigInput));
+		printf("tan comparison : (%.10f) - (%.10f)\n", tanRet, std::tan(trigInput));
+	}
+
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;
 }

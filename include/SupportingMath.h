@@ -84,10 +84,10 @@ namespace LAB{
 			si &= QT_Sine_Table::size - 1;
 			ci &= QT_Sine_Table::size - 1;
 			if constexpr(std::is_same_v<F, float>){
-				return QT_Sine_Table::table_float[si] - (QT_Sine_Table::table_float[ci] + 0.5f * QT_Sine_Table::table_float[si] * d) * d;
+				return QT_Sine_Table::table_float[ci] - (QT_Sine_Table::table_float[si] + 0.5f * QT_Sine_Table::table_float[ci] * d) * d;
 			}
 			else if constexpr(std::is_same_v<F, double>){
-				return QT_Sine_Table::table_double[si] - (QT_Sine_Table::table_double[ci] + 0.5 * QT_Sine_Table::table_double[si] * d) * d;
+				return QT_Sine_Table::table_double[ci] - (QT_Sine_Table::table_double[si] + 0.5 * QT_Sine_Table::table_double[ci] * d) * d;
 			}
 			else{
 				static_assert(false);
@@ -96,7 +96,24 @@ namespace LAB{
 
 		template<std::floating_point F>
 		constexpr F Tan(F const input){
-			return Sin(input) / Cos(input);
+			//return Sin(input) / Cos(input);
+
+			int si = int(input * (F(0.5) * QT_Sine_Table::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
+			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine_Table::size);
+			int ci = si + QT_Sine_Table::size / 4;
+			si &= QT_Sine_Table::size - 1;
+			ci &= QT_Sine_Table::size - 1;
+			if constexpr(std::is_same_v<F, float>){
+				return (QT_Sine_Table::table_float[si] + (QT_Sine_Table::table_float[ci] - 0.5f * QT_Sine_Table::table_float[si] * d) * d)
+				/ (QT_Sine_Table::table_float[ci] - (QT_Sine_Table::table_float[si] + 0.5f * QT_Sine_Table::table_float[ci] * d) * d);
+			}
+			else if constexpr(std::is_same_v<F, double>){
+				return (QT_Sine_Table::table_double[si] + (QT_Sine_Table::table_double[ci] - 0.5f * QT_Sine_Table::table_double[si] * d) * d)
+				/ (QT_Sine_Table::table_double[ci] - (QT_Sine_Table::table_double[si] + 0.5f * QT_Sine_Table::table_double[ci] * d) * d);
+			}
+			else{
+				static_assert(false);
+			}
 		}
 
 		template<std::floating_point F>
