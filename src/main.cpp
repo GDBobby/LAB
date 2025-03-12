@@ -136,10 +136,28 @@ int main() {
 		printf("cos comparison : (%.10f) - (%.10f)\n", cosRet, std::cos(trigInput));
 		printf("sin comparison : (%.10f) - (%.10f)\n", sinRet, std::sin(trigInput));
 		printf("tan comparison : (%.10f) - (%.10f)\n", tanRet, std::tan(trigInput));
+
+		constexpr float arcCosRet = LAB::SupportingMath::ArcCos(trigInput);
+		constexpr float arcSinRet = LAB::SupportingMath::ArcSin(trigInput);
+		constexpr float arcTanRet = LAB::SupportingMath::ArcTan(trigInput);
+		printf("\narccos comparison : (%.10f) - (%.10f)\n", arcCosRet, std::acos(trigInput));
+		printf("\narcsin comparison : (%.10f) - (%.10f)\n", arcSinRet, std::asin(trigInput));
+		printf("\narctan comparison : (%.10f) - (%.10f)\n", arcTanRet, std::atan(trigInput));
+
+		//printf("arc tan comparison : (%.10f):(%.10f)\n", LAB::SupportingMath::ArcTan2BitMasking(trigInput, 1.f), LAB::SupportingMath::ArcTan2(trigInput, 1.f));
 	}
 	{
 		constexpr auto viewMat = LAB::CreateViewMatrix(LAB::Vector<float, 3>(0.f), LAB::Vector<float, 3>::Forward());
 	}
+	{
+		constexpr float truncRet = LAB::SupportingMath::Trunc(11.f);
+		constexpr float truncRet2 = LAB::SupportingMath::Trunc(11.2f);
+		constexpr float truncRet3 = LAB::SupportingMath::Trunc(0.1f);
+		constexpr float truncRet4 = LAB::SupportingMath::Trunc(-1.1f);
+
+		printf("trunc ret - %.2f:%.2f:%.2f:%.2f\n", truncRet, truncRet2, truncRet3, truncRet4);
+	}
+
 
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;
