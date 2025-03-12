@@ -93,6 +93,21 @@ namespace LAB{
 				static_assert(false);
 			}
 		}
+
+		template<std::floating_point F>
+		constexpr F Tan(F const input){
+			return Sin(input) / Cos(input);
+		}
+
+		template<std::floating_point F>
+		constexpr F DegreesToRadians(F const theta){
+			return theta * F(180) / std::numbers::pi_v<F>;
+		}
+
+		template<std::floating_point F>
+		constexpr F RadiansToDegrees(F const theta){
+			return theta / F(180) * std::numbers::pi_v<F>; 
+		}
 #endif
 	}
 }

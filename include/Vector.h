@@ -281,6 +281,7 @@ namespace LAB {
 		return sum;
 	}
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
+	//that test was before i knew reverse square root was faster than square root i guess. should be faster now
 	template<std::floating_point F, uint8_t Dimensions>
 	constexpr F NormalizedDimensionsDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();

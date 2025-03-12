@@ -1,6 +1,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 #include "Transform.h"
+#include "BiggerFunctions.h"
 
 #include <cstdio>
 #include <fstream>
@@ -46,7 +47,7 @@ int main() {
 		constexpr float nDP = LAB::NormalizedDimensionsDotProduct(checkVec1, checkVec2);
 
 		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
-		printf("nDP : %.2f\n", nDP);
+		//printf("nDP : %.2f\n", nDP);
 
 		static_assert(LAB::Vector<float, 2>::Forward().x == LAB::Vector<float, 2>::Up().y);
 	}
@@ -109,8 +110,16 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&zval), sizeof(float));
 			}
 		}
-
-
+	}
+	{
+		constexpr auto proj = LAB::CreateProjectionMatrix<float>(LAB::SupportingMath::DegreesToRadians(70.f), 0.f, 100.f);
+	
+		for(uint8_t x = 0; x < 4; x++){
+			for(uint8_t y = 0; y < 4; y++){
+				const float tempVal = proj.At(x, y);
+				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
+			}
+		}
 	}
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;

@@ -48,7 +48,7 @@ namespace LAB {
 		constexpr Matrix<F, 3, 3, Alignment> ToMatrixNoRotation() const {
 			//const float cosine = glm::cos(rotation);
 			//const float sine = glm::sin(rotation);
-			Matrix<F, 3, 3, Alignment> ret{0.f};
+			Matrix<F, 3, 3, Alignment> ret{F(0)};
 			ret.At(0, 0) = scale.x;
 
 			ret.At(1, 1) = scale.y;
@@ -122,12 +122,12 @@ namespace LAB {
 			ret.At(1, 0) = -sinRet;
 			ret.At(0, 1) = sinRet;
 			ret.At(1, 1) = cosRet;
-			
+
 			return ret;
 		}
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 4, 4> GetScaleMatrix() const {
+		constexpr Matrix<F, 4, 4, Alignment> GetScaleMatrix() const {
 			Matrix<F, 4, 4, Alignment> ret;
 			ret.At(0, 0) = scale.x;
 			ret.At(1, 1) = scale.y;
@@ -151,7 +151,19 @@ namespace LAB {
 			ret.At(3, 2) = 0.f;
 			return ret;
 		}
-    };
+    
+		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
+		constexpr Matrix<F, 4, 4, Alignment> GetMatrix(){
+			Matrix<F, 4, 4, Alignment> ret;
+			ret.At(3, 0) = translation.x;
+			ret.At(3, 1) = translation.y;
+			ret.At(3, 2) = translation.z;
+
+			
+			
+		}
+	
+	};
 
 
 }
