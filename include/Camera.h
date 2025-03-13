@@ -71,53 +71,40 @@ namespace LAB{
         const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
         const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 
-        if constexpr(CoordinateSystem::forward == CoordinateSystem::XPos){
-            ret.At(0, 0) = right.x;
-            ret.At(1, 0) = right.y;
-            ret.At(2, 0) = right.z;
-            ret.At(3, 0) = -position.DotProduct(right);
-        }
-        else if constexpr(CoordinateSystem::forward == CoordinateSystem::XPos){
-            ret.At(0, 0) = -right.x;
-            ret.At(1, 0) = -right.y;
-            ret.At(2, 0) = -right.z;
-            ret.At(3, 0) = position.DotProduct(right);
-        }
-        //other forward directions
 
+        constexpr int f_sign = (CoordinateSystem::forward == CoordinateSystem::XNeg ||
+            CoordinateSystem::forward == CoordinateSystem::YNeg ||
+            CoordinateSystem::forward == CoordinateSystem::ZNeg) ? -1 : 1;
+        constexpr int u_sign = (CoordinateSystem::up == CoordinateSystem::XNeg ||
+            CoordinateSystem::up == CoordinateSystem::YNeg ||
+            CoordinateSystem::up == CoordinateSystem::ZNeg) ? -1 : 1;
+        constexpr int r_sign = (CoordinateSystem::right == CoordinateSystem::XNeg ||
+            CoordinateSystem::right == CoordinateSystem::YNeg ||
+            CoordinateSystem::right == CoordinateSystem::ZNeg) ? -1 : 1;
 
-        if constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
-            ret.At(0, 1) = -up.x;
-            ret.At(1, 1) = -up.x;
-            ret.At(2, 1) = -up.x;
-            ret.At(3, 1) = position.DotProduct(up);
-        }
-        else if constexpr (CoordinateSystem::up == CoordinateSystem::YNeg){
-            ret.At(0, 1) = up.x;
-            ret.At(1, 1) = up.x;
-            ret.At(2, 1) = up.x;
-            ret.At(3, 1) = -position.DotProduct(up);
-        }
-        //other up directions
+        constexpr int f_axis = (CoordinateSystem::forward == CoordinateSystem::XPos || CoordinateSystem::forward == CoordinateSystem::XNeg) ? 0 :
+            (CoordinateSystem::forward == CoordinateSystem::YPos || CoordinateSystem::forward == CoordinateSystem::YNeg) ? 1 : 2;
 
-        if constexpr (CoordinateSystem::right == CoordinateSystem::ZPos){
-            ret.At(0, 2) = -forward.x;
-            ret.At(1, 2) = -forward.y;
-            ret.At(2, 2) = -forward.z;
-            ret.At(3, 2) = position.DotProduct(forward);
-        }
-        else if constexpr (CoordinateSystem::right == CoordinateSystem::ZNeg){
-            ret.At(0, 2) = forward.x;
-            ret.At(1, 2) = forward.y;
-            ret.At(2, 2) = forward.z;
-            ret.At(3, 2) = -position.DotProduct(forward);
-        }
-        //other right directions
-            
-        ret.At(0, 3) = F(0);
-        ret.At(1, 3) = F(0);
-        ret.At(2, 3) = F(0);
-        ret.At(3, 3) = F(1);
+        constexpr int u_axis = (CoordinateSystem::up == CoordinateSystem::XPos || CoordinateSystem::up == CoordinateSystem::XNeg) ? 0 :
+            (CoordinateSystem::up == CoordinateSystem::YPos || CoordinateSystem::up == CoordinateSystem::YNeg) ? 1 : 2;
+
+        constexpr int r_axis = (CoordinateSystem::right == CoordinateSystem::XPos || CoordinateSystem::right == CoordinateSystem::XNeg) ? 0 :
+            (CoordinateSystem::right == CoordinateSystem::YPos || CoordinateSystem::right == CoordinateSystem::YNeg) ? 1 : 2;
+
+        ret.At(0, f_axis) = f_sign * forward.x;
+        ret.At(1, f_axis) = f_sign * forward.y;
+        ret.At(2, f_axis) = f_sign * forward.z;
+        ret.At(3, f_axis) = -position.DotProduct(forward) * f_sign;
+
+        ret.At(0, u_axis) = u_sign * up.x;
+        ret.At(1, u_axis) = u_sign * up.y;
+        ret.At(2, u_axis) = u_sign * up.z;
+        ret.At(3, u_axis) = -position.DotProduct(up) * u_sign;
+
+        ret.At(0, r_axis) = r_sign * right.x;
+        ret.At(1, r_axis) = r_sign * right.y;
+        ret.At(2, r_axis) = r_sign * right.z;
+        ret.At(3, r_axis) = -position.DotProduct(right) * r_sign;
 
         return ret;
     }

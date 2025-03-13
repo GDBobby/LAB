@@ -344,10 +344,10 @@ namespace LAB {
 			else if constexpr (Dimensions == 4) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
 				if (numerator > F(0)) {
-					return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+					return SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
 				}
 				else if (numerator < F(0)) {
-					return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
+					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
 				}
 			}
 		}
