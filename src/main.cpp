@@ -154,6 +154,13 @@ int main() {
 	}
 	{
 		constexpr auto viewMat = LAB::CreateViewMatrix(LAB::Vector<float, 3>(0.f), LAB::Vector<float, 3>::Forward());
+		for (uint8_t x = 0; x < 4; x++) {
+			for (uint8_t y = 0; y < 4; y++) {
+				const float tempVal = viewMat.At(x, y);
+				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
+			}
+		}
+
 	}
 	{
 		constexpr float truncRet = LAB::SupportingMath::Trunc(11.f);
