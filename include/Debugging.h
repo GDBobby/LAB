@@ -96,7 +96,7 @@ namespace LAB {
 #ifndef LAB_static_assert
 #define LAB_static_assert static_assert
 #endif
-#ifndef LAB_LAB_constexpr
+#ifndef LAB_constexpr
 #define LAB_constexpr constexpr
 #endif
 }
