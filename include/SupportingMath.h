@@ -67,21 +67,6 @@ namespace LAB{
 		}
 
 #ifdef USING_CMATH
-		template <std::floating_point F>
-		F Sqrt(F const input) {
-			return std::sqrt(input);
-		}
-
-
-		template<std::floating_point F>
-		F Cos(F const input) {
-			return std::cos(input);
-		}
-
-		template<std::floating_point F>
-		F Sin(F const input) {
-			return std::sin(input);
-		}
 #else
 		template<std::floating_point F>
 		constexpr F Abs(F const input){
@@ -90,6 +75,8 @@ namespace LAB{
 
 		template<std::floating_point F>
 		constexpr F Trunc(F const input){
+			//stealing from ccmath a little bit
+			//https://github.com/Rinzii/ccmath
 #if MATH_DEBUGGING
 			if (input == std::nanf())
 
@@ -110,19 +97,19 @@ namespace LAB{
 				//if (CCM_UNLIKELY(num == 0.0)) { return num; }
 
 				//255 is the first 8 bits set to true
-				 //23 is mantissa length
-				constexpr int exponent_mask = 255 << 23;
-				const int exponent = (bits & exponent_mask) >> 23;
+				//23 is mantissa length
 
-				// If the exponent is greater than or equal to the fraction length, then we will return the number as is since it is already an integer.
-				//fraction length is 23, equal to the amount of mantissa bits
-				if (exponent >= 23) { return input; }
+				const int exponent = ((bits >> 23) & 0xFF) - 127;
 
-				// If our exponent is set up such that the abs(x) is less than 1 we will instead return 0.
-				if (exponent <= -1) { return 0.f; }
+				if (exponent >= 23) {
+					return input;  // Already an integer
+				}
+				if (exponent < 0) {
+					return 0.f;
+				}
 
 				// Perform the truncation
-				const int trimming_size = 23 - exponent;
+				const int trimming_size = 23 - (exponent);
 
 				constexpr uint32_t mantissa_mask = (1 << 23) - 1;
 				const auto truncated_mantissa = static_cast<uint32_t>(((bits & mantissa_mask) >> trimming_size) << trimming_size);
@@ -132,9 +119,21 @@ namespace LAB{
 			}
 		}
 		template<std::floating_point F>
-		constexpr F Mod(F const x, F const y){
+		constexpr F Mod(F const x, F const y) {
 			//stealing from ccmath a little bit
-			return static_cast<F>(x - (Trunc(x / y) * y));
+			//https://github.com/Rinzii/ccmath
+			return x - (Trunc(x / y) * y);
+		}
+
+		template<std::floating_point F>
+		constexpr F PhaseToPi(F const input, F const lower, F const higher) {
+
+			F const fullRange = higher - lower;
+			F const moddedInput = Mod(input - lower, fullRange) + lower;
+			if (moddedInput > higher) {
+				return moddedInput - fullRange;
+			}
+			return moddedInput;
 		}
 
 		template<std::floating_point F>
@@ -255,17 +254,27 @@ namespace LAB{
 			return ret - F(2) * negate * ret;
 		}
 		template<std::floating_point F>
-		constexpr F ArcTan(F const input){
+		constexpr F ArcTan(F const y) {
 			//https://developer.download.nvidia.com/cg/atan.html
-			const F absX = Abs(input);
-			const F absY = F(1);
+			const F absX = F(1);
+			const F absY = Abs(y);
 			const bool yBigger = absY > absX;
 			const F minOverMax = absX / absY * F(yBigger) + absY / absX * F(!yBigger);
+			const F t4 = minOverMax * minOverMax;
+			F t0 = -F(0.013480470);
+			t0 = t0 * t4 + F(0.057477314);
+			t0 = t0 * t4 - F(0.121239071);
+			t0 = t0 * t4 + F(0.195635925);
+			t0 = t0 * t4 - F(0.332994597);
+			t0 = t0 * t4 + F(0.999995630);
+			F t3 = t0 * minOverMax;
 
-			return minOverMax;
+
+			t3 = (yBigger) ? GetPI(F(0.5)) - t3 : t3;
+			return (y < F(0)) ? -t3 : t3;
 		}
 		template<std::floating_point F>
-		constexpr F ArcTan2(F const x, F const y){
+		constexpr F ArcTan2(F const y, F const x){
 			//https://developer.download.nvidia.com/cg/atan2.html
 			//heavily paraphrased, they had to be trolling
 
@@ -288,13 +297,12 @@ namespace LAB{
 			
 			t3 = (yBigger) ? GetPI(F(0.5)) - t3 : t3;
 			t3 = (x < F(0)) ?  PI<F> - t3 : t3;
-			t3 = (y < F(0)) ? -t3 : t3;
 			/*
 			t3 = t3 * (F(1) - F(2) * (y < F(0)))
 				+ (yBigger * (GetPI(F(0.5)) - F(2) * t3))
 				+ (x < F(0)) * (F(2) * (PI<F> - t3));
 			*/
-			return t3;
+			return (y < F(0)) ? -t3 : t3;
 		}
 
 /*

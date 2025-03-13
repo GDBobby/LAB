@@ -137,12 +137,18 @@ int main() {
 		printf("sin comparison : (%.10f) - (%.10f)\n", sinRet, std::sin(trigInput));
 		printf("tan comparison : (%.10f) - (%.10f)\n", tanRet, std::tan(trigInput));
 
-		constexpr float arcCosRet = LAB::SupportingMath::ArcCos(trigInput);
-		constexpr float arcSinRet = LAB::SupportingMath::ArcSin(trigInput);
-		constexpr float arcTanRet = LAB::SupportingMath::ArcTan(trigInput);
-		printf("\narccos comparison : (%.10f) - (%.10f)\n", arcCosRet, std::acos(trigInput));
-		printf("\narcsin comparison : (%.10f) - (%.10f)\n", arcSinRet, std::asin(trigInput));
-		printf("\narctan comparison : (%.10f) - (%.10f)\n", arcTanRet, std::atan(trigInput));
+		constexpr float arcInput = 0.5f;
+		constexpr float arcCosRet = LAB::SupportingMath::ArcCos(arcInput);
+		constexpr float arcSinRet = LAB::SupportingMath::ArcSin(arcInput);
+		constexpr float arcTanRet = LAB::SupportingMath::ArcTan(arcInput);
+		constexpr float arcTan2Ret = LAB::SupportingMath::ArcTan2(arcInput, 1.f);
+		outFile.write(reinterpret_cast<const char*>(&arcCosRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&arcSinRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&arcTanRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&arcTan2Ret), sizeof(float));
+		printf("\narccos comparison : (%.10f) - (%.10f)\n", arcCosRet, std::acos(arcInput));
+		printf("\narcsin comparison : (%.10f) - (%.10f)\n", arcSinRet, std::asin(arcInput));
+		printf("\narctan comparison : (%.10f) - (%.10f) - (%.10f)\n", arcTanRet, std::atan(arcInput), arcTan2Ret);
 
 		//printf("arc tan comparison : (%.10f):(%.10f)\n", LAB::SupportingMath::ArcTan2BitMasking(trigInput, 1.f), LAB::SupportingMath::ArcTan2(trigInput, 1.f));
 	}
@@ -154,8 +160,24 @@ int main() {
 		constexpr float truncRet2 = LAB::SupportingMath::Trunc(11.2f);
 		constexpr float truncRet3 = LAB::SupportingMath::Trunc(0.1f);
 		constexpr float truncRet4 = LAB::SupportingMath::Trunc(-1.1f);
+		outFile.write(reinterpret_cast<const char*>(&truncRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&truncRet2), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&truncRet3), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&truncRet4), sizeof(float));
 
-		printf("trunc ret - %.2f:%.2f:%.2f:%.2f\n", truncRet, truncRet2, truncRet3, truncRet4);
+		constexpr float modRet = LAB::SupportingMath::Mod(22.f, LAB::SupportingMath::GetPI<float, true>(2.f));
+		outFile.write(reinterpret_cast<const char*>(&modRet), sizeof(float));
+		printf("mod comparison : (%.10f):(%.10f)\n", modRet, std::fmod(22.f, LAB::SupportingMath::GetPI<float, true>(2.f)));
+		printf("mod comparison : (%.10f):(%.10f)\n", LAB::SupportingMath::Mod(-25.f, LAB::SupportingMath::GetPI<float, true>(2.f)), std::fmod(-25.f, LAB::SupportingMath::GetPI<float, true>(2.f)));
+
+		constexpr float piPhase1 = LAB::SupportingMath::PhaseToPi(LAB::SupportingMath::GetPI(2.f), -LAB::SupportingMath::GetPI_DividedBy(2.f), LAB::SupportingMath::GetPI_DividedBy(2.f));
+		constexpr float piPhase2 = LAB::SupportingMath::PhaseToPi(-LAB::SupportingMath::PI<float>, -LAB::SupportingMath::GetPI_DividedBy(2.f), LAB::SupportingMath::GetPI_DividedBy(2.f));
+		constexpr float piPhase3 = LAB::SupportingMath::PhaseToPi(4.f, -LAB::SupportingMath::GetPI_DividedBy(2.f), LAB::SupportingMath::GetPI_DividedBy(2.f));
+
+		outFile.write(reinterpret_cast<const char*>(&piPhase1), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&piPhase2), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&piPhase3), sizeof(float));
+		printf("pi phase - (%.10f):(%.10f):(%.10f)\n", piPhase1, piPhase2, piPhase3);
 	}
 
 
