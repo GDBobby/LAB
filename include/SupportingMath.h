@@ -66,8 +66,6 @@ namespace LAB{
 			return PI<F> / divisor;
 		}
 
-#ifdef USING_CMATH
-#else
 		template<std::floating_point F>
 		constexpr F Abs(F const input){
 			return input * (F(1) - F(2) * (input < F(0)));
@@ -122,6 +120,8 @@ namespace LAB{
 		constexpr F Mod(F const x, F const y) {
 			//stealing from ccmath a little bit
 			//https://github.com/Rinzii/ccmath
+
+			//https://quick-bench.com/q/SzfiLPh2admpveSGNjQrUV5D6Qg
 			return x - (Trunc(x / y) * y);
 		}
 
@@ -345,7 +345,6 @@ namespace LAB{
 		constexpr F RadiansToDegrees(F const theta){
 			return theta * GetPI_DividedBy(F(180)); 
 		}
-#endif
 	}
 }
 

@@ -10,9 +10,7 @@ namespace LAB{
     constexpr Matrix<F, 4, 4, 16> CreateProjectionMatrix(F const field_of_view_radians, F const near, F const far)  { 
         Matrix<F, 4, 4, 16> ret;
 
-        //until i get a better function for calculating tan
-        const F halfFOV = field_of_view_radians * F(0.5);
-        const F scale = SupportingMath::Cos(halfFOV) / SupportingMath::Sin(halfFOV);
+        const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5));
         //const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5)); 
         ret.At(0, 0) = scale;  // scale the x coordinates of the projected point 
         ret.At(1, 1) = scale;  // scale the y coordinates of the projected point 
