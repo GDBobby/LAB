@@ -8,13 +8,14 @@
 
 #include "qt_sine_table.h"
 
-#define DEBUGGING_FLOAT_ANOMALIES
+//#define DEBUGGING_FLOAT_ANOMALIES
 
 #if __has_include(<stacktrace>)
 	#ifdef DEBUGGING_FLOAT_ANOMALIES
 		#define MATH_DEBUG
 		#include <stacktrace>
 		#include <cmath>
+		#include <iostream>
 
 		#ifdef _MSC_VER
 			#include <intrin.h>
