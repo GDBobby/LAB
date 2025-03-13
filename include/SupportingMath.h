@@ -6,45 +6,55 @@
 
 //#define USING_CMATH
 
-#ifdef USING_CMATH
-#include <cmath>
-#else
 #include "qt_sine_table.h"
-#endif
 
-//#define DEBUGGING_FLOAT_ANOMALIES
+#define DEBUGGING_FLOAT_ANOMALIES
 
-#ifdef __cpp_lib_stacktrace
-#ifdef DEBUGGING_FLOAT_ANOMALIES
-#define MATH_DEBUG
-#include <stacktrace>
+#if __has_include(<stacktrace>)
+	#ifdef DEBUGGING_FLOAT_ANOMALIES
+		#define MATH_DEBUG
+		#include <stacktrace>
+		#include <cmath>
 
-#ifdef _MSC_VER
-	#include <intrin.h>
-#elif defined(__GNUC__) || defined(__clang__)
-	#include <csignal>
-#else
-	#include <cstdlib>
-#endif
+		#ifdef _MSC_VER
+			#include <intrin.h>
+		#elif defined(__GNUC__) || defined(__clang__)
+			#include <csignal>
+		#else
+			#include <cstdlib>
+		#endif
 
-void BREAKPOINT() {
-	auto trace = std::stacktrace::current(1, 5);
-	for(auto& tr : trace){
-		std::cout << tr << std::endl;
-	}
+		
+		constexpr void LAB_breakpoint() {
 
-	#ifdef _MSC_VER
-		__debugbreak()
-	#elif defined(__GNUC__) || defined(__clang__)
-		std::raise(SIGTRAP)
-	#else
-		std::abort()
+			#if defined(__cpp_lib_stacktrace) && (__cpp_lib_stacktrace >= 202011L)
+			auto trace = std::stacktrace::current();
+			
+			for(auto& tr : trace){
+				std::cout << tr << std::endl;
+			}
+			#endif
+
+			#ifdef _MSC_VER
+				__debugbreak();
+			#elif defined(__GNUC__) || defined(__clang__)
+				std::raise(SIGTRAP);
+			#else
+				std::abort();
+			#endif
+			
+		}
+		#define LAB_BREAKPOINT_(x) if(std::fpclassify(x) != FP_NORMAL) {LAB_breakpoint();}
+		#define LAB_ZERO_ALLOWED_BREAKPOINT(x) if((std::fpclassify(x) != FP_NORMAL) && (x != 0.f) && (x != -0.f)){LAB_breakpoint();} 
 	#endif
-}
-
-#endif
 #endif
 
+#ifndef LAB_BREAKPOINT
+#define LAB_BREAKPOINT(x)
+#endif
+#ifndef LAB_ZERO_ALLOWED_BREAKPOINT
+#define LAB_ZERO_ALLOWED_BREAKPOINT(x)
+#endif
 
 
 namespace LAB{
@@ -63,6 +73,7 @@ namespace LAB{
 		}
 		template<std::floating_point F>
 		static constexpr F GetPI_DividedBy(F divisor){
+			LAB_BREAKPOINT(divisor)
 			return PI<F> / divisor;
 		}
 
@@ -75,12 +86,7 @@ namespace LAB{
 		constexpr F Trunc(F const input){
 			//stealing from ccmath a little bit
 			//https://github.com/Rinzii/ccmath
-#if MATH_DEBUGGING
-			if (input == std::nanf())
-
-
-			}
-#endif
+			LAB_BREAKPOINT(input)
 			
 			if constexpr(std::is_same_v<F, float>){
 				const uint32_t bits = std::bit_cast<uint32_t>(input);
@@ -120,7 +126,9 @@ namespace LAB{
 		constexpr F Mod(F const x, F const y) {
 			//stealing from ccmath a little bit
 			//https://github.com/Rinzii/ccmath
-
+			LAB_ZERO_ALLOWED_BREAKPOINT(x)
+			LAB_BREAKPOINT(y)
+			
 			//https://quick-bench.com/q/SzfiLPh2admpveSGNjQrUV5D6Qg
 			return x - (Trunc(x / y) * y);
 		}
@@ -139,6 +147,11 @@ namespace LAB{
 		template<std::floating_point F>
 		constexpr F InverseSqrt(F const input){
 			//copied from wikipedia
+#ifdef MATH_DEBUG
+			if(input <= 0.f){
+				LAB_breakpoint();
+			}
+#endif
 			if constexpr(std::is_same_v<F, float>){
 				const auto y = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(input) >> 1));
 				const float refined = y * (1.5f - (input * 0.5f * y * y));
@@ -224,6 +237,14 @@ namespace LAB{
 		template<std::floating_point F>
 		constexpr F ArcCos(F const input){
 			//https://developer.download.nvidia.com/cg/acos.html
+
+#ifdef MATH_DEBUG
+			LAB_ZERO_ALLOWED_BREAKPOINT(input);
+			if((input < -1.f) || (input > 1.f)){
+				LAB_breakpoint();
+			}		
+#endif
+
 			const F negate = F(input < 0);
 			const F absInput = Abs(input);
 			F ret = F(-0.0187293);
@@ -240,6 +261,12 @@ namespace LAB{
 		template<std::floating_point F>
 		constexpr F ArcSin(F const input){
 			//https://developer.download.nvidia.com/cg/index_stdlib.html
+#ifdef MATH_DEBUG
+			LAB_ZERO_ALLOWED_BREAKPOINT(input);
+			if((input < -1.f) || (input > 1.f)){
+				LAB_breakpoint();
+			}		
+#endif
 			const F negate = F(input < 0);
 			const F absInput = Abs(input);
 			F ret = F(-0.0187293);
@@ -255,6 +282,7 @@ namespace LAB{
 		}
 		template<std::floating_point F>
 		constexpr F ArcTan(F const y) {
+			LAB_ZERO_ALLOWED_BREAKPOINT(y)
 			//https://developer.download.nvidia.com/cg/atan.html
 			const F absX = F(1);
 			const F absY = Abs(y);
@@ -277,6 +305,10 @@ namespace LAB{
 		constexpr F ArcTan2(F const y, F const x){
 			//https://developer.download.nvidia.com/cg/atan2.html
 			//heavily paraphrased, they had to be trolling
+
+			LAB_ZERO_ALLOWED_BREAKPOINT(y)
+			LAB_ZERO_ALLOWED_BREAKPOINT(x)
+			//i think im missing an exception case
 
 			const F absX = Abs(x);
 			const F absY = Abs(y);
@@ -306,7 +338,7 @@ namespace LAB{
 		}
 
 /*
-		//ArcTan2BitMasking lost in a microbenchmark against ArcTan
+		//ArcTan2BitMasking lost in a microbenchmark against ArcTan. i think in some situations its slower, and in full random situations its even. might require a revisit
 		template<std::floating_point F>
 		constexpr F ArcTan2BitMasking(F const x, F const y){
 			//https://developer.download.nvidia.com/cg/atan2.html

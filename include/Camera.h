@@ -71,41 +71,50 @@ namespace LAB{
         const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
         const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 
+        constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
+        constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
+        constexpr bool r_sign = CoordinateSystem::right < CoordinateSystem::XPos;
 
-        constexpr int f_sign = (CoordinateSystem::forward == CoordinateSystem::XNeg ||
-            CoordinateSystem::forward == CoordinateSystem::YNeg ||
-            CoordinateSystem::forward == CoordinateSystem::ZNeg) ? -1 : 1;
-        constexpr int u_sign = (CoordinateSystem::up == CoordinateSystem::XNeg ||
-            CoordinateSystem::up == CoordinateSystem::YNeg ||
-            CoordinateSystem::up == CoordinateSystem::ZNeg) ? -1 : 1;
-        constexpr int r_sign = (CoordinateSystem::right == CoordinateSystem::XNeg ||
-            CoordinateSystem::right == CoordinateSystem::YNeg ||
-            CoordinateSystem::right == CoordinateSystem::ZNeg) ? -1 : 1;
-
-        constexpr int f_axis = (CoordinateSystem::forward == CoordinateSystem::XPos || CoordinateSystem::forward == CoordinateSystem::XNeg) ? 0 :
-            (CoordinateSystem::forward == CoordinateSystem::YPos || CoordinateSystem::forward == CoordinateSystem::YNeg) ? 1 : 2;
-
-        constexpr int u_axis = (CoordinateSystem::up == CoordinateSystem::XPos || CoordinateSystem::up == CoordinateSystem::XNeg) ? 0 :
-            (CoordinateSystem::up == CoordinateSystem::YPos || CoordinateSystem::up == CoordinateSystem::YNeg) ? 1 : 2;
-
-        constexpr int r_axis = (CoordinateSystem::right == CoordinateSystem::XPos || CoordinateSystem::right == CoordinateSystem::XNeg) ? 0 :
-            (CoordinateSystem::right == CoordinateSystem::YPos || CoordinateSystem::right == CoordinateSystem::YNeg) ? 1 : 2;
-
-        ret.At(0, f_axis) = f_sign * forward.x;
-        ret.At(1, f_axis) = f_sign * forward.y;
-        ret.At(2, f_axis) = f_sign * forward.z;
-        ret.At(3, f_axis) = -position.DotProduct(forward) * f_sign;
-
-        ret.At(0, u_axis) = u_sign * up.x;
-        ret.At(1, u_axis) = u_sign * up.y;
-        ret.At(2, u_axis) = u_sign * up.z;
-        ret.At(3, u_axis) = -position.DotProduct(up) * u_sign;
-
-        ret.At(0, r_axis) = r_sign * right.x;
-        ret.At(1, r_axis) = r_sign * right.y;
-        ret.At(2, r_axis) = r_sign * right.z;
-        ret.At(3, r_axis) = -position.DotProduct(right) * r_sign;
-
+        constexpr int f_axis = CoordinateSystem::forward - (!f_sign * 3);
+        constexpr int u_axis = CoordinateSystem::up - (!u_sign * 3);
+        constexpr int r_axis = CoordinateSystem::right - (!r_sign * 3);
+        
+        if constexpr(f_sign){
+            ret.At(0, f_axis) = -forward.x;
+            ret.At(1, f_axis) = -forward.y;
+            ret.At(2, f_axis) = -forward.z;
+            ret.At(3, f_axis) = position.DotProduct(forward);
+        }
+        else{
+            ret.At(0, f_axis) = forward.x;
+            ret.At(1, f_axis) = forward.y;
+            ret.At(2, f_axis) = forward.z;
+            ret.At(3, f_axis) = -position.DotProduct(forward);
+        }
+        if constexpr(u_sign){
+            ret.At(0, u_axis) = -up.x;
+            ret.At(1, u_axis) = -up.y;
+            ret.At(2, u_axis) = -up.z;
+            ret.At(3, u_axis) = position.DotProduct(up);
+        }
+        else{
+            ret.At(0, u_axis) = up.x;
+            ret.At(1, u_axis) = up.y;
+            ret.At(2, u_axis) = up.z;
+            ret.At(3, u_axis) = -position.DotProduct(up);
+        }
+        if constexpr(r_sign){
+            ret.At(0, r_axis) = -right.x;
+            ret.At(1, r_axis) = -right.y;
+            ret.At(2, r_axis) = -right.z;
+            ret.At(3, r_axis) = position.DotProduct(right);
+        }
+        else{
+            ret.At(0, r_axis) = right.x;
+            ret.At(1, r_axis) = right.y;
+            ret.At(2, r_axis) = right.z;
+            ret.At(3, r_axis) = -position.DotProduct(right);
+        }
         return ret;
     }
 }
