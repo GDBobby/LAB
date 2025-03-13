@@ -7,7 +7,7 @@
     //they have an LGPL license, which I'll have to copy
 
 namespace LAB {
-    namespace QT_Sine_Table {
+    namespace QT_Sine {
 
         constexpr int size = 256;
         template<std::floating_point F>

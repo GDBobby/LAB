@@ -179,6 +179,7 @@ int main() {
 		printf("pi phase - (%.10f):(%.10f):(%.10f)\n", piPhase1, piPhase2, piPhase3);
 	}
 	float testBreak = LAB::SupportingMath::InverseSqrt(-1.f);
+	printf("result : %.2f\n", testBreak);
 
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;

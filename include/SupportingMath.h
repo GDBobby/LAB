@@ -37,12 +37,12 @@ namespace LAB{
 		}
 
 		template<std::floating_point F>
-		LAB_constexpr F Abs(F const input){
+		LAB_constexpr F Abs(F const input) {
 			return input * (F(1) - F(2) * (input < F(0)));
 		}
 
 		template<std::floating_point F>
-		LAB_constexpr F Trunc(F const input){
+		LAB_constexpr F Trunc(F const input) {
 			//stealing from ccmath a little bit
 			//https://github.com/Rinzii/ccmath
 #ifdef LAB_MATH_DEBUG
@@ -108,7 +108,7 @@ namespace LAB{
 		}
 
 		template<std::floating_point F>
-		LAB_constexpr F InverseSqrt(F const input){
+		LAB_constexpr F InverseSqrt(F const input) {
 			//copied from wikipedia
 #ifdef LAB_MATH_DEBUG
 			Debug_Min_Check<F, F(0)>(input);
@@ -134,45 +134,45 @@ namespace LAB{
 		}
 
 		//im literally just ripping this from QT
-		//https://codebrowser.dev/qt5/qtbase/src/corelib/kernel/qmath.cpp.html#qt_sine_table
+		//https://codebrowser.dev/qt5/qtbase/src/corelib/kernel/qmath.cpp.html#QT_Sine
 
 		template<std::floating_point F>
-		LAB_constexpr F Sin(F const input){
-			int si = int(input * (F(0.5) * QT_Sine_Table::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
-			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine_Table::size);
-			int ci = si + QT_Sine_Table::size/ 4;
-			si &= QT_Sine_Table::size - 1;
-			ci &= QT_Sine_Table::size - 1;
-			return QT_Sine_Table::table<F>[si] + (QT_Sine_Table::table<F>[ci] - F(0.5) * QT_Sine_Table::table<F>[si] * d) * d;
+		LAB_constexpr F Sin(F const input) {
+			int si = int(input * (F(0.5) * QT_Sine::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
+			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine::size);
+			int ci = si + QT_Sine::size/ 4;
+			si &= QT_Sine::size - 1;
+			ci &= QT_Sine::size - 1;
+			return QT_Sine::table<F>[si] + (QT_Sine::table<F>[ci] - F(0.5) * QT_Sine::table<F>[si] * d) * d;
 		}
 
 		template<std::floating_point F>
 		LAB_constexpr F Cos(F const input) {
-			int si = int(input * (F(0.5) * QT_Sine_Table::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
-			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine_Table::size);
-			int ci = si + QT_Sine_Table::size / 4;
-			si &= QT_Sine_Table::size - 1;
-			ci &= QT_Sine_Table::size - 1;
-			return QT_Sine_Table::table<F>[ci] - (QT_Sine_Table::table<F>[si] + F(0.5) * QT_Sine_Table::table<F>[ci] * d) * d;
+			int si = int(input * (F(0.5) * QT_Sine::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
+			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine::size);
+			int ci = si + QT_Sine::size / 4;
+			si &= QT_Sine::size - 1;
+			ci &= QT_Sine::size - 1;
+			return QT_Sine::table<F>[ci] - (QT_Sine::table<F>[si] + F(0.5) * QT_Sine::table<F>[ci] * d) * d;
 		}
 
 		template<std::floating_point F>
-		LAB_constexpr F Tan(F const input){
+		LAB_constexpr F Tan(F const input) {
 			//return Sin(input) / Cos(input);
 
-			int si = int(input * (F(0.5) * QT_Sine_Table::size / PI<F>)); // Would be more accurate with qRound, but slower.
-			const F d = input - F(si) * (F(2.0) * PI<F> / QT_Sine_Table::size);
-			int ci = si + QT_Sine_Table::size / 4;
-			si &= QT_Sine_Table::size - 1;
-			ci &= QT_Sine_Table::size - 1;
-			return (QT_Sine_Table::table<F>[si] + (QT_Sine_Table::table<F>[ci] - F(0.5) * QT_Sine_Table::table<F>[si] * d) * d)
-				/ (QT_Sine_Table::table<F>[ci] - (QT_Sine_Table::table<F>[si] + F(0.5) * QT_Sine_Table::table<F>[ci] * d) * d);
+			int si = int(input * (F(0.5) * QT_Sine::size / PI<F>)); // Would be more accurate with qRound, but slower.
+			const F d = input - F(si) * (F(2.0) * PI<F> / QT_Sine::size);
+			int ci = si + QT_Sine::size / 4;
+			si &= QT_Sine::size - 1;
+			ci &= QT_Sine::size - 1;
+			return (QT_Sine::table<F>[si] + (QT_Sine::table<F>[ci] - F(0.5) * QT_Sine::table<F>[si] * d) * d)
+				/ (QT_Sine::table<F>[ci] - (QT_Sine::table<F>[si] + F(0.5) * QT_Sine::table<F>[ci] * d) * d);
 			
 		}
 
 
 		template<std::floating_point F>
-		LAB_constexpr F ArcCos(F const input){
+		LAB_constexpr F ArcCos(F const input) {
 			//https://developer.download.nvidia.com/cg/acos.html
 
 #ifdef LAB_MATH_DEBUG
@@ -194,7 +194,7 @@ namespace LAB{
 			return negate * PI<F> + ret;
 		}
 		template<std::floating_point F>
-		LAB_constexpr F ArcSin(F const input){
+		LAB_constexpr F ArcSin(F const input) {
 			//https://developer.download.nvidia.com/cg/index_stdlib.html
 #ifdef LAB_MATH_DEBUG
 			Debug_Anomaly_Check<F, true>(input);

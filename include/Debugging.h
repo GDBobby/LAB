@@ -4,7 +4,7 @@
 #include <bit>
 
 namespace LAB {
-//#define LAB_DEBUGGING_FLOAT_ANOMALIES
+#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #if __has_include(<stacktrace>)
 	#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
@@ -93,7 +93,7 @@ namespace LAB {
 	#endif
 #endif
 
-#ifndef LAB_static_assert assert
+#ifndef LAB_static_assert
 #define LAB_static_assert static_assert
 #endif
 #ifndef LAB_LAB_constexpr
