@@ -2,6 +2,7 @@
 
 #include "SupportingMath.h"
 #include "CoordinateSystems.h"
+#include "Debugging.h"
 
 #include <concepts>
 
@@ -15,104 +16,104 @@ namespace LAB {
 	struct Vector<F, 2> {
 		F x;
 		F y;
-		constexpr Vector() {}
-		constexpr Vector(F const x, F const y) : x{ x }, y{ y } {}
-		constexpr Vector(F const all) : x{ all }, y{ all } {}
+		LAB_constexpr Vector() {}
+		LAB_constexpr Vector(F const x, F const y) : x{ x }, y{ y } {}
+		LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
-		constexpr F& operator[](uint8_t const row) {
+		LAB_constexpr F& operator[](uint8_t const row) {
 			//static_assert(row < 2);
 			return *(&x + row);
 		}
 
 
-		constexpr bool operator==(Vector const other) const {
+		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y);
 		}
-		constexpr void operator+= (Vector const other) {
+		LAB_constexpr void operator+= (Vector const other) {
 			x += other.x;
 			y += other.y;
 		}
-		constexpr Vector operator+(Vector const other) const {
+		LAB_constexpr Vector operator+(Vector const other) const {
 			Vector ret = *this;
 			ret += other;
 			return ret;
 		}
-		constexpr void operator-=(Vector const other) {
+		LAB_constexpr void operator-=(Vector const other) {
 			x -= other.x;
 			y -= other.y;
 		}
-		constexpr Vector operator-(Vector const other) const {
+		LAB_constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator *=(F const multiplier) {
+		LAB_constexpr void operator *=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 		}
-		constexpr Vector operator*(F const multiplier) const {
+		LAB_constexpr Vector operator*(F const multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator /=(F const divisor) {
+		LAB_constexpr void operator /=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 		}
-		constexpr Vector operator /(F const divisor) const {
+		LAB_constexpr Vector operator /(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
 		
-		constexpr F SquaredMagnitude() const {
+		LAB_constexpr F SquaredMagnitude() const {
 			return x * x + y * y;
 		}
 
-		constexpr F Magnitude() const {
+		LAB_constexpr F Magnitude() const {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
-		constexpr void Normalize() {
+		LAB_constexpr void Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
 		}
 
-		constexpr F DotProduct(Vector const& other) const {
+		LAB_constexpr F DotProduct(Vector const& other) const {
 			return x * other.x + y * other.y;
 		}
 
-		constexpr static Vector Forward() {
-			if constexpr (CoordinateSystem::forward == CoordinateSystem::XPos){
+		LAB_constexpr static Vector Forward() {
+			if LAB_constexpr (CoordinateSystem::forward == CoordinateSystem::XPos){
 				return { F(1), F(0) };
 			}
-			else if constexpr(CoordinateSystem::forward == CoordinateSystem::XNeg){
+			else if LAB_constexpr(CoordinateSystem::forward == CoordinateSystem::XNeg){
 				return {F(-1), F(0)};
 			}
-			else if constexpr(CoordinateSystem::forward == CoordinateSystem::YPos){
+			else if LAB_constexpr(CoordinateSystem::forward == CoordinateSystem::YPos){
 				return {F(0), F(1)};
 			}
-			else if constexpr(CoordinateSystem::forward == CoordinateSystem::YNeg){
+			else if LAB_constexpr(CoordinateSystem::forward == CoordinateSystem::YNeg){
 				return {F(0), F(-1)};
 			}
 			else{
 				static_assert(false && "idk how to rectify Z forward/back/up/down in 2 dimensions yet. I'm aware 3D environments will frequently use 2 dimensional vectors");
 			}
 		}
-		constexpr static Vector Up() {
-			//switch constexpr where pls
-			//i read that i could potentially expect it to look the same as if constexpr, but it's not guaranteed, and I'm relying on compiler optimization
+		LAB_constexpr static Vector Up() {
+			//switch LAB_constexpr where pls
+			//i read that i could potentially expect it to look the same as if LAB_constexpr, but it's not guaranteed, and I'm relying on compiler optimization
 
-			if constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
+			if LAB_constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
 				return { F(0), F(1) };
 			}
-			else if constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
+			else if LAB_constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
 				return {F(0), F(-1)};
 			}
-			else if constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
+			else if LAB_constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
 				return {F(1), F(0)};
 			}
-			else if constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
+			else if LAB_constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
 				return {F(-1), F(0)};
 			}
 			else{
@@ -127,84 +128,84 @@ namespace LAB {
 		F x;
 		F y;
 		F z;
-		constexpr Vector() {}
-		constexpr Vector(F const x, F const y, F const z) : x{ x }, y{ y }, z{ z } {}
-		constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
+		LAB_constexpr Vector() {}
+		LAB_constexpr Vector(F const x, F const y, F const z) : x{ x }, y{ y }, z{ z } {}
+		LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
-		constexpr F& operator[](uint8_t const row) {
+		LAB_constexpr F& operator[](uint8_t const row) {
 			//static_assert(row < 3);
 			return *(&x + row);
 		}
 
 
-		constexpr bool operator==(Vector const other) const {
+		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z);
 		}
-		constexpr void operator +=(Vector const other) {
+		LAB_constexpr void operator +=(Vector const other) {
 			x += other.x;
 			y += other.y;
 			z += other.z;
 		}
-		constexpr Vector operator+(Vector const other) const {
+		LAB_constexpr Vector operator+(Vector const other) const {
 			Vector ret = *this;
 			ret += other;
 			return ret;
 		}
-		constexpr void operator-=(Vector const other) {
+		LAB_constexpr void operator-=(Vector const other) {
 			x -= other.x;
 			y -= other.y;
 			z -= other.z;
 		}
-		constexpr Vector operator-(Vector const other) const {
+		LAB_constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator*=(F const multiplier) {
+		LAB_constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 			z *= multiplier;
 		}
-		constexpr Vector operator*(F const multiplier) const {
+		LAB_constexpr Vector operator*(F const multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator/=(F const divisor) {
+		LAB_constexpr void operator/=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 			z /= divisor;
 		}
-		constexpr Vector operator/(F const divisor) const {
+		LAB_constexpr Vector operator/(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
 		
-		constexpr F SquaredMagnitude() const {
+		LAB_constexpr F SquaredMagnitude() const {
 			return x * x + y * y + z * z;
 		}
 
-		constexpr F Magnitude() const {
+		LAB_constexpr F Magnitude() const {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
-		constexpr Vector& Normalize() {
+		LAB_constexpr Vector& Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
 			return *this;
 		}
-		constexpr F DotProduct(Vector const& other) const {
+		LAB_constexpr F DotProduct(Vector const& other) const {
 			return x * other.x + y * other.y + z * other.z;
 		}
 
-		constexpr static Vector Forward() {
+		LAB_constexpr static Vector Forward() {
 			return { F(1), F(0), F(0) };
 		}
-		constexpr static Vector Up() {
+		LAB_constexpr static Vector Up() {
 			return { F(0), F(0), F(1) };
 		}
-		constexpr static Vector Right() {
+		LAB_constexpr static Vector Right() {
 			return { F(0), F(1), F(0) };
 		}
 	};
@@ -215,100 +216,100 @@ namespace LAB {
 		F y;
 		F z;
 		F w;
-		constexpr Vector() {}
-		constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
-		constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
+		LAB_constexpr Vector() {}
+		LAB_constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
+		LAB_constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 
-		constexpr F& operator[](uint8_t const row) {
+		LAB_constexpr F& operator[](uint8_t const row) {
 			//static_assert(row < 4);
 			return *(&x + row);
 		}
-		constexpr bool operator==(Vector const other) const {
+		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
 		}
-		constexpr void operator+=(Vector const other) {
+		LAB_constexpr void operator+=(Vector const other) {
 			x += other.x;
 			y += other.y;
 			z += other.z;
 			w += other.w;
 		}
-		constexpr Vector operator+(Vector const other) const {
+		LAB_constexpr Vector operator+(Vector const other) const {
 			Vector ret = *this;
 			ret += other;
 			return ret;
 		}
-		constexpr void operator-=(Vector const other) {
+		LAB_constexpr void operator-=(Vector const other) {
 			x -= other.x;
 			y -= other.y;
 			z -= other.z;
 			w -= other.w;
 		}
-		constexpr Vector operator-(Vector const other) const {
+		LAB_constexpr Vector operator-(Vector const other) const {
 			Vector ret = *this;
 			ret -= other;
 			return ret;
 		}
-		constexpr void operator*=(F const multiplier) {
+		LAB_constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 			z *= multiplier;
 			w *= multiplier;
 		}
-		constexpr Vector operator*(F const multiplier) const {
+		LAB_constexpr Vector operator*(F const multiplier) const {
 			Vector ret = *this;
 			ret *= multiplier;
 			return ret;
 		}
-		constexpr void operator/=(F const divisor) {
+		LAB_constexpr void operator/=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 			z /= divisor;
 			w /= divisor;
 		}
-		constexpr Vector operator/(F const divisor) const {
+		LAB_constexpr Vector operator/(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
 			return ret;
 		}
 
-		constexpr F SquaredMagnitude() const {
+		LAB_constexpr F SquaredMagnitude() const {
 			return x * x + y * y + z * z + w * w;
 		}
 
-		constexpr F Magnitude() const {
+		LAB_constexpr F Magnitude() const {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
-		constexpr void Normalize() {
+		LAB_constexpr void Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
 		}
 
-		constexpr F DotProduct(Vector const& other) const {
+		LAB_constexpr F DotProduct(Vector const& other) const {
 			return x * other.x + y * other.y + z * other.z + w * other.w;
 		}
 
-		constexpr static Vector Forward() {
+		LAB_constexpr static Vector Forward() {
 			return { F(1), F(0), F(0), F(0) };
 		}
-		constexpr static Vector Up() {
+		LAB_constexpr static Vector Up() {
 			return { F(0), F(0), F(1), F(0) };
 		}
-		constexpr static Vector Right() {
+		LAB_constexpr static Vector Right() {
 			return { F(0), F(1), F(0), F(0) };
 		}
-		constexpr static Vector Ahead() {
+		LAB_constexpr static Vector Ahead() {
 			return { F(0), F(0), F(0), F(1) };
 		}
 	};
 
 	template<std::floating_point F, uint8_t Dimensions>
-	constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	LAB_constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		F sum = first.x * second.x + first.y * second.y;
-		if constexpr (Dimensions >= 3) {
+		if LAB_constexpr (Dimensions >= 3) {
 			sum += first.z * second.z;
 		}
-		if constexpr (Dimensions >= 4) {
+		if LAB_constexpr (Dimensions >= 4) {
 			sum += first.w * second.w;
 		}
 		return sum;
@@ -316,10 +317,10 @@ namespace LAB {
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
 	//that test was before i knew reverse square root was faster than square root. should be faster now
 	template<std::floating_point F, uint8_t Dimensions>
-	constexpr F NormalizedDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	LAB_constexpr F NormalizedDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();
 		if (combinedMagSquared != F(0)) {	
-			if constexpr (Dimensions == 2) {
+			if LAB_constexpr (Dimensions == 2) {
 				const F numerator = first.x * second.x + first.y * second.y;
 				if (numerator > F(0)) {
 					//return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
@@ -330,7 +331,7 @@ namespace LAB {
 					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
 				}
 			}
-			else if constexpr (Dimensions == 3) {
+			else if LAB_constexpr (Dimensions == 3) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z;
 				if (numerator > F(0)) {
 					//return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
@@ -341,7 +342,7 @@ namespace LAB {
 					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
 				}
 			}
-			else if constexpr (Dimensions == 4) {
+			else if LAB_constexpr (Dimensions == 4) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
 				if (numerator > F(0)) {
 					return SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
@@ -356,12 +357,12 @@ namespace LAB {
 
 
 	template<std::floating_point F>
-	constexpr F CrossProduct(Vector<F, 2> const first, Vector<F, 2> const second) {
+	LAB_constexpr F CrossProduct(Vector<F, 2> const first, Vector<F, 2> const second) {
 		return first.x * second.y - first.y * second.x;
 	}
 
 	template<std::floating_point F>
-	constexpr Vector<F, 3> CrossProduct(Vector<F, 3> const first, Vector<F, 3> const second) {
+	LAB_constexpr Vector<F, 3> CrossProduct(Vector<F, 3> const first, Vector<F, 3> const second) {
 		//inlining matrix
 		return Vector<F, 3>{
 			first.y * second.z - first.z * first.y,

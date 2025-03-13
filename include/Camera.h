@@ -1,13 +1,14 @@
 #include "Matrix.h"
 #include "SupportingMath.h"
 #include "CoordinateSystems.h"
+#include "Debugging.h"
 
 namespace LAB{
     //https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/projection-matrices-what-you-need-to-know-first.html
     //both Projection and Ortho functions copied from here
 
     template<std::floating_point F>
-    constexpr Matrix<F, 4, 4, 16> CreateProjectionMatrix(F const field_of_view_radians, F const near, F const far)  { 
+    LAB_constexpr Matrix<F, 4, 4, 16> CreateProjectionMatrix(F const field_of_view_radians, F const near, F const far)  { 
         Matrix<F, 4, 4, 16> ret;
 
         const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5));
@@ -66,20 +67,20 @@ namespace LAB{
     }
     
     template<std::floating_point F>
-    constexpr Matrix<F, 4, 4, 16> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
+    LAB_constexpr Matrix<F, 4, 4, 16> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
         Matrix<F, 4, 4, 16> ret;
         const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
         const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 
-        constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
-        constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
-        constexpr bool r_sign = CoordinateSystem::right < CoordinateSystem::XPos;
+        LAB_constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
+        LAB_constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
+        LAB_constexpr bool r_sign = CoordinateSystem::right < CoordinateSystem::XPos;
 
-        constexpr int f_axis = CoordinateSystem::forward - (!f_sign * 3);
-        constexpr int u_axis = CoordinateSystem::up - (!u_sign * 3);
-        constexpr int r_axis = CoordinateSystem::right - (!r_sign * 3);
+        LAB_constexpr int f_axis = CoordinateSystem::forward - (!f_sign * 3);
+        LAB_constexpr int u_axis = CoordinateSystem::up - (!u_sign * 3);
+        LAB_constexpr int r_axis = CoordinateSystem::right - (!r_sign * 3);
         
-        if constexpr(f_sign){
+        if LAB_constexpr(f_sign){
             ret.At(0, f_axis) = -forward.x;
             ret.At(1, f_axis) = -forward.y;
             ret.At(2, f_axis) = -forward.z;
@@ -91,7 +92,7 @@ namespace LAB{
             ret.At(2, f_axis) = forward.z;
             ret.At(3, f_axis) = -position.DotProduct(forward);
         }
-        if constexpr(u_sign){
+        if LAB_constexpr(u_sign){
             ret.At(0, u_axis) = -up.x;
             ret.At(1, u_axis) = -up.y;
             ret.At(2, u_axis) = -up.z;
@@ -103,7 +104,7 @@ namespace LAB{
             ret.At(2, u_axis) = up.z;
             ret.At(3, u_axis) = -position.DotProduct(up);
         }
-        if constexpr(r_sign){
+        if LAB_constexpr(r_sign){
             ret.At(0, r_axis) = -right.x;
             ret.At(1, r_axis) = -right.y;
             ret.At(2, r_axis) = -right.z;

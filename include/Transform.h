@@ -18,14 +18,14 @@ namespace LAB {
         F rotation;
 
 		//Transform() {}
-        constexpr Transform() : translation{F(0)}, scale{F(1)}, rotation{F(0)} {}
-        constexpr Transform(Vector<F, 2> const translation) : translation{translation}, scale{F(1)}, rotation{F(0)}{}
-        constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale) : translation{translation}, scale{scale}, rotation{F(0)}{}
-        constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{rotation}{}
+        LAB_constexpr Transform() : translation{F(0)}, scale{F(1)}, rotation{F(0)} {}
+        LAB_constexpr Transform(Vector<F, 2> const translation) : translation{translation}, scale{F(1)}, rotation{F(0)}{}
+        LAB_constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale) : translation{translation}, scale{scale}, rotation{F(0)}{}
+        LAB_constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{rotation}{}
 
     
 		template<uint8_t Alignment = 12> requires((Alignment >= (sizeof(F) * 3)) && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 3, 3, Alignment> ToMatrix() const{
+		LAB_constexpr Matrix<F, 3, 3, Alignment> ToMatrix() const{
 			const float cosine = SupportingMath::Cos(rotation);
 			const float sine = SupportingMath::Sin(rotation);
 			Matrix<F, 3, 3, Alignment> ret;
@@ -45,7 +45,7 @@ namespace LAB {
 		}
 	
 		template<uint8_t Alignment = 12> requires((Alignment >= (sizeof(F) * 3)) && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 3, 3, Alignment> ToMatrixNoRotation() const {
+		LAB_constexpr Matrix<F, 3, 3, Alignment> ToMatrixNoRotation() const {
 			//const float cosine = glm::cos(rotation);
 			//const float sine = glm::sin(rotation);
 			Matrix<F, 3, 3, Alignment> ret{F(0)};
@@ -68,13 +68,13 @@ namespace LAB {
         Vector<F, 3> rotation;
 
 
-		constexpr Transform() : translation{ F(0) }, scale{ F(1) }, rotation{ F(0) } {}
-		constexpr Transform(Vector<F, 3> const translation) : translation{ translation }, scale{ F(1) }, rotation{ F(0) } {}
-		constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale) : translation{ translation }, scale{ scale }, rotation{ F(0) } {}
-		constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale, Vector<F, 3> const rotation) : translation{ translation }, scale{ scale }, rotation{ rotation } {}
+		LAB_constexpr Transform() : translation{ F(0) }, scale{ F(1) }, rotation{ F(0) } {}
+		LAB_constexpr Transform(Vector<F, 3> const translation) : translation{ translation }, scale{ F(1) }, rotation{ F(0) } {}
+		LAB_constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale) : translation{ translation }, scale{ scale }, rotation{ F(0) } {}
+		LAB_constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale, Vector<F, 3> const rotation) : translation{ translation }, scale{ scale }, rotation{ rotation } {}
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 4, 4, Alignment> GetRotationXMatrix() const {
+		LAB_constexpr Matrix<F, 4, 4, Alignment> GetRotationXMatrix() const {
 			Matrix<F, 4, 4, Alignment> ret{ F(0) };
 
 			ret.At(0, 0) = F(1);
@@ -93,7 +93,7 @@ namespace LAB {
 		}
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 4, 4, Alignment> GetRotationYMatrix() const {
+		LAB_constexpr Matrix<F, 4, 4, Alignment> GetRotationYMatrix() const {
 			Matrix<F, 4, 4> ret{ F(0) };
 			ret.At(1, 1) = F(1);
 			ret.At(3, 3) = 1;
@@ -110,7 +110,7 @@ namespace LAB {
 		}
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 4, 4, Alignment> GetRotationZMatrix() const {
+		LAB_constexpr Matrix<F, 4, 4, Alignment> GetRotationZMatrix() const {
 			Matrix<F, 4, 4> ret{ F(0) };
 			ret.At(2, 2) = F(1);
 			ret.At(3, 3) = 1;
@@ -127,7 +127,7 @@ namespace LAB {
 		}
 
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 4, 4, Alignment> GetScaleMatrix() const {
+		LAB_constexpr Matrix<F, 4, 4, Alignment> GetScaleMatrix() const {
 			Matrix<F, 4, 4, Alignment> ret;
 			ret.At(0, 0) = scale.x;
 			ret.At(1, 1) = scale.y;
@@ -153,7 +153,7 @@ namespace LAB {
 		}
     
 		template<uint8_t Alignment = 16> requires(Alignment >= 16 && (Alignment % sizeof(F) == 0))
-		constexpr Matrix<F, 4, 4, Alignment> GetMatrix(){
+		LAB_constexpr Matrix<F, 4, 4, Alignment> GetMatrix(){
 			Matrix<F, 4, 4, Alignment> ret;
 			ret.At(3, 0) = translation.x;
 			ret.At(3, 1) = translation.y;
