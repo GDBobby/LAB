@@ -6,9 +6,9 @@
 
 //#define USING_CMATH
 
-#include "LAB/qt_sine_table.h"
+#include "qt_sine_table.h"
 
-#include "LAB/Debugging.h"
+#include "Debugging.h"
 
 
 namespace LAB{
