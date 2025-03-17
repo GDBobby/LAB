@@ -17,12 +17,6 @@
 			#endif
 		#endif
 	#endif
-#endif
-
-#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
-	#include <cassert>
-namespace LAB {
-	#define LAB_MATH_DEBUG
 
 	#ifdef _MSC_VER
 		#include <intrin.h>
@@ -32,12 +26,21 @@ namespace LAB {
 		#include <cstdlib>
 	#endif
 
+
+	#define LAB_MATH_DEBUG
+
 	#ifndef LAB_static_assert
 		#define LAB_static_assert assert
 	#endif
 	#ifndef LAB_constexpr
 		#define LAB_constexpr 
 	#endif
+
+	#include <cassert>
+#endif
+
+#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
+namespace LAB {
 
 		inline void breakpoint_with_stacktrace() {
 	#ifdef LAB_STACK_TRACE_INCLUDED
