@@ -10,7 +10,7 @@
       "name": "default",
       "description": "Build configuration using Ninja Multi-config",
       "generator": "Ninja Multi-Config",
-      "binaryDir": "${sourceDir}/out/default",
+      "binaryDir": "${sourceDir}/build/default",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
@@ -19,7 +19,7 @@
       "name": "ninja-clang",
       "description": "Build configuration using Ninja Multi-config / clang",
       "inherits": "default",
-      "binaryDir": "${sourceDir}/out/clang",
+      "binaryDir": "${sourceDir}/build/clang",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++"
@@ -29,7 +29,7 @@
       "name": "ninja-ubsan",
       "description": "UBSan build configuration using Ninja Multi-config",
       "inherits": "default",
-      "binaryDir": "${sourceDir}/out/ubsan",
+      "binaryDir": "${sourceDir}/build/ubsan",
       "cacheVariables": {
         "CMAKE_CXX_FLAGS": "-fsanitize=undefined"
       }
@@ -38,7 +38,7 @@
       "name": "ninja-asan",
       "description": "ASan build configuration using Ninja Multi-config",
       "inherits": "ninja-ubsan",
-      "binaryDir": "${sourceDir}/out/asan",
+      "binaryDir": "${sourceDir}/build/asan",
       "cacheVariables": {
         "CMAKE_CXX_FLAGS": "-fsanitize=address -O1"
       }
@@ -47,7 +47,7 @@
       "name": "ninja-tsan",
       "inherits": "ninja-ubsan",
       "description": "TSan build configuration using Ninja Multi-config",
-      "binaryDir": "${sourceDir}/out/tsan",
+      "binaryDir": "${sourceDir}/build/tsan",
       "cacheVariables": {
         "CMAKE_CXX_FLAGS": "-fsanitize=thread -O1"
       }
@@ -56,7 +56,7 @@
       "name": "vs22",
       "description": "Build configuration using Visual Studio 17 (2022)",
       "generator": "Visual Studio 17 2022",
-      "binaryDir": "${sourceDir}/out/vs",
+      "binaryDir": "${sourceDir}/build/vs",
       "architecture": {
         "value": "x64",
         "strategy": "external"
