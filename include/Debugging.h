@@ -3,7 +3,7 @@
 #include <concepts>
 #include <bit>
 
-#define LAB_DEBUGGING_FLOAT_ANOMALIES
+//#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
 //gcc is having issues with this, and im not really sure why or how to fix it. so im just excluding gcc from backtracing
