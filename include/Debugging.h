@@ -6,9 +6,6 @@
 #define LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
-	#include <cassert>
-namespace LAB {
-	#define LAB_MATH_DEBUG
 	#ifdef __has_include
 		#if __has_include(<stacktrace>)
 			#include <stacktrace>
@@ -20,6 +17,12 @@ namespace LAB {
 			#endif
 		#endif
 	#endif
+#endif
+
+#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
+	#include <cassert>
+namespace LAB {
+	#define LAB_MATH_DEBUG
 
 	#ifdef _MSC_VER
 		#include <intrin.h>
@@ -38,11 +41,11 @@ namespace LAB {
 
 		inline void breakpoint_with_stacktrace() {
 	#ifdef LAB_STACK_TRACE_INCLUDED
-			//auto trace = std::stacktrace::current();
+			auto trace = std::stacktrace::current();
 
-			//for (auto& tr : trace) {
-			//	std::cout << tr << std::endl;
-			//}
+			for (auto& tr : trace) {
+				std::cout << tr << std::endl;
+			}
 	#endif
 
 	#ifdef _MSC_VER
