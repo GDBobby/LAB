@@ -3,21 +3,19 @@
 #include <concepts>
 #include <bit>
 
-//#define LAB_DEBUGGING_FLOAT_ANOMALIES
+#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
 	#include <cassert>
 namespace LAB {
-
-		//requires C++23, if this is disabled, only C++20 is required
 	#define LAB_MATH_DEBUG
 	#ifdef __has_include
 		#if __has_include(<stacktrace>)
-			//#include <stacktrace>
+			#include <stacktrace>
 			#ifdef __cpp_lib_stacktrace
 				#if __cpp_lib_stacktrace >= 202011L
 					#define LAB_STACK_TRACE_INCLUDED
-					//#include <iostream>
+					#include <iostream>
 				#endif
 			#endif
 		#endif
