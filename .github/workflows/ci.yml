@@ -1,12 +1,10 @@
 name: ci
 on: [push]
 jobs:
-  build-linux:
+  build-gcc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: init
-        run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
       - name: configure gcc
         run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13
       - name: build gcc
@@ -21,7 +19,12 @@ jobs:
           name: gcc_output.txt
           path: gcc_output.txt
 
-      
+  build-clang:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: init
+        run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
       - name: configure clang
         run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18
       - name: build clang
@@ -35,6 +38,7 @@ jobs:
         with:
           name: clang_output.txt
           path: clang_output.txt
+
   build-windows:
     runs-on: windows-latest
     steps:
@@ -56,7 +60,7 @@ jobs:
 
   compare-results:
     name: Compare Outputs
-    needs: [build-linux, build-windows]
+    needs: [build-gcc, build-clang, build-windows]
     runs-on: ubuntu-latest
 
     steps:
@@ -72,7 +76,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: gcc_output.txt
-
 
       - name: Compare gcc and msvc Outputs
         run: |
