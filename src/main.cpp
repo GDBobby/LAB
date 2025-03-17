@@ -1,7 +1,7 @@
-#include "LAB/Vector.h"
-#include "LAB/Matrix.h"
-#include "LAB/Transform.h"
-#include "LAB/Camera.h"
+#include "Vector.h"
+#include "Matrix.h"
+#include "Transform.h"
+#include "Camera.h"
 
 #include <cstdio>
 #include <fstream>
