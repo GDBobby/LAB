@@ -7,7 +7,7 @@
 
 #ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
 //gcc is having issues with this, and im not really sure why or how to fix it. so im just excluding gcc from backtracing
-#ifndef __GNUC__
+#if !(defined(__GNUC__) && !defined(__clang__))
 	#ifdef __has_include
 		#if __has_include(<stacktrace>)
 			#include <stacktrace>
