@@ -78,6 +78,7 @@ int main() {
 		LAB_static_assert(identityMat.data[0] == 1.f);
 
 		LAB_static_assert(scaleMat == identityMat);
+		printf("scale and identity - %.2f:%.2f\n", scaleMat.data[0], identityMat.data[0]);
 	}
 	{
 		LAB_constexpr LAB::Transform<float, 3> transformX{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{std::numbers::pi_v<float>, 0.f, 0.f}};
