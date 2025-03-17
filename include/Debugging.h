@@ -20,6 +20,8 @@
 			#endif
 		#endif
 	#endif
+#else
+#pragma message("back trace was not included because gcc")
 #endif
 #ifndef LAB_STACK_TRACE_INCLUDED
 #pragma message("backtrace was NOT included")
