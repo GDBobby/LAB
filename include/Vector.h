@@ -84,16 +84,16 @@ namespace LAB {
 		}
 
 		LAB_constexpr static Vector Forward() {
-			if LAB_constexpr (CoordinateSystem::forward == CoordinateSystem::XPos){
+			if constexpr (CoordinateSystem::forward == CoordinateSystem::XPos){
 				return { F(1), F(0) };
 			}
-			else if LAB_constexpr(CoordinateSystem::forward == CoordinateSystem::XNeg){
+			else if constexpr(CoordinateSystem::forward == CoordinateSystem::XNeg){
 				return {F(-1), F(0)};
 			}
-			else if LAB_constexpr(CoordinateSystem::forward == CoordinateSystem::YPos){
+			else if constexpr(CoordinateSystem::forward == CoordinateSystem::YPos){
 				return {F(0), F(1)};
 			}
-			else if LAB_constexpr(CoordinateSystem::forward == CoordinateSystem::YNeg){
+			else if constexpr(CoordinateSystem::forward == CoordinateSystem::YNeg){
 				return {F(0), F(-1)};
 			}
 			else{
@@ -102,18 +102,18 @@ namespace LAB {
 		}
 		LAB_constexpr static Vector Up() {
 			//switch LAB_constexpr where pls
-			//i read that i could potentially expect it to look the same as if LAB_constexpr, but it's not guaranteed, and I'm relying on compiler optimization
+			//i read that i could potentially expect it to look the same as if constexpr, but it's not guaranteed, and I'm relying on compiler optimization
 
-			if LAB_constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
+			if constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
 				return { F(0), F(1) };
 			}
-			else if LAB_constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
+			else if constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
 				return {F(0), F(-1)};
 			}
-			else if LAB_constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
+			else if constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
 				return {F(1), F(0)};
 			}
-			else if LAB_constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
+			else if constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
 				return {F(-1), F(0)};
 			}
 			else{
@@ -306,10 +306,10 @@ namespace LAB {
 	template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		F sum = first.x * second.x + first.y * second.y;
-		if LAB_constexpr (Dimensions >= 3) {
+		if constexpr (Dimensions >= 3) {
 			sum += first.z * second.z;
 		}
-		if LAB_constexpr (Dimensions >= 4) {
+		if constexpr (Dimensions >= 4) {
 			sum += first.w * second.w;
 		}
 		return sum;
@@ -320,7 +320,7 @@ namespace LAB {
 	LAB_constexpr F NormalizedDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();
 		if (combinedMagSquared != F(0)) {	
-			if LAB_constexpr (Dimensions == 2) {
+			if constexpr (Dimensions == 2) {
 				const F numerator = first.x * second.x + first.y * second.y;
 				if (numerator > F(0)) {
 					//return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
@@ -331,7 +331,7 @@ namespace LAB {
 					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
 				}
 			}
-			else if LAB_constexpr (Dimensions == 3) {
+			else if constexpr (Dimensions == 3) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z;
 				if (numerator > F(0)) {
 					//return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
@@ -342,7 +342,7 @@ namespace LAB {
 					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
 				}
 			}
-			else if LAB_constexpr (Dimensions == 4) {
+			else if constexpr (Dimensions == 4) {
 				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
 				if (numerator > F(0)) {
 					return SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));

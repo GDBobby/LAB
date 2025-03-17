@@ -19,9 +19,9 @@ namespace LAB{
 		template<std::floating_point F, bool Inverse = false>
 		static LAB_constexpr F GetPI(F multiplier) {
 #ifdef LAB_MATH_DEBUG
-			Debug_Anomaly_Check<F, true>(divisor);
+			Debug_Anomaly_Check<F, true>(multiplier);
 #endif
-			if LAB_constexpr(Inverse){
+			if constexpr(Inverse){
 				return multiplier / PI<F>;
 			}
 			else{
@@ -49,7 +49,7 @@ namespace LAB{
 			Debug_Anomaly_Check(input);
 #endif
 			
-			if LAB_constexpr(std::is_same_v<F, float>) {
+			if constexpr(std::is_same_v<F, float>) {
 				const uint32_t bits = std::bit_cast<uint32_t>(input);
 
 				//ill add debugging methods later
@@ -113,12 +113,12 @@ namespace LAB{
 #ifdef LAB_MATH_DEBUG
 			Debug_Min_Check<F, F(0)>(input);
 #endif
-			if LAB_constexpr(std::is_same_v<F, float>){
+			if constexpr(std::is_same_v<F, float>){
 				const auto y = std::bit_cast<float>(0x5f3759df - (std::bit_cast<std::uint32_t>(input) >> 1));
 				const float refined = y * (1.5f - (input * 0.5f * y * y));
 				return refined * (1.5f - (input * 0.5f * refined * refined));
 			}
-			else if LAB_constexpr(std::is_same_v<F, double>){
+			else if constexpr(std::is_same_v<F, double>){
 				const auto y = std::bit_cast<double>(0x5fe6eb50c7b537a9 - (std::bit_cast<std::uint64_t>(input) >> 1));
 				const double refined = y * (1.5 - (input * 0.5 * y * y));
 				return refined * (1.5 - (input * 0.5 * refined * refined));

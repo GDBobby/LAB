@@ -72,15 +72,15 @@ namespace LAB{
         const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
         const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 
-        LAB_constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
-        LAB_constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
-        LAB_constexpr bool r_sign = CoordinateSystem::right < CoordinateSystem::XPos;
-
-        LAB_constexpr int f_axis = CoordinateSystem::forward - (!f_sign * 3);
-        LAB_constexpr int u_axis = CoordinateSystem::up - (!u_sign * 3);
-        LAB_constexpr int r_axis = CoordinateSystem::right - (!r_sign * 3);
+        constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
+        constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
+        constexpr bool r_sign = CoordinateSystem::right < CoordinateSystem::XPos;
         
-        if LAB_constexpr(f_sign){
+        constexpr int f_axis = CoordinateSystem::forward - (!f_sign * 3);
+        constexpr int u_axis = CoordinateSystem::up - (!u_sign * 3);
+        constexpr int r_axis = CoordinateSystem::right - (!r_sign * 3);
+        
+        if constexpr(f_sign){
             ret.At(0, f_axis) = -forward.x;
             ret.At(1, f_axis) = -forward.y;
             ret.At(2, f_axis) = -forward.z;
@@ -92,7 +92,7 @@ namespace LAB{
             ret.At(2, f_axis) = forward.z;
             ret.At(3, f_axis) = -position.DotProduct(forward);
         }
-        if LAB_constexpr(u_sign){
+        if constexpr(u_sign){
             ret.At(0, u_axis) = -up.x;
             ret.At(1, u_axis) = -up.y;
             ret.At(2, u_axis) = -up.z;
@@ -104,7 +104,7 @@ namespace LAB{
             ret.At(2, u_axis) = up.z;
             ret.At(3, u_axis) = -position.DotProduct(up);
         }
-        if LAB_constexpr(r_sign){
+        if constexpr(r_sign){
             ret.At(0, r_axis) = -right.x;
             ret.At(1, r_axis) = -right.y;
             ret.At(2, r_axis) = -right.z;

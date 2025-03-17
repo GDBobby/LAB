@@ -65,7 +65,7 @@ namespace LAB {
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix operator*(Matrix<F, Columns, Rows, Alignment> const& other) const {
 			Matrix ret;
-			if LAB_constexpr(Columns == 3 && Rows == 3) {
+			if constexpr(Columns == 3 && Rows == 3) {
 				ret.At(0, 0) = At(0, 0) * other.At(0, 0) + At(1, 0) * other.At(0, 1) + At(2, 0) * other.At(0, 2);
 				ret.At(0, 1) = At(0, 1) * other.At(0, 0) + At(1, 1) * other.At(0, 1) + At(2, 1) * other.At(0, 2);
 				ret.At(0, 2) = At(0, 2) * other.At(0, 0) + At(1, 2) * other.At(0, 1) + At(2, 2) * other.At(0, 2);
@@ -78,7 +78,7 @@ namespace LAB {
 				ret.At(2, 1) = At(0, 1) * other.At(2, 0) + At(1, 1) + other.At(2, 1) + At(2, 1) * other.At(2, 2);
 				ret.At(2, 2) = At(0, 2) * other.At(2, 0) + At(1, 2) + other.At(2, 1) + At(2, 2) * other.At(2, 2);
 			}
-			else if LAB_constexpr(Columns == 4 && Rows == 4){
+			else if constexpr(Columns == 4 && Rows == 4){
 				ret.At(0, 0) = At(0, 0) * other.At(0, 0) + At(1, 0) * other.At(0, 1) + At(2, 0) * other.At(0, 2) + At(3, 0) * other.At(0, 3);
 				ret.At(0, 1) = At(0, 1) * other.At(0, 0) + At(1, 1) * other.At(0, 1) + At(2, 1) * other.At(0, 2) + At(3, 1) * other.At(0, 3);
 				ret.At(0, 2) = At(0, 2) * other.At(0, 0) + At(1, 2) * other.At(0, 1) + At(2, 2) * other.At(0, 2) + At(3, 2) * other.At(0, 3);
@@ -122,10 +122,10 @@ namespace LAB {
 	LAB_constexpr auto FillColumn(Matrix<F, Columns, Rows, Alignment>& mat, const uint8_t col, Vector<F, Rows> const& vector) {
 		mat.data[col * Rows] = vector.x;
 		mat.data[col * Rows + 1] = vector.y;
-		if LAB_constexpr (Rows >= 3) {
+		if constexpr (Rows >= 3) {
 			mat.data[col * Rows + 2] = vector.z;
 		}
-		if LAB_constexpr (Rows == 4) {
+		if constexpr (Rows == 4) {
 			mat.data[col * Rows + 3] = vector.w;
 		}
 	}
@@ -142,7 +142,7 @@ namespace LAB {
 
 		FillColumn(ret, 0, vec1);
 
-		if LAB_constexpr (sizeof...(vectors) > 0) {
+		if constexpr (sizeof...(vectors) > 0) {
 			ApplyVectorToMatrix(ret, std::forward<Vectors>(vectors)...);
 		}
 
