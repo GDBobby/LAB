@@ -37,9 +37,9 @@ endif()
 
 add_library(LinearAlgebra INTERFACE)
 
-file(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/include/LAB/*.h ${PROJECT_SOURCE_DIR}/include/LAB/*.hpp)
+file(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/LAB/*.h ${PROJECT_SOURCE_DIR}/LAB/*.hpp)
 
-target_sources(LinearAlgebra PUBLIC FILE_SET HEADERS BASE_DIRS include FILES ${HEADER_FILES})
+target_sources(LinearAlgebra PUBLIC FILE_SET HEADERS BASE_DIRS LAB FILES ${HEADER_FILES})
 target_include_directories(LinearAlgebra INTERFACE ${PROJECT_SOURCE_DIR}/LAB)
 
 set_target_properties(LinearAlgebra PROPERTIES
