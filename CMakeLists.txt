@@ -52,6 +52,7 @@ set_target_properties(LinearAlgebra PROPERTIES
 )
 
 if(is_project_root)
+  message(STATUS "LinearAlgebra is project root")
   project(LinearAlgebraExample)
   file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
   add_executable(LinearAlgebraExample ${SOURCES})
@@ -59,7 +60,6 @@ if(is_project_root)
       LinearAlgebra
       LinearAlgebra-compile-options
   )
-  target_include_directories(LinearAlgebraExample PUBLIC ${CMAKE_SOURCE_DIR}/include)
   target_link_directories(LinearAlgebraExample PUBLIC
     $<$<CONFIG:Debug>:${CMAKE_SOURCE_DIR}/Debug>
     $<$<CONFIG:Release>:${CMAKE_SOURCE_DIR}/Release>
