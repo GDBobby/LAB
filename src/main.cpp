@@ -33,8 +33,8 @@ int main() {
 		LAB_constexpr LAB::Vector<float, 2> checkVec3(3.f, 4.f);
 
 		LAB_constexpr auto checkMat = LAB::CreateMatrix<float, 2, 8>(checkVec1, checkVec3);
-
 		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
+		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
@@ -43,8 +43,9 @@ int main() {
 		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
 		//printf("nDP : %.2f\n", nDP);
 
-		LAB_constexpr auto forwardX = LAB::Vector<float, 2>::Forward().x;
-		LAB_constexpr auto upY = LAB::Vector<float, 2>::Up().y;
+		LAB_constexpr float forwardX = LAB::Vector<float, 2>::Forward().x;
+		LAB_constexpr float upY = LAB::Vector<float, 2>::Up().y;
+		printf("unit vector - %.2f:%.2f\n", forwardX, upY);
 
 		LAB_static_assert(forwardX == upY);
 	}
