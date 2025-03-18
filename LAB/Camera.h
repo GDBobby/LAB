@@ -8,8 +8,8 @@ namespace LAB{
     //both Projection and Ortho functions copied from here
 
     template<std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4, 16> CreateProjectionMatrix(F const field_of_view_radians, F const near, F const far)  { 
-        Matrix<F, 4, 4, 16> ret;
+    LAB_constexpr Matrix<F, 4, 4> CreateProjectionMatrix(F const field_of_view_radians, F const near, F const far)  { 
+        Matrix<F, 4, 4> ret;
 
         const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5));
         //const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5)); 
@@ -67,8 +67,8 @@ namespace LAB{
     }
     
     template<std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4, 16> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
-        Matrix<F, 4, 4, 16> ret;
+    LAB_constexpr Matrix<F, 4, 4> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
+        Matrix<F, 4, 4> ret;
         const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
         const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 

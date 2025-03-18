@@ -5,6 +5,7 @@
 #include "Debugging.h"
 
 #include <concepts>
+#include <bit>
 
 namespace LAB {
 	//F short for floating point, can be double or float, Dimensions is short for dimensions
@@ -21,8 +22,32 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			//static_assert(row < 2);
-			return *(&x + row);
+			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
+				static_assert(row < 2);
+				if constexpr (row == 0) {
+					return x;
+				}
+				else if constexpr (row == 1) {
+					return y;
+				}
+			}
+			else {
+				return *(&x + row);
+			}
+		}
+		LAB_constexpr F operator[](uint8_t const row) const {
+			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
+				static_assert(row < 2);
+				if constexpr (row == 0) {
+					return x;
+				}
+				else if constexpr (row == 1) {
+					return y;
+				}
+			}
+			else {
+				return *(&x + row);
+			}
 		}
 
 
@@ -133,10 +158,39 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			//static_assert(row < 3);
-			return *(&x + row);
+			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
+				static_assert(row < 3);
+				if constexpr (row == 0) {
+					return x;
+				}
+				else if constexpr (row == 1) {
+					return y;
+				}
+				else if constexpr (row == 2) {
+					return z;
+				}
+			}
+			else {
+				return *(&x + row);
+			}
 		}
-
+		LAB_constexpr F operator[](uint8_t const row) const {
+			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
+				static_assert(row < 3);
+				if constexpr (row == 0) {
+					return x;
+				}
+				else if constexpr (row == 1) {
+					return y;
+				}
+				else if constexpr (row == 2) {
+					return z;
+				}
+			}
+			else {
+				return *(&x + row);
+			}
+		}
 
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z);
@@ -181,6 +235,17 @@ namespace LAB {
 			ret /= divisor;
 			return ret;
 		}
+		LAB_constexpr Vector& operator*=(Vector const other){
+			x *= other.x;
+			y *= other.y;
+			z *= other.z;
+			return *this;
+		}
+		LAB_constexpr Vector operator*(Vector const other) const {
+			Vector ret = *this;
+			ret *= other;
+			return ret;
+		}
 		
 		LAB_constexpr F SquaredMagnitude() const {
 			return x * x + y * y + z * z;
@@ -216,13 +281,50 @@ namespace LAB {
 		F y;
 		F z;
 		F w;
+
 		LAB_constexpr Vector() {}
 		LAB_constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
 		LAB_constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			//static_assert(row < 4);
-			return *(&x + row);
+			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
+				static_assert(row < 4);
+				if constexpr (row == 0) {
+					return x;
+				}
+				else if constexpr (row == 1) {
+					return y;
+				}
+				else if constexpr (row == 2) {
+					return z;
+				}
+				else if constexpr (row == 3) {
+					return w;
+				}
+			}
+			else {
+				return *(&x + row);
+			}
+		}
+		LAB_constexpr F operator[](uint8_t const row) const {
+			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
+				static_assert(row < 4);
+				if constexpr (row == 0) {
+					return x;
+				}
+				else if constexpr (row == 1) {
+					return y;
+				}
+				else if constexpr (row == 2) {
+					return z;
+				}
+				else if constexpr (row == 3) {
+					return w;
+				}
+			}
+			else {
+				return *(&x + row);
+			}
 		}
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
@@ -269,6 +371,18 @@ namespace LAB {
 		LAB_constexpr Vector operator/(F const divisor) const {
 			Vector ret = *this;
 			ret /= divisor;
+			return ret;
+		}
+		LAB_constexpr Vector& operator*=(Vector const other){
+			x *= other.x;
+			y *= other.y;
+			z *= other.z;
+			w *= other.w;
+			return *this;
+		}
+		LAB_constexpr Vector operator*(Vector const other) const {
+			Vector ret = *this;
+			ret *= other;
 			return ret;
 		}
 

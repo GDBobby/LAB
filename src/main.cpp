@@ -26,15 +26,23 @@ int main() {
 	}
 
 	{
+		LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
+		LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
+		LAB::Vector<float, 3> vec3c(5.0f, 6.0f, 7.0f);
+		LAB::Vector<float, 3> vec3d(7.0f, 8.0f, 9.0f);
+		LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+
 		LAB_constexpr LAB::Vector<float, 2> checkVec1(1.f, 2.f);
 		LAB_constexpr LAB::Vector<float, 2> checkVec2(1.f / 2.f, 2.f / 2.f);
 		LAB_static_assert((checkVec1 / 2.f) == checkVec2);
 
 		LAB_constexpr LAB::Vector<float, 2> checkVec3(3.f, 4.f);
 
-		LAB_constexpr auto checkMat = LAB::CreateMatrix<float, 2, 8>(checkVec1, checkVec3);
+		LAB_constexpr auto checkMat = LAB::CreateMatrix<float, 2, 2>(checkVec1, checkVec3);
 		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
 		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
+
+		LAB_constexpr LAB::Matrix<float, 3, 2> imbalancedMat{ 0.f };
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
@@ -51,8 +59,8 @@ int main() {
 	}
 
 	{
-		LAB_constexpr auto mat1 = LAB::CreateMatrix<float, 3, 16>(LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f));
-		LAB_constexpr auto mat2 = LAB::CreateMatrix<float, 3, 12>(LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f));
+		LAB_constexpr auto mat1 = LAB::CreateMatrix<float, 3, 4>(LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f));
+		LAB_constexpr auto mat2 = LAB::CreateMatrix<float, 3, 3>(LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f));
 
 		LAB_static_assert(mat1.At(0, 0) == 0.f);
 		LAB_constexpr auto intermediate = mat1 * mat2;
@@ -71,9 +79,20 @@ int main() {
 		outFile.close();
 	}
 	{
+		LAB_constexpr LAB::Matrix<float, 4, 4> matrix1{ 1.f };
+		LAB_constexpr auto rotatedMat = LAB::Rotate(matrix1, 0.5f, LAB::Vector<float, 3>::Up());
+		LAB_constexpr LAB::Vector<float, 3> testVec{0.f, 1.f, 2.f};
+		LAB_constexpr float testFloat0 = testVec[0];
+		LAB_constexpr float testFloat1 = testVec[1];
+		//LAB_static_assert(testFloat0 != testFloat1);
+
+		//LAB_constexpr auto translatedMat = LAB::Translate(rotatedMat, LAB::Vector<float, 3>{0.f, 1.f, 2.f});
+
+	}
+	{
 		LAB_constexpr LAB::Transform<float, 3> transform{};
-		LAB_constexpr auto scaleMat = transform.GetScaleMatrix<16>();
-		LAB_constexpr LAB::Matrix<float, 4, 4, 16> identityMat{LAB::Matrix<float, 4, 4, 16>::Identity(1.f)};
+		LAB_constexpr auto scaleMat = transform.GetScaleMatrix();
+		LAB_constexpr LAB::Matrix<float, 4, 4> identityMat{LAB::Identity<float, 4>(1.f)};
 		LAB_static_assert(scaleMat.data[0] == 1.f);
 		LAB_static_assert(identityMat.data[0] == 1.f);
 
