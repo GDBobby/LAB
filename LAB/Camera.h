@@ -42,7 +42,7 @@ namespace LAB{
         const F rMl = right - left;
         const F tMb = top - bottom;
         const float fMn = far - near;
-        Matrix<F, 4, 4, 16> ret;
+        Matrix<F, 4, 4> ret;
         ret.At(0, 0) = F(2) / rMl;
         ret.At(0, 1) = F(0);
         ret.At(0, 2) = F(0);

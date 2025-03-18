@@ -112,6 +112,7 @@ namespace LAB {
 		template<uint8_t Alignment = 4> requires(Alignment >= 4)
 		LAB_constexpr Matrix<F, 4, 4, Alignment> GetRotationZMatrix() const {
 			Matrix<F, 4, 4> ret{ F(0) };
+
 			ret.At(2, 2) = F(1);
 			ret.At(3, 3) = 1;
 
@@ -155,12 +156,35 @@ namespace LAB {
 		template<uint8_t Alignment = 4> requires(Alignment >= 4)
 		LAB_constexpr Matrix<F, 4, 4, Alignment> GetMatrix(){
 			Matrix<F, 4, 4, Alignment> ret;
+
+			const F cosZ = SupportingMath::Cos(rotation.z);
+			const F sinZ = SupportingMath::Sin(rotation.z);
+			const F cosY = SupportingMath::Cos(rotation.y);
+			const F sinY = SupportingMath::Sin(rotation.y);
+			const F cosX = SupportingMath::Cos(rotation.x);
+			const F sinX = SupportingMath::Sin(rotation.x);
+
+			ret.At(0, 0) = scale.x * (cosY * cosZ + sinY * sinX * sinZ);
+			ret.At(0, 1) = scale.x * (cosX * sinZ);
+			ret.At(0, 2) = scale.x * (cosY * sinX * sinZ - cosZ * sinY);
+			ret.At(0, 3) = 0.f;
+
+			ret.At(1, 0) = scale.y * (cosZ * sinY * sinX - cosY * sinZ);
+			ret.At(1, 1) = scale.y * (cosX * cosZ);
+			ret.At(1, 2) = scale.y * (cosY * cosZ * sinX + sinY * sinZ);
+			ret.At(1, 3) = 0.f;
+
+			ret.At(2, 0) = scale.z * (cosX * sinY);
+			ret.At(2, 1) = scale.z * (-sinX);
+			ret.At(2, 2) = scale.z * (cosY * cosX);
+			ret.At(2, 3) = 0.0f;
+
 			ret.At(3, 0) = translation.x;
 			ret.At(3, 1) = translation.y;
 			ret.At(3, 2) = translation.z;
+			ret.At(3, 3) = 1.0f;
 
-			
-			
+			return ret;
 		}
 	
 	};
