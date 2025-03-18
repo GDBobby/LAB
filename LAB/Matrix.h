@@ -148,10 +148,10 @@ namespace LAB {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
 	[[nodiscard]] LAB_constexpr Matrix<F, Columns, Rows, Alignment> Translate(Matrix<F, Columns, Rows, Alignment> const& matrix, Vector<F, Rows - 1> const translation) {
-		Matrix<F, Columns, Rows, Alignment> ret;
+		Matrix<F, Columns, Rows, Alignment> ret = matrix;
 		for (uint8_t row = 0; row < (Rows - 1); row++) {
 			for (uint8_t column = 0; column < (Columns - 1); column++) {
-				ret.At(Columns - 1, row) += matrix.At(column, row) * translation[column];
+				ret.At(3, row) += matrix.At(column, row) * translation[column];
 			}
 		}
 		return ret;
@@ -193,12 +193,13 @@ namespace LAB {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
 	[[nodiscard]] LAB_constexpr Matrix<F, Columns, Rows, Alignment> Scale(Matrix<F, Columns, Rows, Alignment> const& matrix, Vector<F, Rows - 1> const scalingVec) {
+		Matrix<F, Columns, Rows, Alignment> retMat = matrix;
 		for (uint8_t column = 0; column < (Columns - 1); column++) {
 			for (uint8_t row = 0; row < Rows; row++) {
-				matrix.At(column, row) *= scalingVec[column];
+				retMat.At(column, row) *= scalingVec[column];
 			}
 		}
-		return matrix;
+		return retMat;
 	}
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Alignment = Columns>

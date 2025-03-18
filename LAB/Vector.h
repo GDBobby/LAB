@@ -4,12 +4,12 @@
 #include "CoordinateSystems.h"
 #include "Debugging.h"
 
+#include <cstdint>
 #include <concepts>
-#include <bit>
 
 namespace LAB {
 	//F short for floating point, can be double or float, Dimensions is short for dimensions
-	template<std::floating_point F, std::uint8_t Dimensions> 
+	template<std::floating_point F, uint8_t Dimensions> 
 		requires((Dimensions > 1) && (Dimensions <= 4))
 	struct Vector{};
 
@@ -22,10 +22,20 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			return *(&x + row);
+			if (row == 0) {
+				return x;
+			}
+			else if (row == 1) {
+				return y;
+			}
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
-			return *(&x + row);
+			if (row == 0) {
+				return x;
+			}
+			else if (row == 1) {
+				return y;
+			}
 		}
 
 
@@ -136,10 +146,26 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			return *(&x + row);
+			if (row == 0) {
+				return x;
+			}
+			else if (row == 1) {
+				return y;
+			}
+			else if (row == 2) {
+				return z;
+			}
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
-			return *(&x + row);
+			if (row == 0) {
+				return x;
+			}
+			else if (row == 1) {
+				return y;
+			}
+			else if (row == 2) {
+				return z;
+			}
 		}
 
 		LAB_constexpr bool operator==(Vector const other) const {
@@ -237,10 +263,32 @@ namespace LAB {
 		LAB_constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			return *(&x + row);
+			if (row == 0) {
+				return x;
+			}
+			else if (row == 1) {
+				return y;
+			}
+			else if (row == 2) {
+				return z;
+			}
+			else if (row == 3) {
+				return w;
+			}
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
-			return *(&x + row);
+			if (row == 0) {
+				return x;
+			}
+			else if (row == 1) {
+				return y;
+			}
+			else if (row == 2) {
+				return z;
+			}
+			else if (row == 3) {
+				return w;
+			}
 		}
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
