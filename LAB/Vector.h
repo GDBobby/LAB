@@ -22,32 +22,10 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
-				static_assert(row < 2);
-				if constexpr (row == 0) {
-					return x;
-				}
-				else if constexpr (row == 1) {
-					return y;
-				}
-			}
-			else {
-				return *(&x + row);
-			}
+			return *(&x + row);
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
-			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
-				static_assert(row < 2);
-				if constexpr (row == 0) {
-					return x;
-				}
-				else if constexpr (row == 1) {
-					return y;
-				}
-			}
-			else {
-				return *(&x + row);
-			}
+			return *(&x + row);
 		}
 
 
@@ -158,38 +136,10 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
-				static_assert(row < 3);
-				if constexpr (row == 0) {
-					return x;
-				}
-				else if constexpr (row == 1) {
-					return y;
-				}
-				else if constexpr (row == 2) {
-					return z;
-				}
-			}
-			else {
-				return *(&x + row);
-			}
+			return *(&x + row);
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
-			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
-				static_assert(row < 3);
-				if constexpr (row == 0) {
-					return x;
-				}
-				else if constexpr (row == 1) {
-					return y;
-				}
-				else if constexpr (row == 2) {
-					return z;
-				}
-			}
-			else {
-				return *(&x + row);
-			}
+			return *(&x + row);
 		}
 
 		LAB_constexpr bool operator==(Vector const other) const {
@@ -287,44 +237,10 @@ namespace LAB {
 		LAB_constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
-			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
-				static_assert(row < 4);
-				if constexpr (row == 0) {
-					return x;
-				}
-				else if constexpr (row == 1) {
-					return y;
-				}
-				else if constexpr (row == 2) {
-					return z;
-				}
-				else if constexpr (row == 3) {
-					return w;
-				}
-			}
-			else {
-				return *(&x + row);
-			}
+			return *(&x + row);
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
-			if constexpr (requires{std::integral_constant<uint8_t, row>{}; }) {
-				static_assert(row < 4);
-				if constexpr (row == 0) {
-					return x;
-				}
-				else if constexpr (row == 1) {
-					return y;
-				}
-				else if constexpr (row == 2) {
-					return z;
-				}
-				else if constexpr (row == 3) {
-					return w;
-				}
-			}
-			else {
-				return *(&x + row);
-			}
+			return *(&x + row);
 		}
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);

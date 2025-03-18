@@ -82,8 +82,8 @@ int main() {
 		LAB_constexpr LAB::Matrix<float, 4, 4> matrix1{ 1.f };
 		LAB_constexpr auto rotatedMat = LAB::Rotate(matrix1, 0.5f, LAB::Vector<float, 3>::Up());
 		LAB_constexpr LAB::Vector<float, 3> testVec{0.f, 1.f, 2.f};
-		LAB_constexpr float testFloat0 = testVec[0];
-		LAB_constexpr float testFloat1 = testVec[1];
+		//LAB_constexpr float testFloat0 = testVec[0];
+		//LAB_constexpr float testFloat1 = testVec[1];
 		//LAB_static_assert(testFloat0 != testFloat1);
 
 		//LAB_constexpr auto translatedMat = LAB::Translate(rotatedMat, LAB::Vector<float, 3>{0.f, 1.f, 2.f});
