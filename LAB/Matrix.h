@@ -112,6 +112,16 @@ namespace LAB {
 			}
 			return true;	
 		}
+
+		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
+			Vector<F, Rows> ret{ F(0)};
+			for (uint8_t row = 0; row < Rows; row++) {
+				for (uint8_t column = 0; column < Columns; column++) {
+					ret[row] += At(column, row) * vector[column];
+				}
+			}
+			return ret;
+		}
 	};
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
