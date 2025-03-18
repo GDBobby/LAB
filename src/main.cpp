@@ -10,9 +10,6 @@
 
 #include <cmath>
 
-
-
-
 int main() {
 #ifdef _MSC_VER
 	std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
@@ -43,6 +40,7 @@ int main() {
 		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
 
 		LAB_constexpr LAB::Matrix<float, 3, 2> imbalancedMat{ 0.f };
+		printf("imbalanced mat usage : %.2f\n", imbalancedMat.At(2, 1));
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
