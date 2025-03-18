@@ -28,6 +28,7 @@ namespace LAB {
 			else if (row == 1) {
 				return y;
 			}
+			Unreachable();
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
 			if (row == 0) {
@@ -36,6 +37,7 @@ namespace LAB {
 			else if (row == 1) {
 				return y;
 			}
+			Unreachable();
 		}
 
 
@@ -155,6 +157,7 @@ namespace LAB {
 			else if (row == 2) {
 				return z;
 			}
+			Unreachable();
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
 			if (row == 0) {
@@ -166,6 +169,7 @@ namespace LAB {
 			else if (row == 2) {
 				return z;
 			}
+			Unreachable();
 		}
 
 		LAB_constexpr bool operator==(Vector const other) const {
@@ -275,6 +279,7 @@ namespace LAB {
 			else if (row == 3) {
 				return w;
 			}
+			Unreachable();
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
 			if (row == 0) {
@@ -289,6 +294,7 @@ namespace LAB {
 			else if (row == 3) {
 				return w;
 			}
+			Unreachable();
 		}
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);

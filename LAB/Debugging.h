@@ -1,11 +1,22 @@
 #pragma once
 
-#include <concepts>
-#include <bit>
+namespace LAB {
+	[[noreturn]] inline void Unreachable() {
+#if defined(_MSC_VER) && !defined(__clang__) // MSVC
+		__assume(false);
+#else // GCC, Clang
+		__builtin_unreachable();
+#endif
+	}
+}
+
 
 //#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
+
+#include <concepts>
+#include <bit>
 //gcc is having issues with this, and im not really sure why or how to fix it. so im just excluding gcc from backtracing
 #if !(defined(__GNUC__) && !defined(__clang__))
 	#ifdef __has_include
