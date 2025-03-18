@@ -37,7 +37,7 @@ namespace LAB{
         return ret;
     }
     template<std::floating_point F>
-    Matrix<F, 4, 4, 16> CreateOrthographicMatrix(F const bottom, F const top, F const left, F const right, F const near, F const far) {
+    Matrix<F, 4, 4> CreateOrthographicMatrix(F const bottom, F const top, F const left, F const right, F const near, F const far) {
 
         const F rMl = right - left;
         const F tMb = top - bottom;
