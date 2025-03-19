@@ -22,29 +22,25 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	{
-		LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
-		LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
-		LAB::Vector<float, 3> vec3c(5.0f, 6.0f, 7.0f);
-		LAB::Vector<float, 3> vec3d(7.0f, 8.0f, 9.0f);
+	{ //vectors
+		LAB_constexpr LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
+		LAB_constexpr LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
+		LAB_constexpr LAB::Vector<float, 3> vec3c(5.0f, 6.0f, 7.0f);
+		LAB_constexpr LAB::Vector<float, 3> vec3d(7.0f, 8.0f, 9.0f);
 		LAB::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+		LAB_constexpr LAB::Vector<float, 3> vec3aN = vec3a.Normalized();
+		LAB_constexpr LAB::Vector<float, 3> vec3bN = vec3b.Normalized();
+		LAB_constexpr LAB::Vector<float, 3> vec3cN = vec3c.Normalized();
+		LAB_constexpr LAB::Vector<float, 3> vec3dN = vec3d.Normalized();
+		printf("normalized dots - %.2f\n", vec3aN.DotProduct(vec3bN) + vec3cN.DotProduct(vec3dN));
 
-		LAB_constexpr LAB::Vector<float, 2> checkVec1(1.f, 2.f);
-		LAB_constexpr LAB::Vector<float, 2> checkVec2(1.f / 2.f, 2.f / 2.f);
-		LAB_static_assert((checkVec1 / 2.f) == checkVec2);
-
-		LAB_constexpr LAB::Vector<float, 2> checkVec3(3.f, 4.f);
-
-		LAB_constexpr auto checkMat = LAB::CreateMatrix<float, 2, 2>(checkVec1, checkVec3);
-		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
-		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
 
 		LAB_constexpr LAB::Matrix<float, 3, 2> imbalancedMat{ 0.f };
 		printf("imbalanced mat usage : %.2f\n", imbalancedMat.At(2, 1));
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
-		LAB_constexpr float nDP = LAB::NormalizedDotProduct(checkVec1, checkVec2);
+		LAB_constexpr float nDP = LAB::NormalizedDotProduct(vec3a, vec3b);
 
 		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
 		//printf("nDP : %.2f\n", nDP);
@@ -56,7 +52,18 @@ int main() {
 		LAB_static_assert(forwardX == upY);
 	}
 
-	{
+	{ //matrices
+
+		LAB_constexpr LAB::Vector<float, 2> checkVec1(1.f, 2.f);
+		LAB_constexpr LAB::Vector<float, 2> checkVec2(1.f / 2.f, 2.f / 2.f);
+		LAB_static_assert((checkVec1 / 2.f) == checkVec2);
+
+		LAB_constexpr LAB::Vector<float, 2> checkVec3(3.f, 4.f);
+
+		LAB_constexpr auto checkMat = LAB::CreateMatrix<float, 2, 2>(checkVec1, checkVec3);
+		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
+		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
+
 		LAB_constexpr auto mat1 = LAB::CreateMatrix<float, 3, 4>(LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f));
 		LAB_constexpr auto mat2 = LAB::CreateMatrix<float, 3, 3>(LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f));
 
@@ -76,7 +83,7 @@ int main() {
 		
 		outFile.close();
 	}
-	{
+	{ //rotation, scale, and translate of matrices
 		LAB_constexpr LAB::Vector<float, 3> testVec{ 0.f, 1.f, 2.f };
 		LAB_constexpr float testFloat0 = testVec[0];
 		LAB_constexpr float testFloat1 = testVec[1];
@@ -95,16 +102,8 @@ int main() {
 		printf("postMultVec usage : %.2f\n", postMultVec.x);
 	}
 	{
-		LAB_constexpr LAB::Transform<float, 3> transform{};
-		LAB_constexpr auto scaleMat = transform.GetScaleMatrix();
-		LAB_constexpr LAB::Matrix<float, 4, 4> identityMat{LAB::Identity<float, 4>(1.f)};
-		LAB_static_assert(scaleMat.data[0] == 1.f);
-		LAB_static_assert(identityMat.data[0] == 1.f);
-
-		LAB_static_assert(scaleMat == identityMat);
-		printf("scale and identity - %.2f:%.2f\n", scaleMat.data[0], identityMat.data[0]);
 	}
-	{
+	{ //rotation matrices, scale matrix
 		LAB_constexpr LAB::Transform<float, 3> transformX{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{std::numbers::pi_v<float>, 0.f, 0.f}};
 		LAB_constexpr LAB::Transform<float, 3> transformY{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, std::numbers::pi_v<float>, 0.f}};
 		LAB_constexpr LAB::Transform<float, 3> transformZ{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, 0.f, std::numbers::pi_v<float>}};
@@ -133,8 +132,17 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&zval), sizeof(float));
 			}
 		}
+		
+		LAB_constexpr LAB::Transform<float, 3> transformScale{};
+		LAB_constexpr auto scaleMat = transformScale.GetScaleMatrix();
+		LAB_constexpr LAB::Matrix<float, 4, 4> identityMat{LAB::Identity<float, 4>(1.f)};
+		LAB_static_assert(scaleMat.data[0] == 1.f);
+		LAB_static_assert(identityMat.data[0] == 1.f);
+
+		LAB_static_assert(scaleMat == identityMat);
+		printf("scale and identity - %.2f:%.2f\n", scaleMat.data[0], identityMat.data[0]);
 	}
-	{
+	{ //camera functions
 		LAB_constexpr auto proj = LAB::CreateProjectionMatrix<float>(LAB::SupportingMath::DegreesToRadians(70.f), 0.f, 100.f);
 	
 		for(uint8_t x = 0; x < 4; x++){
@@ -143,8 +151,15 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
 			}
 		}
+		LAB_constexpr auto viewMat = LAB::CreateViewMatrix(LAB::Vector<float, 3>(0.f), LAB::Vector<float, 3>::Forward());
+		for (uint8_t x = 0; x < 4; x++) {
+			for (uint8_t y = 0; y < 4; y++) {
+				const float tempVal = viewMat.At(x, y);
+				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
+			}
+		}
 	}
-	{
+	{ //trig functions
 		LAB_constexpr float trigInput = 50.f;
 		LAB_constexpr auto cosRet = LAB::SupportingMath::Cos(trigInput);
 		LAB_constexpr auto sinRet = LAB::SupportingMath::Sin(trigInput);
@@ -173,17 +188,7 @@ int main() {
 
 		//printf("arc tan comparison : (%.10f):(%.10f)\n", LAB::SupportingMath::ArcTan2BitMasking(trigInput, 1.f), LAB::SupportingMath::ArcTan2(trigInput, 1.f));
 	}
-	{
-		LAB_constexpr auto viewMat = LAB::CreateViewMatrix(LAB::Vector<float, 3>(0.f), LAB::Vector<float, 3>::Forward());
-		for (uint8_t x = 0; x < 4; x++) {
-			for (uint8_t y = 0; y < 4; y++) {
-				const float tempVal = viewMat.At(x, y);
-				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
-			}
-		}
-
-	}
-	{
+	{ //other math functions
 		LAB_constexpr float truncRet = LAB::SupportingMath::Trunc(11.f);
 		LAB_constexpr float truncRet2 = LAB::SupportingMath::Trunc(11.2f);
 		LAB_constexpr float truncRet3 = LAB::SupportingMath::Trunc(0.1f);

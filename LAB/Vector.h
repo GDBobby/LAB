@@ -44,7 +44,7 @@ namespace LAB {
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y);
 		}
-		LAB_constexpr void operator+= (Vector const other) {
+		LAB_constexpr void operator+=(Vector const other) {
 			x += other.x;
 			y += other.y;
 		}
@@ -64,7 +64,7 @@ namespace LAB {
 				y - other.y
 			};
 		}
-		LAB_constexpr void operator *=(F const multiplier) {
+		LAB_constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 		}
@@ -74,11 +74,11 @@ namespace LAB {
 				y * multiplier
 			};
 		}
-		LAB_constexpr void operator /=(F const divisor) {
+		LAB_constexpr void operator/=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 		}
-		LAB_constexpr Vector operator /(F const divisor) const {
+		LAB_constexpr Vector operator/(F const divisor) const {
 			return Vector{
 				x / divisor,
 				y / divisor,
@@ -94,13 +94,13 @@ namespace LAB {
 		}
 
 		LAB_constexpr Vector& Normalize() {
-			const auto mag = Magnitude();
-			operator/=(mag);
+			const F invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+			operator*=(invMag);
 			return *this;
 		}
-		LAB_constexpr Vector Normalize() const{
-			const auto mag = Magnitude();
-			return operator/(mag);
+		LAB_constexpr Vector Normalized() const {
+			const auto invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+			return operator*(invMag);
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
@@ -255,13 +255,13 @@ namespace LAB {
 		}
 
 		LAB_constexpr Vector& Normalize() {
-			const auto mag = Magnitude();
-			operator/=(mag);
+			const F invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+			operator*=(invMag);
 			return *this;
 		}
-		LAB_constexpr Vector Normalize() const{
-			const auto mag = Magnitude();
-			return operator/(mag);
+		LAB_constexpr Vector Normalized() const {
+			const auto invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+			return operator*(invMag);
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
@@ -416,13 +416,13 @@ namespace LAB {
 		}
 
 		LAB_constexpr Vector& Normalize() {
-			const auto mag = Magnitude();
-			operator/=(mag);
+			const F invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+			operator*=(invMag);
 			return *this;
 		}
-		LAB_constexpr Vector Normalize() const{
-			const auto mag = Magnitude();
-			return operator/(mag);
+		LAB_constexpr Vector Normalized() const{
+			const auto invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+			return operator*(invMag);
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
