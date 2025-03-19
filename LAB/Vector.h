@@ -306,10 +306,25 @@ namespace LAB {
 			w += other.w;
 		}
 		LAB_constexpr Vector operator+(Vector const other) const {
-			Vector ret = *this;
-			ret += other;
-			return ret;
+			return Vector{
+				x + other.x,
+				y + other.y,
+				z + other.z,
+				w + other.w
+			}
 		}
+		/*
+		simd
+		LAB_constexpr Vector operator+(Vector const other) const{
+			if constexpr(LAB_SSE2){
+				return _mm_add_ps(*this, other);
+			}
+			else if constexpr(LAB_{
+
+			}
+		}
+		*/ 
+
 		LAB_constexpr void operator-=(Vector const other) {
 			x -= other.x;
 			y -= other.y;
