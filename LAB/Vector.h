@@ -311,7 +311,7 @@ namespace LAB {
 				y + other.y,
 				z + other.z,
 				w + other.w
-			}
+			};
 		}
 		/*
 		simd
