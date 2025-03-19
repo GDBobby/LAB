@@ -332,9 +332,12 @@ namespace LAB {
 			w -= other.w;
 		}
 		LAB_constexpr Vector operator-(Vector const other) const {
-			Vector ret = *this;
-			ret -= other;
-			return ret;
+			return Vector{
+				x - other.x,
+				y - other.y,
+				z - other.z,
+				w - other.w
+			};
 		}
 		LAB_constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
@@ -343,9 +346,12 @@ namespace LAB {
 			w *= multiplier;
 		}
 		LAB_constexpr Vector operator*(F const multiplier) const {
-			Vector ret = *this;
-			ret *= multiplier;
-			return ret;
+			return Vector{
+				x * multiplier,
+				y * multiplier,
+				z * multiplier,
+				w * multiplier
+			};
 		}
 		LAB_constexpr void operator/=(F const divisor) {
 			x /= divisor;
@@ -354,9 +360,12 @@ namespace LAB {
 			w /= divisor;
 		}
 		LAB_constexpr Vector operator/(F const divisor) const {
-			Vector ret = *this;
-			ret /= divisor;
-			return ret;
+			return Vector{
+				x / divisor,
+				y / divisor,
+				z / divisor,
+				w / divisor
+			};
 		}
 		LAB_constexpr Vector& operator*=(Vector const other){
 			x *= other.x;
@@ -366,9 +375,12 @@ namespace LAB {
 			return *this;
 		}
 		LAB_constexpr Vector operator*(Vector const other) const {
-			Vector ret = *this;
-			ret *= other;
-			return ret;
+			return Vector{
+				x * other.x,
+				y * other.y,
+				z * other.z,
+				w * other.w
+			};
 		}
 
 		LAB_constexpr F SquaredMagnitude() const {
@@ -379,9 +391,10 @@ namespace LAB {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
-		LAB_constexpr void Normalize() {
+		LAB_constexpr Vector& Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
+			return *this;
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
@@ -404,14 +417,15 @@ namespace LAB {
 
 	template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
-		F sum = first.x * second.x + first.y * second.y;
-		if constexpr (Dimensions >= 3) {
-			sum += first.z * second.z;
+		if constexpr (Dimensions == 2){
+			return first.x * second.x + first.y * second.y;
 		}
-		if constexpr (Dimensions >= 4) {
-			sum += first.w * second.w;
+		else if constexpr (Dimensions >= 3) {
+			return first.x * second.x + first.y * second.y + first.z * second.z;
 		}
-		return sum;
+		else if constexpr (Dimensions >= 4) {
+			return first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
+		}
 	}
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
 	//that test was before i knew reverse square root was faster than square root. should be faster now
