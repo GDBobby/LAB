@@ -49,36 +49,40 @@ namespace LAB {
 			y += other.y;
 		}
 		LAB_constexpr Vector operator+(Vector const other) const {
-			Vector ret = *this;
-			ret += other;
-			return ret;
+			return {
+				x + other.x,
+				y + other.y
+			};
 		}
 		LAB_constexpr void operator-=(Vector const other) {
 			x -= other.x;
 			y -= other.y;
 		}
 		LAB_constexpr Vector operator-(Vector const other) const {
-			Vector ret = *this;
-			ret -= other;
-			return ret;
+			return {
+				x - other.x,
+				y - other.y
+			};
 		}
 		LAB_constexpr void operator *=(F const multiplier) {
 			x *= multiplier;
 			y *= multiplier;
 		}
 		LAB_constexpr Vector operator*(F const multiplier) const {
-			Vector ret = *this;
-			ret *= multiplier;
-			return ret;
+			return {
+				x * multiplier,
+				y * multiplier
+			};
 		}
 		LAB_constexpr void operator /=(F const divisor) {
 			x /= divisor;
 			y /= divisor;
 		}
 		LAB_constexpr Vector operator /(F const divisor) const {
-			Vector ret = *this;
-			ret /= divisor;
-			return ret;
+			return Vector{
+				x / divisor,
+				y / divisor,
+			};
 		}
 		
 		LAB_constexpr F SquaredMagnitude() const {
@@ -89,9 +93,14 @@ namespace LAB {
 			return SupportingMath::Sqrt(SquaredMagnitude());
 		}
 
-		LAB_constexpr void Normalize() {
+		LAB_constexpr Vector& Normalize() {
 			const auto mag = Magnitude();
 			operator/=(mag);
+			return *this;
+		}
+		LAB_constexpr Vector Normalize() const{
+			const auto mag = Magnitude();
+			return operator/(mag);
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
@@ -181,9 +190,11 @@ namespace LAB {
 			z += other.z;
 		}
 		LAB_constexpr Vector operator+(Vector const other) const {
-			Vector ret = *this;
-			ret += other;
-			return ret;
+			return Vector{
+				x + other.x,
+				y + other.y,
+				z + other.z
+			};
 		}
 		LAB_constexpr void operator-=(Vector const other) {
 			x -= other.x;
@@ -191,9 +202,11 @@ namespace LAB {
 			z -= other.z;
 		}
 		LAB_constexpr Vector operator-(Vector const other) const {
-			Vector ret = *this;
-			ret -= other;
-			return ret;
+			return Vector{
+				x - other.x,
+				y - other.y,
+				z - other.z
+			};
 		}
 		LAB_constexpr void operator*=(F const multiplier) {
 			x *= multiplier;
@@ -201,9 +214,11 @@ namespace LAB {
 			z *= multiplier;
 		}
 		LAB_constexpr Vector operator*(F const multiplier) const {
-			Vector ret = *this;
-			ret *= multiplier;
-			return ret;
+			return Vector{
+				x * multiplier,
+				y * multiplier,
+				z * multiplier
+			};
 		}
 		LAB_constexpr void operator/=(F const divisor) {
 			x /= divisor;
@@ -211,9 +226,11 @@ namespace LAB {
 			z /= divisor;
 		}
 		LAB_constexpr Vector operator/(F const divisor) const {
-			Vector ret = *this;
-			ret /= divisor;
-			return ret;
+			return Vector{
+				x / divisor,
+				y / divisor,
+				z / divisor
+			};
 		}
 		LAB_constexpr Vector& operator*=(Vector const other){
 			x *= other.x;
@@ -222,9 +239,11 @@ namespace LAB {
 			return *this;
 		}
 		LAB_constexpr Vector operator*(Vector const other) const {
-			Vector ret = *this;
-			ret *= other;
-			return ret;
+			return Vector{
+				x * other.x,
+				y * other.y,
+				z * other.z
+			};
 		}
 		
 		LAB_constexpr F SquaredMagnitude() const {
@@ -240,6 +259,11 @@ namespace LAB {
 			operator/=(mag);
 			return *this;
 		}
+		LAB_constexpr Vector Normalize() const{
+			const auto mag = Magnitude();
+			return operator/(mag);
+		}
+
 		LAB_constexpr F DotProduct(Vector const& other) const {
 			return x * other.x + y * other.y + z * other.z;
 		}
@@ -395,6 +419,10 @@ namespace LAB {
 			const auto mag = Magnitude();
 			operator/=(mag);
 			return *this;
+		}
+		LAB_constexpr Vector Normalize() const{
+			const auto mag = Magnitude();
+			return operator/(mag);
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
