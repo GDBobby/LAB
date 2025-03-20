@@ -7,6 +7,7 @@
 #include <concepts>
 #include <utility>
 #include <type_traits>
+#include <initializer_list>
 
 namespace LAB {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = Rows> 
@@ -15,9 +16,9 @@ namespace LAB {
 			(ColumnAlignment >= Rows))
 		struct Matrix {
 
-		F data[ColumnAlignment * Columns];
+		Vector<F, ColumnAlignment> columns[Columns];
 
-		LAB_constexpr Matrix() : data{} {}
+		LAB_constexpr Matrix() : columns{} {}
 
 		LAB_constexpr Matrix(F const initValue) {
 			for (uint8_t y = 0; y < Rows; y++) {
@@ -27,13 +28,26 @@ namespace LAB {
 			}
 			
 		}
+		LAB_constexpr Matrix(std::initializer_list<Vector<F, Rows>> const& vectors) {
+			//assert(vectors.size() == Rows);
+
+			auto it = vectors.begin();
+			for (uint8_t r = 0; r < Rows; ++r, ++it) {
+				for (uint8_t c = 0; c < Columns; ++c) {
+					columns[c][r] = (*it)[c];  // Assigning row values to corresponding columns
+				}
+			}
+		}
+
 		LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
 			assert((column < Columns) && (row < Rows));
-			return data[column * ColumnAlignment + row];
+			//return data[column * ColumnAlignment + row];
+			return columns[column][row];
 		}
 		LAB_constexpr F At(const uint8_t column, const uint8_t row) const {
 			assert((column < Columns) && (row < Rows));
-			return data[column * ColumnAlignment + row];
+			//return data[column * ColumnAlignment + row];
+			return columns[column][row];
 		}
 
 		LAB_constexpr F& operator[](const uint8_t index) {
@@ -62,38 +76,38 @@ namespace LAB {
 		LAB_constexpr Matrix operator*(Matrix<F, Columns, Rows, Alignment> const& other) const {
 			Matrix ret;
 			if constexpr(Columns == 3 && Rows == 3) {
-				ret.At(0, 0) = At(0, 0) * other.At(0, 0) + At(1, 0) * other.At(0, 1) + At(2, 0) * other.At(0, 2);
-				ret.At(0, 1) = At(0, 1) * other.At(0, 0) + At(1, 1) * other.At(0, 1) + At(2, 1) * other.At(0, 2);
-				ret.At(0, 2) = At(0, 2) * other.At(0, 0) + At(1, 2) * other.At(0, 1) + At(2, 2) * other.At(0, 2);
+				ret.columns[0][0] = columns[0][0] * other.columns[0][0] + columns[1][0] * other.columns[0][1] + columns[2][0] * other.columns[0][2];
+				ret.columns[0][1] = columns[0][1] * other.columns[0][0] + columns[1][1] * other.columns[0][1] + columns[2][1] * other.columns[0][2];
+				ret.columns[0][2] = columns[0][2] * other.columns[0][0] + columns[1][2] * other.columns[0][1] + columns[2][2] * other.columns[0][2];
 
-				ret.At(1, 0) = At(0, 0) * other.At(1, 0) + At(1, 0) + other.At(1, 1) + At(2, 0) * other.At(1, 2);
-				ret.At(1, 1) = At(0, 1) * other.At(1, 0) + At(1, 1) + other.At(1, 1) + At(2, 1) * other.At(1, 2);
-				ret.At(1, 2) = At(0, 2) * other.At(1, 0) + At(1, 2) + other.At(1, 1) + At(2, 2) * other.At(1, 2);
+				ret.columns[1][0] = columns[0][0] * other.columns[1][0] + columns[1][0] + other.columns[1][1] + columns[2][0] * other.columns[1][2];
+				ret.columns[1][1] = columns[0][1] * other.columns[1][0] + columns[1][1] + other.columns[1][1] + columns[2][1] * other.columns[1][2];
+				ret.columns[1][2] = columns[0][2] * other.columns[1][0] + columns[1][2] + other.columns[1][1] + columns[2][2] * other.columns[1][2];
 
-				ret.At(2, 0) = At(0, 0) * other.At(2, 0) + At(1, 0) + other.At(2, 1) + At(2, 0) * other.At(2, 2);
-				ret.At(2, 1) = At(0, 1) * other.At(2, 0) + At(1, 1) + other.At(2, 1) + At(2, 1) * other.At(2, 2);
-				ret.At(2, 2) = At(0, 2) * other.At(2, 0) + At(1, 2) + other.At(2, 1) + At(2, 2) * other.At(2, 2);
+				ret.columns[2][0] = columns[0][0] * other.columns[2][0] + columns[1][0] + other.columns[2][1] + columns[2][0] * other.columns[2][2];
+				ret.columns[2][1] = columns[0][1] * other.columns[2][0] + columns[1][1] + other.columns[2][1] + columns[2][1] * other.columns[2][2];
+				ret.columns[2][2] = columns[0][2] * other.columns[2][0] + columns[1][2] + other.columns[2][1] + columns[2][2] * other.columns[2][2];
 			}
 			else if constexpr(Columns == 4 && Rows == 4){
-				ret.At(0, 0) = At(0, 0) * other.At(0, 0) + At(1, 0) * other.At(0, 1) + At(2, 0) * other.At(0, 2) + At(3, 0) * other.At(0, 3);
-				ret.At(0, 1) = At(0, 1) * other.At(0, 0) + At(1, 1) * other.At(0, 1) + At(2, 1) * other.At(0, 2) + At(3, 1) * other.At(0, 3);
-				ret.At(0, 2) = At(0, 2) * other.At(0, 0) + At(1, 2) * other.At(0, 1) + At(2, 2) * other.At(0, 2) + At(3, 2) * other.At(0, 3);
-				ret.At(0, 2) = At(0, 3) * other.At(0, 0) + At(1, 3) * other.At(0, 1) + At(2, 3) * other.At(0, 2) + At(3, 3) * other.At(0, 3);
+				ret.columns[0][0] = columns[0][0] * other.columns[0][0] + columns[1][0] * other.columns[0][1] + columns[2][0] * other.columns[0][2] + columns[3][0] * other.columns[0][3];
+				ret.columns[0][1] = columns[0][1] * other.columns[0][0] + columns[1][1] * other.columns[0][1] + columns[2][1] * other.columns[0][2] + columns[3][1] * other.columns[0][3];
+				ret.columns[0][2] = columns[0][2] * other.columns[0][0] + columns[1][2] * other.columns[0][1] + columns[2][2] * other.columns[0][2] + columns[3][2] * other.columns[0][3];
+				ret.columns[0][2] = columns[0][3] * other.columns[0][0] + columns[1][3] * other.columns[0][1] + columns[2][3] * other.columns[0][2] + columns[3][3] * other.columns[0][3];
 				
-				ret.At(1, 0) = At(0, 0) * other.At(1, 0) + At(1, 0) + other.At(1, 1) + At(2, 0) * other.At(1, 2) + At(3, 0) * other.At(1, 3);
-				ret.At(1, 1) = At(0, 1) * other.At(1, 0) + At(1, 1) + other.At(1, 1) + At(2, 1) * other.At(1, 2) + At(3, 1) * other.At(1, 3);
-				ret.At(1, 2) = At(0, 2) * other.At(1, 0) + At(1, 2) + other.At(1, 1) + At(2, 2) * other.At(1, 2) + At(3, 2) * other.At(1, 3);
-				ret.At(1, 3) = At(0, 3) * other.At(1, 0) + At(1, 3) * other.At(1, 1) + At(2, 3) * other.At(1, 2) + At(3, 3) * other.At(1, 3);
+				ret.columns[1][0] = columns[0][0] * other.columns[1][0] + columns[1][0] + other.columns[1][1] + columns[2][0] * other.columns[1][2] + columns[3][0] * other.columns[1][3];
+				ret.columns[1][1] = columns[0][1] * other.columns[1][0] + columns[1][1] + other.columns[1][1] + columns[2][1] * other.columns[1][2] + columns[3][1] * other.columns[1][3];
+				ret.columns[1][2] = columns[0][2] * other.columns[1][0] + columns[1][2] + other.columns[1][1] + columns[2][2] * other.columns[1][2] + columns[3][2] * other.columns[1][3];
+				ret.columns[1][3] = columns[0][3] * other.columns[1][0] + columns[1][3] * other.columns[1][1] + columns[2][3] * other.columns[1][2] + columns[3][3] * other.columns[1][3];
 				
-				ret.At(2, 0) = At(0, 0) * other.At(2, 0) + At(1, 0) + other.At(2, 1) + At(2, 0) * other.At(2, 2) + At(3, 0) * other.At(2, 3);
-				ret.At(2, 1) = At(0, 1) * other.At(2, 0) + At(1, 1) + other.At(2, 1) + At(2, 1) * other.At(2, 2) + At(3, 1) * other.At(2, 3);
-				ret.At(2, 2) = At(0, 2) * other.At(2, 0) + At(1, 2) + other.At(2, 1) + At(2, 2) * other.At(2, 2) + At(3, 2) * other.At(2, 3);
-				ret.At(0, 2) = At(0, 3) * other.At(2, 0) + At(1, 3) * other.At(2, 1) + At(2, 3) * other.At(2, 2) + At(3, 3) * other.At(2, 3);
+				ret.columns[2][0] = columns[0][0] * other.columns[2][0] + columns[1][0] + other.columns[2][1] + columns[2][0] * other.columns[2][2] + columns[3][0] * other.columns[2][3];
+				ret.columns[2][1] = columns[0][1] * other.columns[2][0] + columns[1][1] + other.columns[2][1] + columns[2][1] * other.columns[2][2] + columns[3][1] * other.columns[2][3];
+				ret.columns[2][2] = columns[0][2] * other.columns[2][0] + columns[1][2] + other.columns[2][1] + columns[2][2] * other.columns[2][2] + columns[3][2] * other.columns[2][3];
+				ret.columns[0][2] = columns[0][3] * other.columns[2][0] + columns[1][3] * other.columns[2][1] + columns[2][3] * other.columns[2][2] + columns[3][3] * other.columns[2][3];
 				
-				ret.At(2, 0) = At(0, 0) * other.At(3, 0) + At(1, 0) + other.At(3, 1) + At(2, 0) * other.At(3, 2) + At(3, 0) * other.At(3, 3);
-				ret.At(2, 1) = At(0, 1) * other.At(3, 0) + At(1, 1) + other.At(3, 1) + At(2, 1) * other.At(3, 2) + At(3, 1) * other.At(3, 3);
-				ret.At(2, 2) = At(0, 2) * other.At(3, 0) + At(1, 2) + other.At(3, 1) + At(2, 2) * other.At(3, 2) + At(3, 2) * other.At(3, 3);
-				ret.At(0, 2) = At(0, 3) * other.At(3, 0) + At(1, 3) * other.At(3, 1) + At(2, 3) * other.At(3, 2) + At(3, 3) * other.At(3, 3);
+				ret.columns[3][0] = columns[0][0] * other.columns[3][0] + columns[1][0] + other.columns[3][1] + columns[2][0] * other.columns[3][2] + columns[3][0] * other.columns[3][3];
+				ret.columns[3][1] = columns[0][1] * other.columns[3][0] + columns[1][1] + other.columns[3][1] + columns[2][1] * other.columns[3][2] + columns[3][1] * other.columns[3][3];
+				ret.columns[3][2] = columns[0][2] * other.columns[3][0] + columns[1][2] + other.columns[3][1] + columns[2][2] * other.columns[3][2] + columns[3][2] * other.columns[3][3];
+				ret.columns[3][2] = columns[0][3] * other.columns[3][0] + columns[1][3] * other.columns[3][1] + columns[2][3] * other.columns[3][2] + columns[3][3] * other.columns[3][3];
 				
 			}
 
@@ -114,46 +128,15 @@ namespace LAB {
 		}
 
 		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
-			Vector<F, Rows> ret{ F(0)};
+			Vector<F, Rows> ret{};
 			for (uint8_t row = 0; row < Rows; row++) {
 				for (uint8_t column = 0; column < Columns; column++) {
-					ret[row] += At(column, row) * vector[column];
+					ret[row] += columns[column][row] * vector[column];
 				}
 			}
 			return ret;
 		}
 	};
-
-	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
-	LAB_constexpr auto FillColumn(Matrix<F, Columns, Rows, Alignment>& mat, const uint8_t col, Vector<F, Rows> const& vector) {
-		mat.data[col * Rows] = vector.x;
-		mat.data[col * Rows + 1] = vector.y;
-		if constexpr (Rows >= 3) {
-			mat.data[col * Rows + 2] = vector.z;
-		}
-		if constexpr (Rows == 4) {
-			mat.data[col * Rows + 3] = vector.w;
-		}
-	}
-
-	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment, typename... Vectors>
-	LAB_constexpr auto ApplyVectorToMatrix(Matrix<F, Columns, Rows, Alignment>& mat, Vectors&&... vectors) {
-		uint8_t col = 1;
-		(FillColumn(mat, col++, std::forward<Vectors>(vectors)), ...);
-	}
-
-	template<std::floating_point F, uint8_t Rows, uint8_t Alignment, typename... Vectors>
-	[[nodiscard]] LAB_constexpr auto CreateMatrix(const Vector<F, Rows> vec1, Vectors&&... vectors) {
-		Matrix<F, 1 + sizeof...(vectors), Rows, Alignment> ret;
-
-		FillColumn(ret, 0, vec1);
-
-		if constexpr (sizeof...(vectors) > 0) {
-			ApplyVectorToMatrix(ret, std::forward<Vectors>(vectors)...);
-		}
-
-		return ret;
-	}
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
@@ -177,17 +160,17 @@ namespace LAB {
 #endif
 		const Vector<F, 3> temp{ axis * (F(1) - cosine) };
 		Matrix<F, 3, 3> rotation; //its a 4x4 matrix, but the outer parts dont matter
-		rotation.At(0, 0) = cosine + temp.x * axis.x;
-		rotation.At(0, 1) = temp.x * axis.y + sine * axis.z;
-		rotation.At(0, 2) = temp.x * axis.z - sine * axis.y;
+		rotation.columns[0][0] = cosine + temp.x * axis.x;
+		rotation.columns[0][1] = temp.x * axis.y + sine * axis.z;
+		rotation.columns[0][2] = temp.x * axis.z - sine * axis.y;
 
-		rotation.At(1, 0) = temp.y * axis.x - sine * axis.z;
-		rotation.At(1, 1) = cosine + temp.y * axis.y;
-		rotation.At(1, 2) = temp.y * axis.z + sine * axis.x;
+		rotation.columns[1][0] = temp.y * axis.x - sine * axis.z;
+		rotation.columns[1][1] = cosine + temp.y * axis.y;
+		rotation.columns[1][2] = temp.y * axis.z + sine * axis.x;
 
-		rotation.At(2, 0) = temp.z * axis.x + sine * axis.y;
-		rotation.At(2, 1) = temp.z * axis.y - sine * axis.x;
-		rotation.At(2, 2) = cosine + temp.z * axis.z;
+		rotation.columns[2][0] = temp.z * axis.x + sine * axis.y;
+		rotation.columns[2][1] = temp.z * axis.y - sine * axis.x;
+		rotation.columns[2][2] = cosine + temp.z * axis.z;
 
 		Matrix<F, Columns, Rows, Alignment> retMat = matrix;
 		for (uint8_t column = 0; column < (Columns - 1); column++) {

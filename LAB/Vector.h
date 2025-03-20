@@ -28,7 +28,9 @@ namespace LAB {
 			else if (row == 1) {
 				return y;
 			}
-			Unreachable();
+			if constexpr (!std::is_constant_evaluated()) {
+				Unreachable();
+			}
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
 			if (row == 0) {
@@ -37,7 +39,9 @@ namespace LAB {
 			else if (row == 1) {
 				return y;
 			}
-			Unreachable();
+			if constexpr (!std::is_constant_evaluated()) {
+				Unreachable();
+			}
 		}
 
 

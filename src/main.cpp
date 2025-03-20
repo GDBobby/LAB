@@ -64,8 +64,13 @@ int main() {
 		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
 		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
 
-		LAB_constexpr auto mat1 = LAB::CreateMatrix<float, 3, 4>(LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f));
-		LAB_constexpr auto mat2 = LAB::CreateMatrix<float, 3, 3>(LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f));
+		for (uint8_t row = 0; row < 2; row++) {
+			checkMat.columns[0][row] = checkVec1[row];
+		}
+
+
+		LAB_constexpr auto mat1 = LAB::Matrix<float, 3, 3, 4>(LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f));
+		LAB_constexpr auto mat2 = LAB::Matrix<float, 3, 3>(LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f));
 
 		LAB_static_assert(mat1.At(0, 0) == 0.f);
 		LAB_constexpr auto intermediate = mat1 * mat2;
@@ -136,14 +141,14 @@ int main() {
 		LAB_constexpr LAB::Transform<float, 3> transformScale{};
 		LAB_constexpr auto scaleMat = transformScale.GetScaleMatrix();
 		LAB_constexpr LAB::Matrix<float, 4, 4> identityMat{LAB::Identity<float, 4>(1.f)};
-		LAB_static_assert(scaleMat.data[0] == 1.f);
-		LAB_static_assert(identityMat.data[0] == 1.f);
+		LAB_static_assert(scaleMat.columns[0][0] == 1.f);
+		LAB_static_assert(identityMat.columns[0][0] == 1.f);
 
 		LAB_static_assert(scaleMat == identityMat);
-		printf("scale and identity - %.2f:%.2f\n", scaleMat.data[0], identityMat.data[0]);
+		printf("scale and identity - %.2f:%.2f\n", scaleMat.columns[0][0], identityMat.columns[0][0]);
 	}
 	{ //camera functions
-		LAB_constexpr auto proj = LAB::CreateProjectionMatrix<float>(LAB::SupportingMath::DegreesToRadians(70.f), 0.f, 100.f);
+		LAB_constexpr auto proj = LAB::CreateProjectionMatrix<float>(LAB::SupportingMath::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
 	
 		for(uint8_t x = 0; x < 4; x++){
 			for(uint8_t y = 0; y < 4; y++){
