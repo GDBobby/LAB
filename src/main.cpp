@@ -35,7 +35,7 @@ int main() {
 		printf("normalized dots - %.2f\n", vec3aN.DotProduct(vec3bN) + vec3cN.DotProduct(vec3dN));
 
 
-		LAB_constexpr LAB::Matrix<float, 3, 2> imbalancedMat{ 0.f };
+		LAB_constexpr LAB::Matrix<float, 3, 2> imbalancedMat(0.f);
 		printf("imbalanced mat usage : %.2f\n", imbalancedMat.At(2, 1));
 
 		LAB::Vector<float, 2> myVec{ 1.f, 2.f };
@@ -60,17 +60,16 @@ int main() {
 
 		LAB_constexpr LAB::Vector<float, 2> checkVec3(3.f, 4.f);
 
-		LAB_constexpr auto checkMat = LAB::CreateMatrix<float, 2, 2>(checkVec1, checkVec3);
+		LAB_constexpr LAB::Matrix<float, 2, 2> checkMat{{checkVec1, checkVec3 }};
 		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
 		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
+		LAB_constexpr std::array<LAB::Vector<float, 3>, 3> vecArray{ LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f) };
+		//LAB::Matrix<float, 3, 3> checkMatNonConst(0.f);
+		//checkMatNonConst.columns[0] = vecArray[0];
 
-		for (uint8_t row = 0; row < 2; row++) {
-			checkMat.columns[0][row] = checkVec1[row];
-		}
-
-
-		LAB_constexpr auto mat1 = LAB::Matrix<float, 3, 3, 4>(LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f));
-		LAB_constexpr auto mat2 = LAB::Matrix<float, 3, 3>(LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f));
+		LAB_constexpr LAB::Matrix<float, 3, 3, 4> mat1(vecArray);
+		/*
+		LAB_constexpr LAB::Matrix<float, 3, 3> mat2{ LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f) };
 
 		LAB_static_assert(mat1.At(0, 0) == 0.f);
 		LAB_constexpr auto intermediate = mat1 * mat2;
@@ -85,6 +84,7 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&second), sizeof(float));
 			}
 		}
+		*/
 		
 		outFile.close();
 	}

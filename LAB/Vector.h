@@ -21,6 +21,8 @@ namespace LAB {
 		LAB_constexpr Vector(F const x, F const y) : x{ x }, y{ y } {}
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
+		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y } {}
+
 		LAB_constexpr F& operator[](uint8_t const row) {
 			if (row == 0) {
 				return x;
@@ -28,9 +30,8 @@ namespace LAB {
 			else if (row == 1) {
 				return y;
 			}
-			if constexpr (!std::is_constant_evaluated()) {
-				Unreachable();
-			}
+			return x;
+			
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
 			if (row == 0) {
@@ -39,11 +40,16 @@ namespace LAB {
 			else if (row == 1) {
 				return y;
 			}
-			if constexpr (!std::is_constant_evaluated()) {
-				Unreachable();
-			}
+			return x;
+			
 		}
 
+		template<uint8_t DimensionsOther>
+		LAB_constexpr Vector& operator=(Vector<F, DimensionsOther> const& other) {
+			x = other.x;
+			y = other.y;
+			return *this;
+		}
 
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y);
@@ -160,6 +166,9 @@ namespace LAB {
 		LAB_constexpr Vector(F const x, F const y, F const z) : x{ x }, y{ y }, z{ z } {}
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
+		LAB_constexpr Vector(Vector<F, 2> const& other) : x{ other.x }, y{ other.y } {}
+		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z } {}
+
 		LAB_constexpr F& operator[](uint8_t const row) {
 			if (row == 0) {
 				return x;
@@ -170,7 +179,7 @@ namespace LAB {
 			else if (row == 2) {
 				return z;
 			}
-			Unreachable();
+			return x;
 		}
 		LAB_constexpr F operator[](uint8_t const row) const {
 			if (row == 0) {
@@ -182,7 +191,21 @@ namespace LAB {
 			else if (row == 2) {
 				return z;
 			}
-			Unreachable();
+			return x;
+		}
+
+		template<uint8_t DimensionsOther> 
+		LAB_constexpr Vector& operator=(Vector<F, DimensionsOther> const& other) {
+			if constexpr (DimensionsOther == 2) {
+				x = other.x;
+				y = other.y;
+			}
+			else if constexpr (DimensionsOther >= 3) {
+				x = other.x;
+				y = other.y;
+				z = other.z;
+			}
+			return *this;
 		}
 
 		LAB_constexpr bool operator==(Vector const other) const {
@@ -293,6 +316,9 @@ namespace LAB {
 		LAB_constexpr Vector() {}
 		LAB_constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
 		LAB_constexpr Vector(F all) : x{ all }, y{ all }, z{ all }, w{ all } {}
+		LAB_constexpr Vector(Vector<F, 2> const& other) : x{ other.x }, y{ other.y }, z{ F(0)}, w{F(0)} {}
+		LAB_constexpr Vector(Vector<F, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ F(0) } {}
+		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
 			if (row == 0) {
@@ -324,6 +350,27 @@ namespace LAB {
 			}
 			Unreachable();
 		}
+
+		template<uint8_t DimensionsOther>
+		LAB_constexpr Vector& operator=(Vector<F, DimensionsOther> const& other) {
+			if constexpr (DimensionsOther == 2) {
+				x = other.x;
+				y = other.y;
+			}
+			else if constexpr (DimensionsOther == 3) {
+				x = other.x;
+				y = other.y;
+				z = other.z;
+			}
+			else if constexpr (DimensionsOther == 4) {
+				x = other.x;
+				y = other.y;
+				z = other.z;
+				w = other.w;
+			}
+			return *this;
+		}
+
 		LAB_constexpr bool operator==(Vector const other) const {
 			return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
 		}
@@ -517,5 +564,6 @@ namespace LAB {
 	}
 
 	//look up https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process for the 4th dimensional Orthogonal
+
 }
 

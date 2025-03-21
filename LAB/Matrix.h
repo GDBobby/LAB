@@ -7,15 +7,15 @@
 #include <concepts>
 #include <utility>
 #include <type_traits>
-#include <initializer_list>
+#include <array>
 
 namespace LAB {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = Rows> 
-		requires((Rows <= 4) && (Rows > 1) && 
+	requires((Rows <= 4) && (Rows > 1) && 
 			(Columns <= 4) && (Columns > 1) && 
 			(ColumnAlignment >= Rows))
-		struct Matrix {
-
+	struct Matrix {
+		
 		Vector<F, ColumnAlignment> columns[Columns];
 
 		LAB_constexpr Matrix() : columns{} {}
@@ -26,16 +26,14 @@ namespace LAB {
 					At(x, y) = initValue;
 				}
 			}
-			
 		}
-		LAB_constexpr Matrix(std::initializer_list<Vector<F, Rows>> const& vectors) {
-			//assert(vectors.size() == Rows);
 
-			auto it = vectors.begin();
-			for (uint8_t r = 0; r < Rows; ++r, ++it) {
-				for (uint8_t c = 0; c < Columns; ++c) {
-					columns[c][r] = (*it)[c];  // Assigning row values to corresponding columns
-				}
+
+		LAB_constexpr explicit Matrix(std::array<Vector<F, Rows>, Columns> const& vectors) {
+			//assert(vectors.size() == Columns);
+
+			for (uint8_t column = 0; column < Columns; ++column) {
+				columns[column] = vectors[column];
 			}
 		}
 
@@ -140,11 +138,11 @@ namespace LAB {
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
-	[[nodiscard]] LAB_constexpr Matrix<F, Columns, Rows, Alignment> Translate(Matrix<F, Columns, Rows, Alignment> const& matrix, Vector<F, Rows - 1> const translation) {
+	[[nodiscard]] LAB_constexpr auto Translate(Matrix<F, Columns, Rows, Alignment> const& matrix, Vector<F, Rows - 1> const translation) {
 		Matrix<F, Columns, Rows, Alignment> ret = matrix;
 		for (uint8_t row = 0; row < (Rows - 1); row++) {
 			for (uint8_t column = 0; column < (Columns - 1); column++) {
-				ret.At(3, row) += matrix.At(column, row) * translation[column];
+				ret.columns[3][row] += matrix.columns[column][row] * translation[column];
 			}
 		}
 		return ret;
@@ -152,7 +150,7 @@ namespace LAB {
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
-	[[nodiscard]] LAB_constexpr Matrix<F, Columns, Rows, Alignment> Rotate(Matrix<F, Columns, Rows, Alignment> const& matrix, F const angle, Vector<F, Rows - 1> const axis) {
+	[[nodiscard]] LAB_constexpr auto Rotate(Matrix<F, Columns, Rows, Alignment> const& matrix, F const angle, Vector<F, Rows - 1> const axis) {
 		F const cosine = SupportingMath::Cos(angle);
 		F const sine = SupportingMath::Sin(angle);
 #if MATH_DEBUGGING
@@ -185,7 +183,7 @@ namespace LAB {
 
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
-	[[nodiscard]] LAB_constexpr Matrix<F, Columns, Rows, Alignment> Scale(Matrix<F, Columns, Rows, Alignment> const& matrix, Vector<F, Rows - 1> const scalingVec) {
+	[[nodiscard]] LAB_constexpr auto Scale(Matrix<F, Columns, Rows, Alignment> const& matrix, Vector<F, Rows - 1> const scalingVec) {
 		Matrix<F, Columns, Rows, Alignment> retMat = matrix;
 		for (uint8_t column = 0; column < (Columns - 1); column++) {
 			for (uint8_t row = 0; row < Rows; row++) {
