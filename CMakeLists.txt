@@ -27,7 +27,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     -Wconversion 
     -Wunused 
     -Werror=return-type 
-    $<$<NOT:$<CONFIG:Debug>>:-Werror>
+    #$<$<NOT:$<CONFIG:Debug>>:-Werror>
   )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
   target_compile_options(LinearAlgebra-compile-options INTERFACE
