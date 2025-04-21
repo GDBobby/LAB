@@ -92,6 +92,17 @@ namespace LAB {
 			*this = tempCopy * other;
 			return *this;
 		}
+		template<uint8_t Alignment>
+		LAB_constexpr bool operator==(Matrix<F, Columns, Rows, Alignment> const& other) const{
+			for(uint8_t y = 0; y < Rows; y++){
+				for(uint8_t x = 0; x < Columns; x++){
+					if(columns[x][y] != other[x][y]){
+						return false;
+					}
+				}
+			}
+			return true;	
+		}
 
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix operator*(Matrix<F, Columns, Rows, Alignment> const& other) const {
@@ -161,26 +172,32 @@ namespace LAB {
 		}
 
 
-		template<uint8_t Alignment>
-		LAB_constexpr bool operator==(Matrix<F, Columns, Rows, Alignment> const& other) const{
-			for(uint8_t y = 0; y < Rows; y++){
-				for(uint8_t x = 0; x < Columns; x++){
-					if(At(x, y) != other.At(x, y)){
-						return false;
-					}
-				}
-			}
-			return true;	
-		}
 
 		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
-			Vector<F, Rows> ret{};
-			for (uint8_t row = 0; row < Rows; row++) {
-				for (uint8_t column = 0; column < Columns; column++) {
-					ret[row] += columns[column][row] * vector[column];
+			if constexpr (std::is_constant_evaluated()){
+				Vector<F, Rows> ret{};
+				for (uint8_t row = 0; row < Rows; row++) {
+					for (uint8_t column = 0; column < Columns; column++) {
+						ret[row] += columns[column][row] * vector[column];
+					}
 				}
+				return ret;
 			}
-			return ret;
+			else if constexpr (Rows == 4) {
+				Vector<F, Rows> ret;
+				{
+					const __m128 scalar = _mm_set1_ps(vector.x);
+					const __m128 scaledColumn = _mm_mul_ps(columns[0].vec, scalar);
+					ret.vec = scaledColumn;
+				}
+				for (uint8_t column = 1; column < Columns; ++column) {
+					const __m128 scalar = _mm_set1_ps(vector[column]);
+					const __m128 scaledColumn = _mm_mul_ps(columns[column].vec, scalar);
+					ret.vec = _mm_add_ps(ret.vec, scaledColumn);
+				}
+				return ret;
+			}
+			Unreachable();
 		}
 	};
 

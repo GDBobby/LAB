@@ -13,27 +13,27 @@ namespace LAB{
 
         const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5));
         //const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5)); 
-        ret.At(0, 0) = scale / aspectRatio;  // scale the x coordinates of the projected point 
-        ret.At(1, 1) = scale;  // scale the y coordinates of the projected point 
-        ret.At(2, 2) = -far / (far - near);  // used to remap z to [0,1] 
-        ret.At(3, 2) = -far * near / (far - near);  // used to remap z [0,1] 
+        ret.columns[0][0] = scale / aspectRatio;  // scale the x coordinates of the projected point 
+        ret.columns[1][1] = scale;  // scale the y coordinates of the projected point 
+        ret.columns[2][2] = -far / (far - near);  // used to remap z to [0,1] 
+        ret.columns[3][2] = -far * near / (far - near);  // used to remap z [0,1] 
 
-        ret.At(2, 3) = F(-1);  // set w = -z 
-
-        ret.At(0, 1) = F(0);
-        ret.At(0, 2) = F(0);
-        ret.At(0, 3) = F(0);
-
-        ret.At(1, 0) = F(0);
-        ret.At(1, 2) = F(0);
-        ret.At(1, 3) = F(0);
+        ret.columns[2][3] = F(-1);  // set w = -z 
+    
+        ret.columns[0][1] = F(0);
+        ret.columns[0][2] = F(0);
+        ret.columns[0][3] = F(0);
+    
+        ret.columns[1][0] = F(0);
+        ret.columns[1][2] = F(0);
+        ret.columns[1][3] = F(0);
         
-        ret.At(2, 0) = F(0);
-        ret.At(2, 1) = F(0);
+        ret.columns[2][0] = F(0);
+        ret.columns[2][1] = F(0);
         
-        ret.At(3, 0) = F(0);
-        ret.At(3, 1) = F(0);
-        ret.At(3, 3) = F(0); 
+        ret.columns[3][0] = F(0);
+        ret.columns[3][1] = F(0);
+        ret.columns[3][3] = F(0); 
 
         return ret;
     }
@@ -44,25 +44,25 @@ namespace LAB{
         const F tMb = top - bottom;
         const float fMn = far - near;
         Matrix<F, 4, 4> ret;
-        ret.At(0, 0) = F(2) / rMl;
-        ret.At(0, 1) = F(0);
-        ret.At(0, 2) = F(0);
-        ret.At(0, 3) = F(0);
+        ret.columns[0][0] = F(2) / rMl;
+        ret.columns[0][1] = F(0);
+        ret.columns[0][2] = F(0);
+        ret.columns[0][3] = F(0);
 
-        ret.At(1, 0) = F(0);
-        ret.At(1, 1) = F(2) / tMb;
-        ret.At(1, 2) = F(0);
-        ret.At(1, 3) = F(0);
+        ret.columns[1][0] = F(0);
+        ret.columns[1][1] = F(2) / tMb;
+        ret.columns[1][2] = F(0);
+        ret.columns[1][3] = F(0);
 
-        ret.At(2, 0) = F(0);
-        ret.At(2, 1) = F(0);
-        ret.At(2, 2) = F(-2) / fMn;
-        ret.At(2, 3) = F(0);
+        ret.columns[2][0] = F(0);
+        ret.columns[2][1] = F(0);
+        ret.columns[2][2] = F(-2) / fMn;
+        ret.columns[2][3] = F(0);
 
-        ret.At(3, 0) = -(right + left) / rMl;
-        ret.At(3, 1) = -(top + bottom) / tMb;
-        ret.At(3, 2) = -(far + near) / fMn;
-        ret.At(3, 3) = F(1);
+        ret.columns[3][0] = -(right + left) / rMl;
+        ret.columns[3][1] = -(top + bottom) / tMb;
+        ret.columns[3][2] = -(far + near) / fMn;
+        ret.columns[3][3] = F(1);
 
         return ret;
     }
@@ -82,41 +82,45 @@ namespace LAB{
         constexpr int r_axis = CoordinateSystem::right - (!r_sign * 3);
         
         if constexpr(f_sign){
-            ret.At(0, f_axis) = -forward.x;
-            ret.At(1, f_axis) = -forward.y;
-            ret.At(2, f_axis) = -forward.z;
-            ret.At(3, f_axis) = position.DotProduct(forward);
+            ret.columns[0][f_axis] = -forward.x;
+            ret.columns[1][f_axis] = -forward.y;
+            ret.columns[2][f_axis] = -forward.z;
+            ret.columns[3][f_axis] = position.DotProduct(forward);
         }
         else{
-            ret.At(0, f_axis) = forward.x;
-            ret.At(1, f_axis) = forward.y;
-            ret.At(2, f_axis) = forward.z;
-            ret.At(3, f_axis) = -position.DotProduct(forward);
+            ret.columns[0][f_axis] = forward.x;
+            ret.columns[1][f_axis] = forward.y;
+            ret.columns[2][f_axis] = forward.z;
+            ret.columns[3][f_axis] = -position.DotProduct(forward);
         }
         if constexpr(u_sign){
-            ret.At(0, u_axis) = -up.x;
-            ret.At(1, u_axis) = -up.y;
-            ret.At(2, u_axis) = -up.z;
-            ret.At(3, u_axis) = position.DotProduct(up);
+            ret.columns[0][u_axis] = -up.x;
+            ret.columns[1][u_axis] = -up.y;
+            ret.columns[2][u_axis] = -up.z;
+            ret.columns[3][u_axis] = position.DotProduct(up);
         }
         else{
-            ret.At(0, u_axis) = up.x;
-            ret.At(1, u_axis) = up.y;
-            ret.At(2, u_axis) = up.z;
-            ret.At(3, u_axis) = -position.DotProduct(up);
+            ret.columns[0][u_axis] = up.x;
+            ret.columns[1][u_axis] = up.y;
+            ret.columns[2][u_axis] = up.z;
+            ret.columns[3][u_axis] = -position.DotProduct(up);
         }
         if constexpr(r_sign){
-            ret.At(0, r_axis) = -right.x;
-            ret.At(1, r_axis) = -right.y;
-            ret.At(2, r_axis) = -right.z;
-            ret.At(3, r_axis) = position.DotProduct(right);
+            ret.columns[0][r_axis] = -right.x;
+            ret.columns[1][r_axis] = -right.y;
+            ret.columns[2][r_axis] = -right.z;
+            ret.columns[3][r_axis] = position.DotProduct(right);
         }
         else{
-            ret.At(0, r_axis) = right.x;
-            ret.At(1, r_axis) = right.y;
-            ret.At(2, r_axis) = right.z;
-            ret.At(3, r_axis) = -position.DotProduct(right);
+            ret.columns[0][r_axis] = right.x;
+            ret.columns[1][r_axis] = right.y;
+            ret.columns[2][r_axis] = right.z;
+            ret.columns[3][r_axis] = -position.DotProduct(right);
         }
+        ret.columns[0][3] = F(0);
+        ret.columns[1][3] = F(0);
+        ret.columns[2][3] = F(0);
+        ret.columns[3][3] = F(1);
         return ret;
     }
 }
