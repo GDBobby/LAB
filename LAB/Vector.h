@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <concepts>
 
+#include <immintrin.h>
+
 namespace LAB {
 	//F short for floating point, can be double or float, Dimensions is short for dimensions
 	template<std::floating_point F, uint8_t Dimensions> 
@@ -22,6 +24,11 @@ namespace LAB {
 		LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
 		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y } {}
+		LAB_constexpr Vector& operator=(Vector const& other){
+			x = other.x;
+			y = other.y;
+			return *this;
+		}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
 			if (row == 0) {
@@ -168,6 +175,12 @@ namespace LAB {
 
 		LAB_constexpr Vector(Vector<F, 2> const& other) : x{ other.x }, y{ other.y } {}
 		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z } {}
+		LAB_constexpr Vector& operator=(Vector const& other){
+			x = other.x;
+			y = other.y;
+			z = other.z;
+			return *this;
+		}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
 			if (row == 0) {
@@ -308,10 +321,15 @@ namespace LAB {
 
 	template<std::floating_point F>
 	struct Vector<F, 4> {
-		F x;
-		F y;
-		F z;
-		F w;
+		union{
+			struct {
+				F x;
+				F y;
+				F z;
+				F w;
+			};
+			__m128 vec;
+		};
 
 		LAB_constexpr Vector() {}
 		LAB_constexpr Vector(F x, F y, F z, F w) : x{ x }, y{ y }, z{ z }, w{ w } {}
@@ -319,6 +337,18 @@ namespace LAB {
 		LAB_constexpr Vector(Vector<F, 2> const& other) : x{ other.x }, y{ other.y }, z{ F(0)}, w{F(0)} {}
 		LAB_constexpr Vector(Vector<F, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ F(0) } {}
 		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
+		LAB_constexpr Vector& operator=(Vector const& other){
+			if constexpr (std::is_constant_evaluated()){
+				x = other.x;
+				y = other.y;
+				z = other.z;
+				w = other.w;
+			}
+			else{
+				vec = other.vec;
+			}
+			return *this;
+		}
 
 		LAB_constexpr F& operator[](uint8_t const row) {
 			if (row == 0) {

@@ -1,7 +1,6 @@
 #pragma once
 #include <concepts>
 #include <cstdint>
-#include <numbers>
 #include <bit>
 
 //#define USING_CMATH
@@ -14,7 +13,7 @@
 namespace LAB{
 	namespace SupportingMath {
 		template<std::floating_point F>
-		inline constexpr F PI = std::numbers::pi_v<F>;
+		inline constexpr F PI = F(3.1415926535);
 
 		template<std::floating_point F, bool Inverse = false>
 		static LAB_constexpr F GetPI(F multiplier) {
@@ -138,8 +137,8 @@ namespace LAB{
 
 		template<std::floating_point F>
 		LAB_constexpr F Sin(F const input) {
-			int si = int(input * (F(0.5) * QT_Sine::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
-			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine::size);
+			int si = int(input * (F(0.5) * QT_Sine::size / PI<F>)); // Would be more accurate with qRound, but slower.
+			const F d = input - F(si) * (F(2.0) * PI<F> / QT_Sine::size);
 			int ci = si + QT_Sine::size/ 4;
 			si &= QT_Sine::size - 1;
 			ci &= QT_Sine::size - 1;
@@ -148,8 +147,8 @@ namespace LAB{
 
 		template<std::floating_point F>
 		LAB_constexpr F Cos(F const input) {
-			int si = int(input * (F(0.5) * QT_Sine::size / std::numbers::pi_v<F>)); // Would be more accurate with qRound, but slower.
-			const F d = input - F(si) * (F(2.0) * std::numbers::pi_v<F> / QT_Sine::size);
+			int si = int(input * (F(0.5) * QT_Sine::size / PI<F>)); // Would be more accurate with qRound, but slower.
+			const F d = input - F(si) * (F(2.0) * PI<F> / QT_Sine::size);
 			int ci = si + QT_Sine::size / 4;
 			si &= QT_Sine::size - 1;
 			ci &= QT_Sine::size - 1;

@@ -12,3 +12,4 @@ LinearAlgebra-debug
 LinearAlgebra
 *.exe
 out/
+.vscode/settings.json

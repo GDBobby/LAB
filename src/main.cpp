@@ -22,6 +22,13 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
+	{
+		LAB_constexpr LAB::Matrix<float, 4, 4> test1{0.f};
+		LAB_constexpr LAB::Matrix<float, 4, 4> test2{1.f};
+
+		LAB_constexpr LAB::Matrix<float, 4 ,4> test3 = LAB::Matrix<float, 4, 4>(0.f) * LAB::Matrix<float, 4, 4>(1.f);
+	}
+
 	{ //vectors
 		LAB_constexpr LAB::Vector<float, 3> vec3a(1.0f, 2.0f, 3.0f);
 		LAB_constexpr LAB::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
@@ -63,11 +70,11 @@ int main() {
 		LAB_constexpr LAB::Matrix<float, 2, 2> checkMat{{checkVec1, checkVec3 }};
 		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
 		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
-		LAB_constexpr std::array<LAB::Vector<float, 3>, 3> vecArray{ LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f) };
+		//LAB_constexpr std::array<LAB::Vector<float, 3>, 3> vecArray{ LAB::Vector<float, 3>(0.f, 1.f, 2.f), LAB::Vector<float, 3>(2.f, 3.f, 4.f), LAB::Vector<float, 3>(3.f, 4.f, 5.f) };
 		//LAB::Matrix<float, 3, 3> checkMatNonConst(0.f);
 		//checkMatNonConst.columns[0] = vecArray[0];
 
-		LAB_constexpr LAB::Matrix<float, 3, 3, 4> mat1(vecArray);
+		//LAB_constexpr LAB::Matrix<float, 3, 3, 4> mat1(vecArray);
 		/*
 		LAB_constexpr LAB::Matrix<float, 3, 3> mat2{ LAB::Vector<float, 3>(10.f, 11.f, 12.f), LAB::Vector<float, 3>(22.f, 23.f, 24.f), LAB::Vector<float, 3>(33.f, 34.f, 35.f) };
 
@@ -88,6 +95,7 @@ int main() {
 		
 		outFile.close();
 	}
+	/*
 	{ //rotation, scale, and translate of matrices
 		LAB_constexpr LAB::Vector<float, 3> testVec{ 0.f, 1.f, 2.f };
 		LAB_constexpr float testFloat0 = testVec[0];
@@ -164,6 +172,7 @@ int main() {
 			}
 		}
 	}
+	*/
 	{ //trig functions
 		LAB_constexpr float trigInput = 50.f;
 		LAB_constexpr auto cosRet = LAB::SupportingMath::Cos(trigInput);
