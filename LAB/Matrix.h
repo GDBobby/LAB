@@ -186,14 +186,10 @@ namespace LAB {
 			else if constexpr (Rows == 4) {
 				Vector<F, Rows> ret;
 				{
-					const __m128 scalar = _mm_set1_ps(vector.x);
-					const __m128 scaledColumn = _mm_mul_ps(columns[0].vec, scalar);
-					ret.vec = scaledColumn;
+					ret.vec = _mm_mul_ps(columns[0].vec, _mm_set1_ps(vector.x));
 				}
 				for (uint8_t column = 1; column < Columns; ++column) {
-					const __m128 scalar = _mm_set1_ps(vector[column]);
-					const __m128 scaledColumn = _mm_mul_ps(columns[column].vec, scalar);
-					ret.vec = _mm_add_ps(ret.vec, scaledColumn);
+					ret.vec = _mm_add_ps(ret.vec, _mm_mul_ps(columns[column].vec, _mm_set1_ps(vector[column])));
 				}
 				return ret;
 			}
