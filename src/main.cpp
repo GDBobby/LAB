@@ -29,6 +29,11 @@ int main() {
 		LAB_constexpr LAB::Matrix<float, 4 ,4> test3 = test1 * test2;
 		LAB_constexpr LAB::Vector<float, 4> test4 = test1 * LAB::Vector<float, 4>{1.f};
 		printf("test mat multiplpication print : %.2f - %.2f\n", test3.columns[0][0], test4.x);
+
+		LAB::Matrix<float, 4, 4> crossTest{1.f};
+		LAB::Matrix<float, 4, 4> crossTest2{2.f};
+		LAB::Matrix<float, 4, 4> crossTestOut = crossTest * crossTest2;
+		outFile.write(reinterpret_cast<const char*>(&crossTestOut.columns), sizeof(float) * 4 * 4);
 	}
 
 	{ //vectors
@@ -42,7 +47,6 @@ int main() {
 		LAB_constexpr LAB::Vector<float, 3> vec3cN = vec3c.Normalized();
 		LAB_constexpr LAB::Vector<float, 3> vec3dN = vec3d.Normalized();
 		printf("normalized dots - %.2f\n", vec3aN.DotProduct(vec3bN) + vec3cN.DotProduct(vec3dN));
-
 
 		LAB_constexpr LAB::Matrix<float, 3, 2> imbalancedMat(0.f);
 		printf("imbalanced mat usage : %.2f\n", imbalancedMat.At(2, 1));

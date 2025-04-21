@@ -8,6 +8,7 @@
 #include <utility>
 #include <type_traits>
 #include <array>
+#include <cstring>
 
 namespace LAB {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = Rows> 
@@ -46,7 +47,7 @@ namespace LAB {
 				}
 			}
 			else{
-				memcpy(columns, other.columns, sizeof(F) * Columns * ColumnAlignment);
+				std::memcpy(columns, other.columns, sizeof(F) * Columns * ColumnAlignment);
 			}
 		}
 		LAB_constexpr Matrix& operator=(Matrix const& other){
@@ -114,6 +115,40 @@ namespace LAB {
 			return true;	
 		}
 
+
+		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
+			if constexpr (std::is_constant_evaluated()){
+				if constexpr(Rows == 4 && Columns == 4){
+					const Vector<F, 4> mul0 = columns[0] * vector.x;
+					const Vector<F, 4> mul1 = columns[1] * vector.y;
+					const Vector<F, 4> mul2 = columns[2] * vector.z;
+					const Vector<F, 4> mul3 = columns[3] * vector.w;
+					return mul0 + mul1 + mul2 + mul3;
+				}
+				else {
+					Vector<F, Rows> ret{F(0)};
+					for (uint8_t row = 0; row < Rows; row++) {
+						for (uint8_t column = 0; column < Columns; column++) {
+							ret[row] += columns[column][row] * vector[column];
+						}
+					}
+					return ret;
+				}
+			}
+			else if constexpr (Rows == 4 && Columns == 4) {
+				//copying glm implementation
+
+				const __m128 Mul0 = __mm_mul_ps(columns[0].vec, _mm_set1_ps(vector.x));
+				const __m128 Mul1 = __mm_mul_ps(columns[1].vec, _mm_set1_ps(vector.y));
+				const __m128 Mul2 = __mm_mul_ps(columns[2].vec, _mm_set1_ps(vector.z));
+				const __m128 Mul3 = __mm_mul_ps(columns[3].vec, _mm_set1_ps(vector.w));
+				return Vector<F, Rows>{_mm_add_ps(_mm_add_ps(Mul0, Mul1), _mm_add_ps(Mul2, Mul3))};
+			}
+			//this is an error for any size other than 4/4 i think
+			Unreachable();
+		}
+
+
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix operator*(Matrix<F, Columns, Rows, Alignment> const& other) const {
 			if constexpr(Columns == 3 && Rows == 3) {
@@ -133,92 +168,15 @@ namespace LAB {
 				return ret;
 			}
 			else if constexpr(Columns == 4 && Rows == 4){
-				if (std::is_constant_evaluated()) {
-					Matrix ret{F(0)};
-					ret.columns[0][0] = columns[0][0] * other.columns[0][0] + columns[1][0] * other.columns[0][1] + columns[2][0] * other.columns[0][2] + columns[3][0] * other.columns[0][3];
-					ret.columns[0][1] = columns[0][1] * other.columns[0][0] + columns[1][1] * other.columns[0][1] + columns[2][1] * other.columns[0][2] + columns[3][1] * other.columns[0][3];
-					ret.columns[0][2] = columns[0][2] * other.columns[0][0] + columns[1][2] * other.columns[0][1] + columns[2][2] * other.columns[0][2] + columns[3][2] * other.columns[0][3];
-					ret.columns[0][3] = columns[0][3] * other.columns[0][0] + columns[1][3] * other.columns[0][1] + columns[2][3] * other.columns[0][2] + columns[3][3] * other.columns[0][3];
-					
-					ret.columns[1][0] = columns[0][0] * other.columns[1][0] + columns[1][0] + other.columns[1][1] + columns[2][0] * other.columns[1][2] + columns[3][0] * other.columns[1][3];
-					ret.columns[1][1] = columns[0][1] * other.columns[1][0] + columns[1][1] + other.columns[1][1] + columns[2][1] * other.columns[1][2] + columns[3][1] * other.columns[1][3];
-					ret.columns[1][2] = columns[0][2] * other.columns[1][0] + columns[1][2] + other.columns[1][1] + columns[2][2] * other.columns[1][2] + columns[3][2] * other.columns[1][3];
-					ret.columns[1][3] = columns[0][3] * other.columns[1][0] + columns[1][3] * other.columns[1][1] + columns[2][3] * other.columns[1][2] + columns[3][3] * other.columns[1][3];
-					
-					ret.columns[2][0] = columns[0][0] * other.columns[2][0] + columns[1][0] + other.columns[2][1] + columns[2][0] * other.columns[2][2] + columns[3][0] * other.columns[2][3];
-					ret.columns[2][1] = columns[0][1] * other.columns[2][0] + columns[1][1] + other.columns[2][1] + columns[2][1] * other.columns[2][2] + columns[3][1] * other.columns[2][3];
-					ret.columns[2][2] = columns[0][2] * other.columns[2][0] + columns[1][2] + other.columns[2][1] + columns[2][2] * other.columns[2][2] + columns[3][2] * other.columns[2][3];
-					ret.columns[0][3] = columns[0][3] * other.columns[2][0] + columns[1][3] * other.columns[2][1] + columns[2][3] * other.columns[2][2] + columns[3][3] * other.columns[2][3];
-					
-					ret.columns[3][0] = columns[0][0] * other.columns[3][0] + columns[1][0] + other.columns[3][1] + columns[2][0] * other.columns[3][2] + columns[3][0] * other.columns[3][3];
-					ret.columns[3][1] = columns[0][1] * other.columns[3][0] + columns[1][1] + other.columns[3][1] + columns[2][1] * other.columns[3][2] + columns[3][1] * other.columns[3][3];
-					ret.columns[3][2] = columns[0][2] * other.columns[3][0] + columns[1][2] + other.columns[3][1] + columns[2][2] * other.columns[3][2] + columns[3][2] * other.columns[3][3];
-					ret.columns[3][3] = columns[0][3] * other.columns[3][0] + columns[1][3] * other.columns[3][1] + columns[2][3] * other.columns[3][2] + columns[3][3] * other.columns[3][3];
-					return ret;
-				}
-				else{
-					Matrix ret;
-					for(uint8_t i = 0; i < 4; ++i){
-						const __m128 otherCol0 = _mm_set1_ps(other.columns[i].x);
-						const __m128 otherCol1 = _mm_set1_ps(other.columns[i].y);
-						const __m128 otherCol2 = _mm_set1_ps(other.columns[i].z);
-						const __m128 otherCol3 = _mm_set1_ps(other.columns[i].w);
-					
-						const __m128 mul0 = _mm_mul_ps(columns[0].vec, otherCol0);
-						const __m128 mul1 = _mm_mul_ps(columns[1].vec, otherCol1);
-						const __m128 mul2 = _mm_mul_ps(columns[2].vec, otherCol2);
-						const __m128 mul3 = _mm_mul_ps(columns[3].vec, otherCol3);
-					
-						__m128 col = mul0;
-						col = _mm_add_ps(col, mul1);
-						col = _mm_add_ps(col, mul2);
-						col = _mm_add_ps(col, mul3);
-
-						ret.columns[i].vec = col;
-					}
-					return ret;
-				}
+				//if i can get the initializer list constructor working i can condense this a little bit
+				Matrix ret;
+				//this is the matrix * vector operator
+				ret.columns[0] = this->operator*(other.columns[0]);
+				ret.columns[1] = this->operator*(other.columns[1]);
+				ret.columns[2] = this->operator*(other.columns[2]);
+				ret.columns[3] = this->operator*(other.columns[3]);
+				return ret;
 			}
-		}
-
-
-
-		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
-			if constexpr (std::is_constant_evaluated()){
-				if constexpr(Rows == 4 && Columns == 4){
-					const Vector<F, 4> mul0 = columns[0] * vector.x;
-					const Vector<F, 4> mul1 = columns[1] * vector.y;
-					const Vector<F, 4> mul2 = columns[2] * vector.z;
-					const Vector<F, 4> mul3 = columns[3] * vector.w;
-					return mul0 + mul1 + mul2 + mul3;
-
-				}
-				else {
-					Vector<F, Rows> ret{F(0)};
-					for (uint8_t row = 0; row < Rows; row++) {
-						for (uint8_t column = 0; column < Columns; column++) {
-							ret[row] += columns[column][row] * vector[column];
-						}
-					}
-					return ret;
-				}
-			}
-			else if constexpr (Rows == 4 && Columns == 4) {
-				//copying glm implementation
-
-				const __m128 Mov0(_mm_set1_ps(vector.x));
-				const __m128 Mov1(_mm_set1_ps(vector.y));
-				const __m128 Mov2(_mm_set1_ps(vector.z));
-				const __m128 Mov3(_mm_set1_ps(vector.w));
-				const __m128 Mul0 = columns[0].vec * Mov0;
-				const __m128 Mul1 = columns[1].vec * Mov1;
-				const __m128 Add0 = _mm_add_ps(Mul0, Mul1);
-				const __m128 Mul2 = columns[2].vec * Mov2;
-				const __m128 Mul3 = columns[3].vec * Mov3;
-				const __m128 Add1 = _mm_add_ps(Mul2, Mul3);
-				return Vector<F, Rows>{_mm_add_ps(Add0, Add1)};
-			}
-			Unreachable();
 		}
 	};
 
