@@ -27,7 +27,8 @@ int main() {
 		LAB_constexpr LAB::Matrix<float, 4, 4> test2{1.f};
 
 		LAB_constexpr LAB::Matrix<float, 4 ,4> test3 = test1 * test2;
-		printf("test mat multiplpication print : %.2f\n", test3.columns[0][0]);
+		LAB_constexpr LAB::Vector<float, 4> test4 = test1 * LAB::Vector<float, 4>{1.f};
+		printf("test mat multiplpication print : %.2f - %.2f\n", test3.columns[0][0], test4.x);
 	}
 
 	{ //vectors

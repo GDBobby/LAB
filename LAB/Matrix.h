@@ -175,7 +175,7 @@ namespace LAB {
 
 		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
 			if constexpr (std::is_constant_evaluated()){
-				Vector<F, Rows> ret{};
+				Vector<F, Rows> ret{F(0)};
 				for (uint8_t row = 0; row < Rows; row++) {
 					for (uint8_t column = 0; column < Columns; column++) {
 						ret[row] += columns[column][row] * vector[column];
@@ -184,14 +184,19 @@ namespace LAB {
 				return ret;
 			}
 			else if constexpr (Rows == 4) {
-				Vector<F, Rows> ret;
-				{
-					ret.vec = _mm_mul_ps(columns[0].vec, _mm_set1_ps(vector.x));
-				}
-				for (uint8_t column = 1; column < Columns; ++column) {
-					ret.vec = _mm_add_ps(ret.vec, _mm_mul_ps(columns[column].vec, _mm_set1_ps(vector[column])));
-				}
-				return ret;
+				//copying glm implementation
+
+				const __m128 Mov0(_mm_set1_ps(vector.x));
+				const __m128 Mov1(_mm_set1_ps(vector.y));
+				const __m128 Mov2(_mm_set1_ps(vector.z));
+				const __m128 Mov3(_mm_set1_ps(vector.w));
+				const __m128 Mul0 = columns[0].vec * Mov0;
+				const __m128 Mul1 = columns[1].vec * Mov1;
+				const __m128 Add0 = Mul0 + Mul1;
+				const __m128 Mul2 = columns[2].vec * Mov2;
+				const __m128 Mul3 = columns[3].vec * Mov3;
+				const __m128 Add1 = Mul2 + Mul3;
+				return Vector<F, Rows>{Add0 + Add1};
 			}
 			Unreachable();
 		}
