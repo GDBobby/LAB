@@ -168,14 +168,28 @@ namespace LAB {
 				return ret;
 			}
 			else if constexpr(Columns == 4 && Rows == 4){
-				//if i can get the initializer list constructor working i can condense this a little bit
-				Matrix ret;
-				//this is the matrix * vector operator
-				ret.columns[0] = this->operator*(other.columns[0]);
-				ret.columns[1] = this->operator*(other.columns[1]);
-				ret.columns[2] = this->operator*(other.columns[2]);
-				ret.columns[3] = this->operator*(other.columns[3]);
-				return ret;
+				if (std::is_constant_evaluated()) {
+					Matrix ret{F(0)};
+					//matrix * vector operator
+					ret.columns[0] = this->operator*(other.columns[0]);
+					ret.columns[1] = this->operator*(other.columns[1]);
+					ret.columns[2] = this->operator*(other.columns[2]);
+					ret.columns[3] = this->operator*(other.columns[3]);
+					return ret;
+				}
+				else{
+					Matrix ret;
+					for(uint8_t i = 0; i < 4; ++i){
+						//the matrix * vector operator isnt good here, im assuming because it converts from __m128 to vector to __m128 or something. idk. couldve been a benchmark error
+						const __m128 mul0 = _mm_mul_ps(columns[0].vec, _mm_set1_ps(other.columns[i].x));
+						const __m128 mul1 = _mm_mul_ps(columns[1].vec, _mm_set1_ps(other.columns[i].y));
+						const __m128 mul2 = _mm_mul_ps(columns[2].vec, _mm_set1_ps(other.columns[i].z));
+						const __m128 mul3 = _mm_mul_ps(columns[3].vec, _mm_set1_ps(other.columns[i].w));
+					
+						ret.columns[i].vec = _mm_add_ps(_mm_add_ps(mul0, mul1), _mm_add_ps(mul2, mul3));
+					}
+					return ret;
+				}
 			}
 		}
 	};
