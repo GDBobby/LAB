@@ -40,13 +40,23 @@ namespace LAB {
 			}
 		}
 		LAB_constexpr Matrix(Matrix const& other){
-			for (uint8_t i = 0; i < Columns; i++){
-				columns[i] = other.columns[i];
+			if(std::is_constant_evaluated()){
+				for (uint8_t i = 0; i < Columns; i++){
+					columns[i] = other.columns[i];
+				}
+			}
+			else{
+				memcpy(columns, other.columns, sizeof(F) * Columns * ColumnAlignment);
 			}
 		}
 		LAB_constexpr Matrix& operator=(Matrix const& other){
-			for (uint8_t i = 0; i < Columns; i++){
-				columns[i] = other.columns[i];
+			if(std::is_constant_evaluated()){
+				for (uint8_t i = 0; i < Columns; i++){
+					columns[i] = other.columns[i];
+				}
+			}
+			else{
+				memcpy(columns, other.columns, sizeof(F) * Columns * ColumnAlignment);
 			}
 			return *this;
 		}
@@ -175,15 +185,25 @@ namespace LAB {
 
 		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
 			if constexpr (std::is_constant_evaluated()){
-				Vector<F, Rows> ret{F(0)};
-				for (uint8_t row = 0; row < Rows; row++) {
-					for (uint8_t column = 0; column < Columns; column++) {
-						ret[row] += columns[column][row] * vector[column];
-					}
+				if constexpr(Rows == 4 && Columns == 4){
+					const Vector<F, 4> mul0 = columns[0] * vector.x;
+					const Vector<F, 4> mul1 = columns[1] * vector.y;
+					const Vector<F, 4> mul2 = columns[2] * vector.z;
+					const Vector<F, 4> mul3 = columns[3] * vector.w;
+					return mul0 + mul1 + mul2 + mul3;
+
 				}
-				return ret;
+				else {
+					Vector<F, Rows> ret{F(0)};
+					for (uint8_t row = 0; row < Rows; row++) {
+						for (uint8_t column = 0; column < Columns; column++) {
+							ret[row] += columns[column][row] * vector[column];
+						}
+					}
+					return ret;
+				}
 			}
-			else if constexpr (Rows == 4) {
+			else if constexpr (Rows == 4 && Columns == 4) {
 				//copying glm implementation
 
 				const __m128 Mov0(_mm_set1_ps(vector.x));
@@ -192,11 +212,11 @@ namespace LAB {
 				const __m128 Mov3(_mm_set1_ps(vector.w));
 				const __m128 Mul0 = columns[0].vec * Mov0;
 				const __m128 Mul1 = columns[1].vec * Mov1;
-				const __m128 Add0 = Mul0 + Mul1;
+				const __m128 Add0 = _mm_add_ps(Mul0, Mul1);
 				const __m128 Mul2 = columns[2].vec * Mov2;
 				const __m128 Mul3 = columns[3].vec * Mov3;
-				const __m128 Add1 = Mul2 + Mul3;
-				return Vector<F, Rows>{Add0 + Add1};
+				const __m128 Add1 = _mm_add_ps(Mul2, Mul3);
+				return Vector<F, Rows>{_mm_add_ps(Add0, Add1)};
 			}
 			Unreachable();
 		}

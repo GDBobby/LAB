@@ -337,6 +337,7 @@ namespace LAB {
 		LAB_constexpr Vector(Vector<F, 2> const& other) : x{ other.x }, y{ other.y }, z{ F(0)}, w{F(0)} {}
 		LAB_constexpr Vector(Vector<F, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ F(0) } {}
 		LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
+		LAB_constexpr Vector(__m128 const& vec) : vec{vec} {}
 		LAB_constexpr Vector& operator=(Vector const& other){
 			if constexpr (std::is_constant_evaluated()){
 				x = other.x;
