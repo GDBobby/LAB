@@ -508,7 +508,13 @@ namespace LAB {
 		}
 
 		LAB_constexpr F DotProduct(Vector const& other) const {
-			return x * other.x + y * other.y + z * other.z + w * other.w;
+			if(std::is_constant_evaluated()){
+				return x * other.x + y * other.y + z * other.z + w * other.w;
+			}
+			else{
+				Vector temp{_mm_mul_ps(vec, other.vec)};
+				return temp.x + temp.y + temp.z + temp.w;
+			}
 		}
 
 		LAB_constexpr static Vector Forward() {
@@ -527,15 +533,7 @@ namespace LAB {
 
 	template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
-		if constexpr (Dimensions == 2){
-			return first.x * second.x + first.y * second.y;
-		}
-		else if constexpr (Dimensions >= 3) {
-			return first.x * second.x + first.y * second.y + first.z * second.z;
-		}
-		else if constexpr (Dimensions >= 4) {
-			return first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
-		}
+		return first.Dot(second);
 	}
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
 	//that test was before i knew reverse square root was faster than square root. should be faster now
