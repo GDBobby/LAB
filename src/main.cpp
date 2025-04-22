@@ -101,7 +101,6 @@ int main() {
 		
 		outFile.close();
 	}
-	/*
 	{ //rotation, scale, and translate of matrices
 		LAB_constexpr LAB::Vector<float, 3> testVec{ 0.f, 1.f, 2.f };
 		LAB_constexpr float testFloat0 = testVec[0];
@@ -123,9 +122,9 @@ int main() {
 	{
 	}
 	{ //rotation matrices, scale matrix
-		LAB_constexpr LAB::Transform<float, 3> transformX{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{std::numbers::pi_v<float>, 0.f, 0.f}};
-		LAB_constexpr LAB::Transform<float, 3> transformY{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, std::numbers::pi_v<float>, 0.f}};
-		LAB_constexpr LAB::Transform<float, 3> transformZ{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, 0.f, std::numbers::pi_v<float>}};
+		LAB_constexpr LAB::Transform<float, 3> transformX{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{LAB::SupportingMath::PI<float>, 0.f, 0.f}};
+		LAB_constexpr LAB::Transform<float, 3> transformY{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, LAB::SupportingMath::PI<float>, 0.f}};
+		LAB_constexpr LAB::Transform<float, 3> transformZ{LAB::Vector<float, 3>{0.f}, LAB::Vector<float, 3>{1.f}, LAB::Vector<float, 3>{0.f, 0.f, LAB::SupportingMath::PI<float>}};
 
 		LAB_constexpr auto rotXMat = transformX.GetRotationXMatrix();
 		LAB_constexpr auto rotYMat = transformY.GetRotationYMatrix();
@@ -178,7 +177,6 @@ int main() {
 			}
 		}
 	}
-	*/
 	{ //trig functions
 		LAB_constexpr float trigInput = 50.f;
 		LAB_constexpr auto cosRet = LAB::SupportingMath::Cos(trigInput);

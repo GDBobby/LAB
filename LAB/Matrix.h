@@ -62,7 +62,6 @@ namespace LAB {
 			return *this;
 		}
 
-
 		LAB_constexpr explicit Matrix(std::array<Vector<F, Rows>, Columns> const& vectors) {
 			//assert(vectors.size() == Columns);
 
@@ -81,22 +80,22 @@ namespace LAB {
 			//return data[column * ColumnAlignment + row];
 			return columns[column][row];
 		}
-
+/*
 		LAB_constexpr F& operator[](const uint8_t index) {
-			LAB_constexpr uint8_t row = index % ColumnAlignment;
-			LAB_constexpr uint8_t column = (index - row) / ColumnAlignment;
+			const uint8_t row = index % ColumnAlignment;
+			const uint8_t column = (index - row) / ColumnAlignment;
 			assert((column < Columns) && (row < Rows));
 
-			return At(column, row);
+			return columns[column][row];
 		}
 		LAB_constexpr F operator[](const uint8_t index) const {
-			LAB_constexpr uint8_t row = index % ColumnAlignment;
-			LAB_constexpr uint8_t column = (index - row) / ColumnAlignment;
+			const uint8_t row = index % ColumnAlignment;
+			const uint8_t column = (index - row) / ColumnAlignment;
 			assert((column < Columns) && (row < Rows));
 
 			return At(column, row);
 		}
-
+*/
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix& operator*=(Matrix<F, Columns, Rows, Alignment> const& other) const {
 			Matrix tempCopy = *this;
@@ -107,14 +106,13 @@ namespace LAB {
 		LAB_constexpr bool operator==(Matrix<F, Columns, Rows, Alignment> const& other) const{
 			for(uint8_t y = 0; y < Rows; y++){
 				for(uint8_t x = 0; x < Columns; x++){
-					if(columns[x][y] != other[x][y]){
+					if(columns[x][y] != other.columns[x][y]){
 						return false;
 					}
 				}
 			}
 			return true;	
 		}
-
 
 		LAB_constexpr Vector<F, Rows> operator*(Vector<F, Columns> const vector) const {
 			if constexpr (std::is_constant_evaluated()){
@@ -147,7 +145,6 @@ namespace LAB {
 			//this is an error for any size other than 4/4 i think
 			Unreachable();
 		}
-
 
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix operator*(Matrix<F, Columns, Rows, Alignment> const& other) const {
@@ -232,7 +229,7 @@ namespace LAB {
 		for (uint8_t column = 0; column < (Columns - 1); column++) {
 			for (uint8_t row = 0; row < Rows; row++) {
 				//need an intermediate copy
-				retMat.At(column, row) = matrix.At(0, row) * rotation.At(column, 0) + matrix.At(1, row) * rotation.At(column, 1) + matrix.At(2, row) * rotation.At(column, 2);
+				retMat.columns[column][row] = matrix.columns[0][row] * rotation.columns[column][0] + matrix.columns[1][row] * rotation.columns[column][1] + matrix.columns[2][row] * rotation.columns[column][2];
 			}
 		}
 
@@ -245,7 +242,7 @@ namespace LAB {
 		Matrix<F, Columns, Rows, Alignment> retMat = matrix;
 		for (uint8_t column = 0; column < (Columns - 1); column++) {
 			for (uint8_t row = 0; row < Rows; row++) {
-				retMat.At(column, row) *= scalingVec[column];
+				retMat.columns[column][row] *= scalingVec[column];
 			}
 		}
 		return retMat;
@@ -257,7 +254,7 @@ namespace LAB {
 		Matrix<F, Columns, Columns, Alignment> ret{ 0.f };
 
 		for (uint8_t i = 0; i < Columns; i++) {
-			ret.At(i, i) = initVal;
+			ret.columns[i][i] = initVal;
 		}
 
 		return ret;
