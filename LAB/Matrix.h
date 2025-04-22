@@ -10,7 +10,7 @@
 #include <array>
 #include <cstring>
 
-namespace LAB {
+namespace lab {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t ColumnAlignment = Rows> 
 	requires((Rows <= 4) && (Rows > 1) && 
 			(Columns <= 4) && (Columns > 1) && 

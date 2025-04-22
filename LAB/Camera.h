@@ -3,7 +3,7 @@
 #include "CoordinateSystems.h"
 #include "Debugging.h"
 
-namespace LAB{
+namespace lab{
     //https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/projection-matrices-what-you-need-to-know-first.html
     //both Projection and Ortho functions copied from here
 

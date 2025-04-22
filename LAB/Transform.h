@@ -5,7 +5,7 @@
 #include <concepts>
 
 
-namespace LAB {
+namespace lab {
 
     template<std::floating_point F, std::uint8_t Dimensions> 
 	requires((Dimensions > 1) && (Dimensions <= 4))

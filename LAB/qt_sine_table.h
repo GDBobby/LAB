@@ -6,7 +6,7 @@
     //https://codebrowser.dev/qt5/qtbase/src/corelib/kernel/qmath.cpp.html#qt_sine_table
     //they have an LGPL license, which I'll have to copy
 
-namespace LAB {
+namespace lab {
     namespace QT_Sine {
 
         constexpr int size = 256;

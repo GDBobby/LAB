@@ -1,6 +1,6 @@
 #pragma once
 
-namespace LAB {
+namespace lab {
 	[[noreturn]] inline void Unreachable() {
 #if defined(_MSC_VER) && !defined(__clang__) // MSVC
 		__assume(false);

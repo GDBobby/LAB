@@ -10,7 +10,7 @@
 #include "Debugging.h"
 
 
-namespace LAB{
+namespace lab {
 	namespace SupportingMath {
 		template<std::floating_point F>
 		inline constexpr F PI = F(3.1415926535);
