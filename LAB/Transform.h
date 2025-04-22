@@ -129,12 +129,12 @@ namespace LAB {
 
 		template<uint8_t Alignment = 4> requires(Alignment >= 4)
 		LAB_constexpr Matrix<F, 4, 4, Alignment> GetScaleMatrix() const {
-			Matrix<F, 4, 4, Alignment> ret;
+			Matrix<F, 4, 4, Alignment> ret{0.f};
 			ret.At(0, 0) = scale.x;
 			ret.At(1, 1) = scale.y;
 			ret.At(2, 2) = scale.z;
 			ret.At(3, 3) = 1.f;
-
+/*
 			ret.At(0, 1) = 0.f;
 			ret.At(0, 2) = 0.f;
 			ret.At(0, 3) = 0.f;
@@ -150,6 +150,7 @@ namespace LAB {
 			ret.At(3, 0) = 0.f;
 			ret.At(3, 1) = 0.f;
 			ret.At(3, 2) = 0.f;
+*/
 			return ret;
 		}
     

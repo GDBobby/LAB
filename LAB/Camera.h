@@ -9,7 +9,7 @@ namespace LAB{
 
     template<std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> CreateProjectionMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
-        Matrix<F, 4, 4> ret;
+        Matrix<F, 4, 4> ret{0.f};
 
         const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5));
         //const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5)); 
@@ -19,7 +19,7 @@ namespace LAB{
         ret.columns[3][2] = -far * near / (far - near);  // used to remap z [0,1] 
 
         ret.columns[2][3] = F(-1);  // set w = -z 
-    
+    /* all elements are initialized to 0
         ret.columns[0][1] = F(0);
         ret.columns[0][2] = F(0);
         ret.columns[0][3] = F(0);
@@ -34,11 +34,11 @@ namespace LAB{
         ret.columns[3][0] = F(0);
         ret.columns[3][1] = F(0);
         ret.columns[3][3] = F(0); 
-
+*/
         return ret;
     }
     template<std::floating_point F>
-    Matrix<F, 4, 4> CreateOrthographicMatrix(F const bottom, F const top, F const left, F const right, F const near, F const far) {
+    LAB_constexpr Matrix<F, 4, 4> CreateOrthographicMatrix(F const bottom, F const top, F const left, F const right, F const near, F const far) {
 
         const F rMl = right - left;
         const F tMb = top - bottom;
@@ -69,7 +69,7 @@ namespace LAB{
     
     template<std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
-        Matrix<F, 4, 4> ret;
+        Matrix<F, 4, 4> ret{0.f};
         const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalize();
         const Vector<float, 3> up = CrossProduct(right, forward).Normalize();
 
