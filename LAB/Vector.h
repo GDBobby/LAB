@@ -533,7 +533,7 @@ namespace LAB {
 
 	template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
-		return first.Dot(second);
+		return first.DotProduct(second);
 	}
 	//according to my testing, this is 28% faster than a conventional DimensionsDot(Normalize, Normalize)
 	//that test was before i knew reverse square root was faster than square root. should be faster now
