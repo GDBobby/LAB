@@ -588,7 +588,7 @@ namespace LAB {
 	LAB_constexpr Vector<F, 3> CrossProduct(Vector<F, 3> const first, Vector<F, 3> const second) {
 		//inlining matrix
 		return Vector<F, 3>{
-			first.y * second.z - first.z * first.y,
+			first.y * second.z - first.z * second.y,
 			first.z * second.x - first.x * second.z,
 			first.x * second.y - first.y * second.x
 		};
