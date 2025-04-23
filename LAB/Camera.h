@@ -71,8 +71,8 @@ namespace lab{
     template<std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
         Matrix<F, 4, 4> ret{0.f};
-        const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalized();
-        const Vector<float, 3> up = CrossProduct(right, forward).Normalized();
+        const Vector<float, 3> right = Cross(forward, Vector<float, 3>::Up()).Normalized();
+        const Vector<float, 3> up = Cross(right, forward).Normalized();
 
         constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
         constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
@@ -128,8 +128,8 @@ namespace lab{
     //the final row needs to be set to 0,0,0,1 outside of this function
     template<std::floating_point F>
     LAB_constexpr void CreateViewMatrix(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward){
-        const Vector<float, 3> right = CrossProduct(forward, Vector<float, 3>::Up()).Normalized();
-        const Vector<float, 3> up = CrossProduct(right, forward).Normalized();
+        const Vector<float, 3> right = Cross(forward, Vector<float, 3>::Up()).Normalized();
+        const Vector<float, 3> up = Cross(right, forward).Normalized();
 
         constexpr bool f_sign = CoordinateSystem::forward < CoordinateSystem::XPos;
         constexpr bool u_sign = CoordinateSystem::up < CoordinateSystem::XPos;
