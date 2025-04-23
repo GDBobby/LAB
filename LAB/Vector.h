@@ -594,5 +594,14 @@ namespace lab {
 
 	//look up https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process for the 4th dimensional Orthogonal
 
+	using vec2 = Vector<float, 2>;
+	using vec3 = Vector<float, 3>;
+	using vec4 = Vector<float, 4>;
+	using vec2f = Vector<float, 2>;
+	using vec3f = Vector<float, 3>;
+	using vec4f = Vector<float, 4>;
+	using vec2d = Vector<double, 2>;
+	using vec3d = Vector<double, 3>;
+	using vec4d = Vector<double, 4>;
 }
 
