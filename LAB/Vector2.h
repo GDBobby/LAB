@@ -38,7 +38,7 @@ namespace lab{
             }
             */
         }
-        explicit LAB_constexpr Vector(Vector<F, 4> const vec) : x{vec.x}, y{vec.y}
+        explicit LAB_constexpr Vector(Vector<F, 4> const vec) : x{vec.x}, y{vec.y} {}
 
         LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y } {}
         LAB_constexpr Vector& operator=(Vector const& other){
