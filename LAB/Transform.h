@@ -206,7 +206,7 @@ namespace lab {
 			ret.columns[2][1] = scale.z * (-sinX);
 			ret.columns[2][2] = scale.z * (cosY * cosX);
 
-			return ret.Invert().Transpose();
+			return ret.Invert().Transposed();
 		}
 
 		//this needs coordinate system branching

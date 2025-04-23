@@ -212,7 +212,7 @@ namespace lab {
 			Matrix ret = *this;
 			return ret *= multiplier;
 		}
-		LAB_constexpr Matrix& operator/=(F const divider) const{
+		LAB_constexpr Matrix& operator/=(F const divider) {
 			for(uint8_t column = 0; column < Columns; column++){
 				for(uint8_t row = 0; row < Rows; row++){
 					columns[column][row] /= divider;
@@ -226,7 +226,7 @@ namespace lab {
 		}
 
 		template<uint8_t Alignment = ColumnAlignment>
-		LAB_constexpr Matrix<F, Rows, Columns, Alignment> Transposed() {
+		LAB_constexpr Matrix<F, Rows, Columns, Alignment> Transposed() const {
 			Matrix<F, Rows, Columns, Alignment> ret;
 			for(uint8_t column = 0; column < Columns; column++){
 				for(uint8_t row = 0; row < Rows; row++){
