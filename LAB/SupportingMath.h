@@ -64,18 +64,6 @@ namespace lab {
 		if constexpr(std::is_same_v<F, float>) {
 			const uint32_t bits = std::bit_cast<uint32_t>(input);
 
-			//ill add debugging methods later
-
-			// If x == ±∞ then return num
-			// If x == ±NaN then return num
-			//if (CCM_UNLIKELY(bits.is_inf_or_nan())) { return num; }
-
-			// If x == ±0 then return num
-			//if (CCM_UNLIKELY(num == 0.0)) { return num; }
-
-			//255 is the first 8 bits set to true
-			//23 is mantissa length
-
 			const int exponent = ((bits >> 23) & 0xFF) - 127;
 
 			if (exponent >= 23) {
@@ -95,10 +83,21 @@ namespace lab {
 			return std::bit_cast<float>((bits & mantissa_anti_mask) | truncated_mantissa);
 		}
 		else if constexpr (std::is_same_v<F, double>) {
+			const uint64_t bits = std::bit_cast<uint64_t>(input);
+			const int64_t exponent = ((bits >> 52) & 0b11111111111); //11 bits
+			if(exponent >= 52){
+				return input;
+			}
+			if(exponent < 0){
+				return 0.0;
+			}
+			const int64_t trimming_size = 52 - (exponent);
 
+			LAB_constexpr uint64_t mantissa_mask = (1 << 52) - 1;
+			const auto truncated_mantissa = static_cast<uint64_t>(((bits & mantissa_mask) >> trimming_size) << trimming_size);
 
-			assert(false);
-			return 0.0;
+			LAB_constexpr uint64_t mantissa_anti_mask = UINT64_MAX ^ mantissa_mask;
+			return std::bit_cast<double>((bits & mantissa_anti_mask) | truncated_mantissa);
 		}
 	}
 	template<std::floating_point F>
