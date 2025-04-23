@@ -35,6 +35,18 @@ namespace lab {
 			return PI<F> / divisor;
 		}
 
+		template<template T>
+		LAB_constexpr T Max(T const a, T const b){
+			const bool aBigger = a > b;
+			return a * aBigger + b * !aBigger;
+		}
+		template<template T>
+		LAB_constexpr T Min(T const a, T const b){
+			const bool aSmaller = a < b;
+			return a * aSmaller + b * !aSmaller;
+		}
+
+
 		template<std::floating_point F>
 		LAB_constexpr F Abs(F const input) {
 			return input * (F(1) - F(2) * (input < F(0)));
