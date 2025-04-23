@@ -5,6 +5,23 @@
 #include "Vector4d.h"
 
 namespace lab{
+
+
+    template<std::floating_point F, uint8_t Dimensions>
+    Vector<F, Dimensions> operator*(F const f, Vector<F, Dimensions> const vec){
+        return vec * f;
+    }
+    template<std::floating_point F, uint8_t Dimensions>
+    Vector<F, Dimensions> operator+(F const f, Vector<F, Dimensions> const vec){
+        return vec + f;
+    }
+    //minus and divide operators are per dimension since order of operations matters
+
+
+
+
+
+
     template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr F Dot(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		return first.Dot(second);
