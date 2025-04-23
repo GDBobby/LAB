@@ -165,7 +165,7 @@ namespace lab {
 				return ret;
 			}
 			else if constexpr(Columns == 4 && Rows == 4){
-				if (std::is_constant_evaluated()) {
+				if constexpr (std::is_constant_evaluated()) {
 					Matrix ret{F(0)};
 					//matrix * vector operator
 					ret.columns[0] = this->operator*(other.columns[0]);
@@ -174,7 +174,7 @@ namespace lab {
 					ret.columns[3] = this->operator*(other.columns[3]);
 					return ret;
 				}
-				else{
+				else {
 					Matrix ret;
 					for(uint8_t i = 0; i < 4; ++i){
 						//the matrix * vector operator isnt good here, im assuming because it converts from __m128 to vector to __m128 or something. idk. couldve been a benchmark error

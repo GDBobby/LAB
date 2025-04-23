@@ -147,7 +147,7 @@ namespace lab{
         LAB_constexpr F DotProduct(Vector const& other) const {
             return x * other.x + y * other.y + z * other.z;
         }
-        LAB_constexpr Vector CrossProduct(Vector const& other) const {		
+        LAB_constexpr Vector Cross(Vector const& other) const {		
             return Vector<F, 3>{
                 y * other.z - z * other.y,
                 z * other.x - x * other.z,
