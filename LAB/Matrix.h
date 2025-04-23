@@ -206,8 +206,8 @@ namespace lab {
 	template<std::floating_point F, uint8_t Columns, uint8_t Rows, uint8_t Alignment>
 	requires(Rows > 2)
 	[[nodiscard]] LAB_constexpr auto Rotate(Matrix<F, Columns, Rows, Alignment> const& matrix, F const angle, Vector<F, Rows - 1> const axis) {
-		F const cosine = SupportingMath::Cos(angle);
-		F const sine = SupportingMath::Sin(angle);
+		F const cosine = Cos(angle);
+		F const sine = Sin(angle);
 #if MATH_DEBUGGING
 		//ensure vec is normalized
 #endif

@@ -21,10 +21,10 @@ namespace lab{
 		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();
         const F numerator = first.Dot(second);
         if(numerator > F(0)){
-            return numerator * SupportingMath::InverseSqrt(combinedMagSquared);
+            return numerator * InverseSqrt(combinedMagSquared);
         }
         else if (numerator < F(0)){
-            return -numerator * SupportingMath::InverseSqrt(combinedMagSquared);
+            return -numerator * InverseSqrt(combinedMagSquared);
         }
         else{
             //i should get LAB_DEBUG in here

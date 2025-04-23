@@ -12,7 +12,7 @@ namespace lab{
     LAB_constexpr Matrix<F, 4, 4> CreateProjectionMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
         Matrix<F, 4, 4> ret{0.f};
 
-        const F scale = F(1) / SupportingMath::Tan(field_of_view_radians * F(0.5));
+        const F scale = F(1) / Tan(field_of_view_radians * F(0.5));
         ret.columns[0][0] = scale / aspectRatio;  // scale the x coordinates of the projected point 
         ret.columns[1][1] = scale;  // scale the y coordinates of the projected point 
         ret.columns[2][2] = -far / (far - near);  // used to remap z to [0,1] 

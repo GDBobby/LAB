@@ -26,8 +26,8 @@ namespace lab {
     
 		template<uint8_t Alignment = 4> requires(Alignment >= 3)
 		LAB_constexpr Matrix<F, 3, 3, Alignment> ToMatrix() const{
-			const float cosine = SupportingMath::Cos(rotation);
-			const float sine = SupportingMath::Sin(rotation);
+			const float cosine = Cos(rotation);
+			const float sine = Sin(rotation);
 			Matrix<F, 3, 3, Alignment> ret;
 			ret.At(0, 0) = scale.x * cosine;
 			ret.At(0, 1) = scale.x * sine;
@@ -80,8 +80,8 @@ namespace lab {
 			ret.At(0, 0) = F(1);
 			ret.At(3, 3) = F(1);
 
-			const F sinRet = SupportingMath::Sin(rotation.x);
-			const F cosRet = SupportingMath::Cos(rotation.x);
+			const F sinRet = Sin(rotation.x);
+			const F cosRet = Cos(rotation.x);
 
 
 			ret.At(1, 1) = cosRet;
@@ -98,8 +98,8 @@ namespace lab {
 			ret.At(1, 1) = F(1);
 			ret.At(3, 3) = 1;
 
-			const F sinRet = SupportingMath::Sin(rotation.y);
-			const F cosRet = SupportingMath::Cos(rotation.y);
+			const F sinRet = Sin(rotation.y);
+			const F cosRet = Cos(rotation.y);
 
 			ret.At(0, 0) = cosRet;
 			ret.At(2, 0) = sinRet;
@@ -116,8 +116,8 @@ namespace lab {
 			ret.At(2, 2) = F(1);
 			ret.At(3, 3) = 1;
 
-			const F sinRet = SupportingMath::Sin(rotation.z);
-			const F cosRet = SupportingMath::Cos(rotation.z);
+			const F sinRet = Sin(rotation.z);
+			const F cosRet = Cos(rotation.z);
 
 			ret.At(0, 0) = cosRet;
 			ret.At(1, 0) = -sinRet;
@@ -158,12 +158,12 @@ namespace lab {
 		LAB_constexpr Matrix<F, 4, 4, Alignment> GetMatrix(){
 			Matrix<F, 4, 4, Alignment> ret;
 
-			const F cosZ = SupportingMath::Cos(rotation.z);
-			const F sinZ = SupportingMath::Sin(rotation.z);
-			const F cosY = SupportingMath::Cos(rotation.y);
-			const F sinY = SupportingMath::Sin(rotation.y);
-			const F cosX = SupportingMath::Cos(rotation.x);
-			const F sinX = SupportingMath::Sin(rotation.x);
+			const F cosZ = Cos(rotation.z);
+			const F sinZ = Sin(rotation.z);
+			const F cosY = Cos(rotation.y);
+			const F sinY = Sin(rotation.y);
+			const F cosX = Cos(rotation.x);
+			const F sinX = Sin(rotation.x);
 
 			ret.At(0, 0) = scale.x * (cosY * cosZ + sinY * sinX * sinZ);
 			ret.At(0, 1) = scale.x * (cosX * sinZ);

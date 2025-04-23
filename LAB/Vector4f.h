@@ -177,16 +177,16 @@ namespace lab{
         }
 
         LAB_constexpr float Magnitude() const {
-            return SupportingMath::Sqrt(SquaredMagnitude());
+            return Sqrt(SquaredMagnitude());
         }
 
         LAB_constexpr Vector& Normalize() {
-            const float invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+            const float invMag = InverseSqrt(SquaredMagnitude());
             operator*=(invMag);
             return *this;
         }
         LAB_constexpr Vector Normalized() const{
-            const auto invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+            const auto invMag = InverseSqrt(SquaredMagnitude());
             return operator*(invMag);
         }
 

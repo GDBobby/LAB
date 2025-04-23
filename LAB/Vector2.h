@@ -102,59 +102,21 @@ namespace lab{
         }
 
         LAB_constexpr F Magnitude() const {
-            return SupportingMath::Sqrt(SquaredMagnitude());
+            return Sqrt(SquaredMagnitude());
         }
 
         LAB_constexpr Vector& Normalize() {
-            const F invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+            const F invMag = InverseSqrt(SquaredMagnitude());
             operator*=(invMag);
             return *this;
         }
         LAB_constexpr Vector Normalized() const {
-            const auto invMag = SupportingMath::InverseSqrt(SquaredMagnitude());
+            const auto invMag = InverseSqrt(SquaredMagnitude());
             return operator*(invMag);
         }
 
         LAB_constexpr F Dot(Vector const& other) const {
             return x * other.x + y * other.y;
-        }
-
-        LAB_constexpr static Vector Forward() {
-            if constexpr (CoordinateSystem::forward == CoordinateSystem::XPos){
-                return { F(1), F(0) };
-            }
-            else if constexpr(CoordinateSystem::forward == CoordinateSystem::XNeg){
-                return {F(-1), F(0)};
-            }
-            else if constexpr(CoordinateSystem::forward == CoordinateSystem::YPos){
-                return {F(0), F(1)};
-            }
-            else if constexpr(CoordinateSystem::forward == CoordinateSystem::YNeg){
-                return {F(0), F(-1)};
-            }
-            else{
-                static_assert(false && "idk how to rectify Z forward/back/up/down in 2 dimensions yet. I'm aware 3D environments will frequently use 2 dimensional vectors");
-            }
-        }
-        LAB_constexpr static Vector Up() {
-            //switch LAB_constexpr where pls
-            //i read that i could potentially expect it to look the same as if constexpr, but it's not guaranteed, and I'm relying on compiler optimization
-
-            if constexpr (CoordinateSystem::up == CoordinateSystem::YPos){
-                return { F(0), F(1) };
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
-                return {F(0), F(-1)};
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
-                return {F(1), F(0)};
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
-                return {F(-1), F(0)};
-            }
-            else{
-                static_assert(false && "idk how to rectify Z forward/back/up/down in 2 dimensions yet. I'm aware 3D environments will frequently use 2 dimensional vectors");
-            }
         }
     };
 } //namespace lab
