@@ -2,6 +2,7 @@
 #include "Matrix.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "IntVector.h"
 
 #include <cstdio>
 #include <fstream>
@@ -20,6 +21,10 @@ int main() {
 #endif
 	if (!outFile.is_open()) {
 		return EXIT_FAILURE;
+	}
+	{
+		lab::ivec2 test{1};
+		printf("int vec test : %d\n", test.x);
 	}
 
 	{

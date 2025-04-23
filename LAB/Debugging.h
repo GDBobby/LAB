@@ -56,10 +56,7 @@ namespace lab {
 		#define LAB_constexpr 
 	#endif
 
-	#include <cassert>
-#endif
-
-#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
+#include <cassert>
 namespace LAB {
 
 		inline void breakpoint_with_stacktrace() {
