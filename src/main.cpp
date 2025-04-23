@@ -46,19 +46,19 @@ int main() {
 		LAB_constexpr lab::Vector<float, 3> vec3b(3.0f, 4.0f, 5.0f);
 		LAB_constexpr lab::Vector<float, 3> vec3c(5.0f, 6.0f, 7.0f);
 		LAB_constexpr lab::Vector<float, 3> vec3d(7.0f, 8.0f, 9.0f);
-		lab::CrossProduct((vec3a + vec3b) * vec3c - vec3d, vec3a);
+		lab::Cross((vec3a + vec3b) * vec3c - vec3d, vec3a);
 		LAB_constexpr lab::Vector<float, 3> vec3aN = vec3a.Normalized();
 		LAB_constexpr lab::Vector<float, 3> vec3bN = vec3b.Normalized();
 		LAB_constexpr lab::Vector<float, 3> vec3cN = vec3c.Normalized();
 		LAB_constexpr lab::Vector<float, 3> vec3dN = vec3d.Normalized();
-		printf("normalized dots - %.2f\n", vec3aN.DotProduct(vec3bN) + vec3cN.DotProduct(vec3dN));
+		printf("normalized dots - %.2f\n", vec3aN.Dot(vec3bN) + vec3cN.Dot(vec3dN));
 
 		LAB_constexpr lab::Matrix<float, 3, 2> imbalancedMat(0.f);
 		printf("imbalanced mat usage : %.2f\n", imbalancedMat.At(2, 1));
 
 		lab::Vector<float, 2> myVec{ 1.f, 2.f };
 		myVec /= 2.f;
-		LAB_constexpr float nDP = lab::NormalizedDotProduct(vec3a, vec3b);
+		LAB_constexpr float nDP = lab::NormalizedDot(vec3a, vec3b);
 
 		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
 		//printf("nDP : %.2f\n", nDP);

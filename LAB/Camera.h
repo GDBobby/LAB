@@ -86,37 +86,37 @@ namespace lab{
             ret.columns[0][f_axis] = -forward.x;
             ret.columns[1][f_axis] = -forward.y;
             ret.columns[2][f_axis] = -forward.z;
-            ret.columns[3][f_axis] = position.DotProduct(forward);
+            ret.columns[3][f_axis] = position.Dot(forward);
         }
         else{
             ret.columns[0][f_axis] = forward.x;
             ret.columns[1][f_axis] = forward.y;
             ret.columns[2][f_axis] = forward.z;
-            ret.columns[3][f_axis] = -position.DotProduct(forward);
+            ret.columns[3][f_axis] = -position.Dot(forward);
         }
         if constexpr(u_sign){
             ret.columns[0][u_axis] = -up.x;
             ret.columns[1][u_axis] = -up.y;
             ret.columns[2][u_axis] = -up.z;
-            ret.columns[3][u_axis] = position.DotProduct(up);
+            ret.columns[3][u_axis] = position.Dot(up);
         }
         else{
             ret.columns[0][u_axis] = up.x;
             ret.columns[1][u_axis] = up.y;
             ret.columns[2][u_axis] = up.z;
-            ret.columns[3][u_axis] = -position.DotProduct(up);
+            ret.columns[3][u_axis] = -position.Dot(up);
         }
         if constexpr(r_sign){
             ret.columns[0][r_axis] = -right.x;
             ret.columns[1][r_axis] = -right.y;
             ret.columns[2][r_axis] = -right.z;
-            ret.columns[3][r_axis] = position.DotProduct(right);
+            ret.columns[3][r_axis] = position.Dot(right);
         }
         else{
             ret.columns[0][r_axis] = right.x;
             ret.columns[1][r_axis] = right.y;
             ret.columns[2][r_axis] = right.z;
-            ret.columns[3][r_axis] = -position.DotProduct(right);
+            ret.columns[3][r_axis] = -position.Dot(right);
         }
         ret.columns[0][3] = F(0);
         ret.columns[1][3] = F(0);
@@ -143,37 +143,37 @@ namespace lab{
             viewMat.columns[0][f_axis] = -forward.x;
             viewMat.columns[1][f_axis] = -forward.y;
             viewMat.columns[2][f_axis] = -forward.z;
-            viewMat.columns[3][f_axis] = position.DotProduct(forward);
+            viewMat.columns[3][f_axis] = position.Dot(forward);
         }
         else{
             viewMat.columns[0][f_axis] = forward.x;
             viewMat.columns[1][f_axis] = forward.y;
             viewMat.columns[2][f_axis] = forward.z;
-            viewMat.columns[3][f_axis] = -position.DotProduct(forward);
+            viewMat.columns[3][f_axis] = -position.Dot(forward);
         }
         if constexpr(u_sign){
             viewMat.columns[0][u_axis] = -up.x;
             viewMat.columns[1][u_axis] = -up.y;
             viewMat.columns[2][u_axis] = -up.z;
-            viewMat.columns[3][u_axis] = position.DotProduct(up);
+            viewMat.columns[3][u_axis] = position.Dot(up);
         }
         else{
             viewMat.columns[0][u_axis] = up.x;
             viewMat.columns[1][u_axis] = up.y;
             viewMat.columns[2][u_axis] = up.z;
-            viewMat.columns[3][u_axis] = -position.DotProduct(up);
+            viewMat.columns[3][u_axis] = -position.Dot(up);
         }
         if constexpr(r_sign){
             viewMat.columns[0][r_axis] = -right.x;
             viewMat.columns[1][r_axis] = -right.y;
             viewMat.columns[2][r_axis] = -right.z;
-            viewMat.columns[3][r_axis] = position.DotProduct(right);
+            viewMat.columns[3][r_axis] = position.Dot(right);
         }
         else{
             viewMat.columns[0][r_axis] = right.x;
             viewMat.columns[1][r_axis] = right.y;
             viewMat.columns[2][r_axis] = right.z;
-            viewMat.columns[3][r_axis] = -position.DotProduct(right);
+            viewMat.columns[3][r_axis] = -position.Dot(right);
         }
     }
 

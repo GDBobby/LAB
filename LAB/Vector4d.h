@@ -170,7 +170,7 @@ namespace lab{
             return operator*(invMag);
         }
 
-        LAB_constexpr double DotProduct(Vector const& other) const {
+        LAB_constexpr double Dot(Vector const& other) const {
             return x * other.x + y * other.y + z * other.z + w * other.w;
         }
 

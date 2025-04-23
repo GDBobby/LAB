@@ -6,52 +6,30 @@
 
 namespace lab{
     template<std::floating_point F, uint8_t Dimensions>
-	LAB_constexpr F DotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
-		return first.DotProduct(second);
+	LAB_constexpr F Dot(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+		return first.Dot(second);
 	}
 	template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr Vector<F, Dimensions> Normalized(Vector<F, Dimensions> const vec){
 		return vec.Normalized();
 	}
+
 	//according to my testing, this is 28% faster than a conventional Dot(Normalize, Normalize)
-	//that test was before i knew reverse square root was faster than square root. should be marginally faster now
+    //it saves a single sqrt call
 	template<std::floating_point F, uint8_t Dimensions>
-	LAB_constexpr F NormalizedDotProduct(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+	LAB_constexpr F NormalizedDot(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
 		const F combinedMagSquared = first.SquaredMagnitude() * second.SquaredMagnitude();
-		if (combinedMagSquared != F(0)) {	
-			if constexpr (Dimensions == 2) {
-				const F numerator = first.x * second.x + first.y * second.y;
-				if (numerator > F(0)) {
-					//return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
-					return SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
-				}
-				else if (numerator < F(0)) {
-					//return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
-					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
-				}
-			}
-			else if constexpr (Dimensions == 3) {
-				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z;
-				if (numerator > F(0)) {
-					//return SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
-					return SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
-				}
-				else if (numerator < F(0)) {
-					//return -SupportingMath::Sqrt(numerator * numerator / combinedMagSquared);
-					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
-				}
-			}
-			else if constexpr (Dimensions == 4) {
-				const F numerator = first.x * second.x + first.y * second.y + first.z * second.z + first.w * second.w;
-				if (numerator > F(0)) {
-					return SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
-				}
-				else if (numerator < F(0)) {
-					return -SupportingMath::InverseSqrt(combinedMagSquared / (numerator * numerator));
-				}
-			}
-		}
-		return F(0);
+        const F numerator = first.Dot(second);
+        if(numerator > F(0)){
+            return numerator * SupportingMath::InverseSqrt(combinedMagSquared);
+        }
+        else if (numerator < F(0)){
+            return -numerator * SupportingMath::InverseSqrt(combinedMagSquared);
+        }
+        else{
+            //i should get LAB_DEBUG in here
+            return F(0);
+        }
 	}
 
 

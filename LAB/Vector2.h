@@ -115,7 +115,7 @@ namespace lab{
             return operator*(invMag);
         }
 
-        LAB_constexpr F DotProduct(Vector const& other) const {
+        LAB_constexpr F Dot(Vector const& other) const {
             return x * other.x + y * other.y;
         }
 

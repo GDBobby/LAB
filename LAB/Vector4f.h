@@ -190,8 +190,8 @@ namespace lab{
             return operator*(invMag);
         }
 
-        LAB_constexpr float DotProduct(Vector const& other) const {
-            if(std::is_constant_evaluated()){
+        LAB_constexpr float Dot(Vector const& other) const {
+            if constexpr (std::is_constant_evaluated()){
                 return x * other.x + y * other.y + z * other.z + w * other.w;
             }
             else{
