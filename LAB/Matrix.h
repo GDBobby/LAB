@@ -25,27 +25,27 @@ namespace lab {
 		LAB_constexpr Matrix(F const initVal) {
 			if constexpr(Columns == Rows){
 				if(Columns == 2){
-					At(0, 0) = initVal;
-					At(0, 1) = F(0);
-					At(1, 0) = F(0);
-					At(1, 1) = F(0);
+					columns[0].x = initVal;
+					columns[0].y = F(0);
+					columns[1].x = F(0);
+					columns[1].y = F(0);
 				}
 				else if constexpr (Columns == 2){
-					At(0, 0) = initVal; At(0, 1) = F(0); At(0, 2) = F(0);
-					At(1, 0) = F(0); At(1, 1) = initVal; At(1, 2) = F(0);
-					At(2, 0) = F(0); At(2, 1) = F(0); At(2, 2) = initVal;
+					columns[0][0] = initVal; columns(0, 1) = F(0); columns(0, 2) = F(0);
+					columns[1][0] = F(0); columns[1][1] = initVal; columns[1][2] = F(0);
+					columns[2][0] = F(0); columns[2][1] = F(0); columns[2][2] = initVal;
 				}
 				if constexpr(Columns == 4){
-					At(0, 0) = initVal; At(0, 1) = F(0); At(0, 2) = F(0); At(0, 3) = F(0);
-					At(1, 0) = F(0); At(1, 1) = initVal; At(1, 2) = F(0); At(1, 3) = F(0);
-					At(2, 0) = F(0); At(2, 1) = F(0); At(2, 2) = initVal; At(2, 3) = F(0);
-					At(3, 0) = F(0); At(3, 1) = F(0); At(3, 2) = F(0); At(3, 3) = initVal;
+					columns[0][0] = initVal; columns[0][1] = F(0); columns[0][2] = F(0); columns[0][3] = F(0);
+					columns[1][0] = F(0); columns[1][1] = initVal; columns[1][2] = F(0); columns[1][3] = F(0);
+					columns[2][0] = F(0); columns[2][1] = F(0); columns[2][2] = initVal; columns[2][3] = F(0);
+					columns[3][0] = F(0); columns[3][1] = F(0); columns[3][2] = F(0); columns[3][3] = initVal;
 				}
 			}
 			else{
 				for(uint8_t column = 0; column < Columns; column++){
 					for(uint8_t row = 0; row < Rows; row++){
-						At(column, row) = initVal;
+						columns[column][row] = initVal;
 					}
 				}
 			}
@@ -103,7 +103,7 @@ namespace lab {
 			const uint8_t column = (index - row) / ColumnAlignment;
 			assert((column < Columns) && (row < Rows));
 
-			return At(column, row);
+			return columns[column][row];
 		}
 
 		template<uint8_t Alignment>
@@ -203,7 +203,7 @@ namespace lab {
 		LAB_constexpr Matrix& operator*=(F const multiplier) {
 			for(uint8_t column = 0; column < Columns; column++){
 				for(uint8_t row = 0; row < Rows; row++){
-					At(column, row) *= multiplier;
+					columns[column][row] *= multiplier;
 				}
 			}
 			return *this;
@@ -215,7 +215,7 @@ namespace lab {
 		LAB_constexpr Matrix& operator/=(F const divider) const{
 			for(uint8_t column = 0; column < Columns; column++){
 				for(uint8_t row = 0; row < Rows; row++){
-					At(column, row) /= divider;
+					columns[column][row] /= divider;
 				}
 			}
 			return *this;
@@ -230,7 +230,7 @@ namespace lab {
 			Matrix<F, Rows, Columns, Alignment> ret;
 			for(uint8_t column = 0; column < Columns; column++){
 				for(uint8_t row = 0; row < Rows; row++){
-					ret.At(row, column) = At(column, row);
+					ret.columns[row][column] = columns[column][row];
 				}
 			}
 			return ret;
@@ -239,17 +239,17 @@ namespace lab {
 
 		LAB_constexpr F GetDeterminant() const requires(Columns == Rows)  {
 			if constexpr(Columns == 2){
-				return At(0, 0) * At(1, 1) - At(1, 0) * At(0, 1);
+				return columns[0][0] * columns[1][1] - columns[1][0] * columns[0][1];
 			}
 			else if constexpr (Columns == 3){
-				const F first = At(0,0) * (At(1, 1) * At(2, 2) - At(2, 1) * At(2, 1));
-				const F second =At(1,0) * (At(0, 1) * At(2, 2) - At(2, 1) * At(2, 0));
-				const F third = At(2,0) * (At(0, 1) * At(1, 2) - At(1, 1) * At(0, 2));
+				const F first = columns[0][0] * (columns[1][1] * columns[2][2] - columns[2][1] * columns[2][1]);
+				const F second =columns[1][0] * (columns[0][1] * columns[2][2] - columns[2][1] * columns[2][0]);
+				const F third = columns[2][0] * (columns[0][1] * columns[1][2] - columns[1][1] * columns[0][2]);
 	
 				return first - second + third;
 			}
 			else if constexpr (Columns == 4){
-				//ill come back to this later
+				//ill come back to this later, is there even a use for the 4d determinent in gaming?
 				return F(0);
 			}
 		}

@@ -38,8 +38,8 @@ int main() {
 	}
 
 	{
-		LAB_constexpr lab::Matrix<float, 4, 4> test1{0.f};
-		LAB_constexpr lab::Matrix<float, 4, 4> test2{1.f};
+		LAB_constexpr lab::Matrix<float, 4, 4> test1(0.f);
+		LAB_constexpr lab::Matrix<float, 4, 4> test2(1.f);
 
 		LAB_constexpr lab::Matrix<float, 4 ,4> test3 = test1 * test2;
 		LAB_constexpr lab::Vector<float, 4> test4 = test1 * lab::Vector<float, 4>{1.f};
@@ -168,6 +168,8 @@ int main() {
 
 		LAB_static_assert(scaleMat == identityMat);
 		printf("scale and identity - %.2f:%.2f\n", scaleMat.columns[0][0], identityMat.columns[0][0]);
+
+		transformScale.GetNormalMatrix();
 	}
 	{ //camera functions
 		LAB_constexpr auto proj = lab::CreateProjectionMatrix<float>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
