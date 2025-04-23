@@ -94,6 +94,12 @@ namespace lab {
 			LAB_constexpr uint32_t mantissa_anti_mask = UINT32_MAX ^ mantissa_mask;
 			return std::bit_cast<float>((bits & mantissa_anti_mask) | truncated_mantissa);
 		}
+		else if constexpr (std::is_same_v<F, double>) {
+
+
+			assert(false);
+			return 0.0;
+		}
 	}
 	template<std::floating_point F>
 	LAB_constexpr F Mod(F const x, F const y) {
