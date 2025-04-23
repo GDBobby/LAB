@@ -25,6 +25,12 @@ int main() {
 	{
 		lab::ivec2 test{1};
 		printf("int vec test : %d\n", test.x);
+
+		lab::Vector<float, 3> testCon{lab::Vector<float, 2>{1.f}, 1.f};
+		lab::Vector<float, 3> testCon2{1.f, lab::Vector<float, 2>{1.f}};
+		printf("con test - %.2f:%.2f\n", testCon.x, testCon2.y);
+
+		
 	}
 
 	{

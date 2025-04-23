@@ -22,6 +22,16 @@ namespace lab{
 
         LAB_constexpr Vector() {}
         LAB_constexpr Vector(float x, float y, float z, float w) : x{ x }, y{ y }, z{ z }, w{ w } {}
+
+        LAB_constexpr Vector(Vector<float, 2> const vec1, Vector<float, 2> const vec2) : x{vec1.x}, y{vec1.y}, z{vec2.x}, w{vec2.y} {}
+        LAB_constexpr Vector(Vector<float, 2> const vec, float z, float w) : x{vec.x}, y{vec.y}, z{z}, w{w} {}
+        LAB_constexpr Vector(float x, Vector<float, 2> vec, float w) : x{x}, y{vec.x}, z{vec.y}, w{w} {}
+        LAB_constexpr Vector(float const x, float const y, Vector<float, 2> vec) : x{x}, y{y}, z{vec.x}, w{vec.y} {}
+
+        LAB_constexpr Vector(Vector<float, 3> const vec, float const w) : x{vec.x}, y{vec.y}, z{vec.z}, w{w} {}
+        LAB_constexpr Vector(float const x, Vector<float, 3> const vec) : x{x}, y{vec.x}, z{vec.y}, w{vec.z} {}
+
+
         LAB_constexpr Vector(float all) : x{ all }, y{ all }, z{ all }, w{ all } {}
         LAB_constexpr Vector(Vector<float, 2> const& other) : x{ other.x }, y{ other.y }, z{ float(0)}, w{float(0)} {}
         LAB_constexpr Vector(Vector<float, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ float(0) } {}

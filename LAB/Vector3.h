@@ -9,6 +9,8 @@ namespace lab{
         F z;
         LAB_constexpr Vector() {}
         LAB_constexpr Vector(F const x, F const y, F const z) : x{ x }, y{ y }, z{ z } {}
+        LAB_constexpr Vector(Vector<F, 2> const vec, F const z) : x{vec.x}, y{vec.y}, z{z}{}
+        LAB_constexpr Vector(F const x, Vector<F, 2> const vec) : x{x}, y{vec.x}, z{vec.y}{}
         LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
 
         LAB_constexpr Vector(Vector<F, 2> const& other) : x{ other.x }, y{ other.y } {}
