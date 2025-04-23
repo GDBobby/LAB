@@ -93,7 +93,7 @@ namespace lab {
 			}
 			const int64_t trimming_size = 52 - (exponent);
 
-			LAB_constexpr uint64_t mantissa_mask = (1 << 52) - 1;
+			LAB_constexpr uint64_t mantissa_mask = ((uint64_t)1 << (uint64_t)52) - (uint64_t)1;
 			const auto truncated_mantissa = static_cast<uint64_t>(((bits & mantissa_mask) >> trimming_size) << trimming_size);
 
 			LAB_constexpr uint64_t mantissa_anti_mask = UINT64_MAX ^ mantissa_mask;
