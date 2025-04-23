@@ -35,12 +35,12 @@ namespace lab {
 			return PI<F> / divisor;
 		}
 
-		template<template T>
+		template<typename T>
 		LAB_constexpr T Max(T const a, T const b){
 			const bool aBigger = a > b;
 			return a * aBigger + b * !aBigger;
 		}
-		template<template T>
+		template<typename T>
 		LAB_constexpr T Min(T const a, T const b){
 			const bool aSmaller = a < b;
 			return a * aSmaller + b * !aSmaller;
