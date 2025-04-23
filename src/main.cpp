@@ -62,12 +62,6 @@ int main() {
 
 		outFile.write(reinterpret_cast<const char*>(&nDP), sizeof(float));
 		//printf("nDP : %.2f\n", nDP);
-
-		LAB_constexpr float forwardX = lab::Vector<float, 2>::Forward().x;
-		LAB_constexpr float upY = lab::Vector<float, 2>::Up().y;
-		printf("unit vector - %.2f:%.2f\n", forwardX, upY);
-
-		LAB_static_assert(forwardX == upY);
 	}
 
 	{ //matrices
@@ -127,9 +121,9 @@ int main() {
 	{
 	}
 	{ //rotation matrices, scale matrix
-		LAB_constexpr lab::Transform<float, 3> transformX{lab::Vector<float, 3>{0.f}, lab::Vector<float, 3>{1.f}, lab::Vector<float, 3>{lab::SupportingMath::PI<float>, 0.f, 0.f}};
-		LAB_constexpr lab::Transform<float, 3> transformY{lab::Vector<float, 3>{0.f}, lab::Vector<float, 3>{1.f}, lab::Vector<float, 3>{0.f, lab::SupportingMath::PI<float>, 0.f}};
-		LAB_constexpr lab::Transform<float, 3> transformZ{lab::Vector<float, 3>{0.f}, lab::Vector<float, 3>{1.f}, lab::Vector<float, 3>{0.f, 0.f, lab::SupportingMath::PI<float>}};
+		LAB_constexpr lab::Transform<float, 3> transformX{lab::Vector<float, 3>{0.f}, lab::Vector<float, 3>{1.f}, lab::Vector<float, 3>{lab::PI<float>, 0.f, 0.f}};
+		LAB_constexpr lab::Transform<float, 3> transformY{lab::Vector<float, 3>{0.f}, lab::Vector<float, 3>{1.f}, lab::Vector<float, 3>{0.f, lab::PI<float>, 0.f}};
+		LAB_constexpr lab::Transform<float, 3> transformZ{lab::Vector<float, 3>{0.f}, lab::Vector<float, 3>{1.f}, lab::Vector<float, 3>{0.f, 0.f, lab::PI<float>}};
 
 		LAB_constexpr auto rotXMat = transformX.GetRotationXMatrix();
 		LAB_constexpr auto rotYMat = transformY.GetRotationYMatrix();
@@ -166,7 +160,7 @@ int main() {
 		printf("scale and identity - %.2f:%.2f\n", scaleMat.columns[0][0], identityMat.columns[0][0]);
 	}
 	{ //camera functions
-		LAB_constexpr auto proj = lab::CreateProjectionMatrix<float>(lab::SupportingMath::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
+		LAB_constexpr auto proj = lab::CreateProjectionMatrix<float>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
 	
 		for(uint8_t x = 0; x < 4; x++){
 			for(uint8_t y = 0; y < 4; y++){
@@ -184,9 +178,9 @@ int main() {
 	}
 	{ //trig functions
 		LAB_constexpr float trigInput = 50.f;
-		LAB_constexpr auto cosRet = lab::SupportingMath::Cos(trigInput);
-		LAB_constexpr auto sinRet = lab::SupportingMath::Sin(trigInput);
-		LAB_constexpr auto tanRet = lab::SupportingMath::Tan(trigInput);
+		LAB_constexpr auto cosRet = lab::Cos(trigInput);
+		LAB_constexpr auto sinRet = lab::Sin(trigInput);
+		LAB_constexpr auto tanRet = lab::Tan(trigInput);
 
 		outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
@@ -197,10 +191,10 @@ int main() {
 		printf("tan comparison : (%.10f) - (%.10f)\n", tanRet, std::tan(trigInput));
 
 		LAB_constexpr float arcInput = 0.5f;
-		LAB_constexpr float arcCosRet = lab::SupportingMath::ArcCos(arcInput);
-		LAB_constexpr float arcSinRet = lab::SupportingMath::ArcSin(arcInput);
-		LAB_constexpr float arcTanRet = lab::SupportingMath::ArcTan(arcInput);
-		LAB_constexpr float arcTan2Ret = lab::SupportingMath::ArcTan2(arcInput, 1.f);
+		LAB_constexpr float arcCosRet = lab::ArcCos(arcInput);
+		LAB_constexpr float arcSinRet = lab::ArcSin(arcInput);
+		LAB_constexpr float arcTanRet = lab::ArcTan(arcInput);
+		LAB_constexpr float arcTan2Ret = lab::ArcTan2(arcInput, 1.f);
 		outFile.write(reinterpret_cast<const char*>(&arcCosRet), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&arcSinRet), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&arcTanRet), sizeof(float));
@@ -209,33 +203,33 @@ int main() {
 		printf("\narcsin comparison : (%.10f) - (%.10f)\n", arcSinRet, std::asin(arcInput));
 		printf("\narctan comparison : (%.10f) - (%.10f) - (%.10f)\n", arcTanRet, std::atan(arcInput), arcTan2Ret);
 
-		//printf("arc tan comparison : (%.10f):(%.10f)\n", lab::SupportingMath::ArcTan2BitMasking(trigInput, 1.f), lab::SupportingMath::ArcTan2(trigInput, 1.f));
+		//printf("arc tan comparison : (%.10f):(%.10f)\n", lab::ArcTan2BitMasking(trigInput, 1.f), lab::ArcTan2(trigInput, 1.f));
 	}
 	{ //other math functions
-		LAB_constexpr float truncRet = lab::SupportingMath::Trunc(11.f);
-		LAB_constexpr float truncRet2 = lab::SupportingMath::Trunc(11.2f);
-		LAB_constexpr float truncRet3 = lab::SupportingMath::Trunc(0.1f);
-		LAB_constexpr float truncRet4 = lab::SupportingMath::Trunc(-1.1f);
+		LAB_constexpr float truncRet = lab::Trunc(11.f);
+		LAB_constexpr float truncRet2 = lab::Trunc(11.2f);
+		LAB_constexpr float truncRet3 = lab::Trunc(0.1f);
+		LAB_constexpr float truncRet4 = lab::Trunc(-1.1f);
 		outFile.write(reinterpret_cast<const char*>(&truncRet), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&truncRet2), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&truncRet3), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&truncRet4), sizeof(float));
 
-		LAB_constexpr float modRet = lab::SupportingMath::Mod(22.f, lab::SupportingMath::GetPI<float, true>(2.f));
+		LAB_constexpr float modRet = lab::Mod(22.f, lab::GetPI<float, true>(2.f));
 		outFile.write(reinterpret_cast<const char*>(&modRet), sizeof(float));
-		printf("mod comparison : (%.10f):(%.10f)\n", modRet, std::fmod(22.f, lab::SupportingMath::GetPI<float, true>(2.f)));
-		printf("mod comparison : (%.10f):(%.10f)\n", lab::SupportingMath::Mod(-25.f, lab::SupportingMath::GetPI<float, true>(2.f)), std::fmod(-25.f, lab::SupportingMath::GetPI<float, true>(2.f)));
+		printf("mod comparison : (%.10f):(%.10f)\n", modRet, std::fmod(22.f, lab::GetPI<float, true>(2.f)));
+		printf("mod comparison : (%.10f):(%.10f)\n", lab::Mod(-25.f, lab::GetPI<float, true>(2.f)), std::fmod(-25.f, lab::GetPI<float, true>(2.f)));
 
-		LAB_constexpr float piPhase1 = lab::SupportingMath::PhaseToPi(lab::SupportingMath::GetPI(2.f), -lab::SupportingMath::GetPI_DividedBy(2.f), lab::SupportingMath::GetPI_DividedBy(2.f));
-		LAB_constexpr float piPhase2 = lab::SupportingMath::PhaseToPi(-lab::SupportingMath::PI<float>, -lab::SupportingMath::GetPI_DividedBy(2.f), lab::SupportingMath::GetPI_DividedBy(2.f));
-		LAB_constexpr float piPhase3 = lab::SupportingMath::PhaseToPi(4.f, -lab::SupportingMath::GetPI_DividedBy(2.f), lab::SupportingMath::GetPI_DividedBy(2.f));
+		LAB_constexpr float piPhase1 = lab::PhaseToPi(lab::GetPI(2.f), -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
+		LAB_constexpr float piPhase2 = lab::PhaseToPi(-lab::PI<float>, -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
+		LAB_constexpr float piPhase3 = lab::PhaseToPi(4.f, -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
 
 		outFile.write(reinterpret_cast<const char*>(&piPhase1), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&piPhase2), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&piPhase3), sizeof(float));
 		printf("pi phase - (%.10f):(%.10f):(%.10f)\n", piPhase1, piPhase2, piPhase3);
 	}
-	float testBreak = lab::SupportingMath::InverseSqrt(1.f);
+	float testBreak = lab::InverseSqrt(1.f);
 	printf("result : %.2f\n", testBreak);
 
 	printf("made it to the end\n");
