@@ -188,6 +188,30 @@ namespace lab {
 			return ret;
 		}
 	
+		//this needs coordinate system branching
+		LAB_constexpr Vector<F, 3> GetForwardDir(){
+			return Vector<F, 3>{
+				lab::Sin(transform.rotation.y), 
+				-lab:Sin(transform.rotation.x), 
+				lab::Cos(transform.rotation.y)
+			};
+		}
+		LAB_constexpr Vector<F, 3> GetNormalizedForwardDir(){
+			Vector<F, 3> ret{
+				lab::Sin(transform.rotation.y), 
+				-lab:Sin(transform.rotation.x), 
+				lab::Cos(transform.rotation.y)
+			};
+			//x^2 + z^2 is always 1, sin^2  cos^2 == 1
+			return ret / (F(1) + Abs(ret.y));
+		}
+		LAB_constexpr Vector<F, 3> GetHorizontalForwardDir(){
+			return Vector<F, 3>{
+				lab::Sin(transform.rotation.y), 
+				0.f,
+				lab::Cos(transform.rotation.y)
+			};
+		}
 	};
 
 

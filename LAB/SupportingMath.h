@@ -109,7 +109,7 @@ namespace lab {
 	}
 
 	template<std::floating_point F>
-	LAB_constexpr F PhaseToPi(F const input, F const lower, F const higher) {
+	LAB_constexpr F PhaseTo(F const input, F const lower, F const higher) {
 
 		F const fullRange = higher - lower;
 		F const moddedInput = Mod(input - lower, fullRange) + lower;
