@@ -34,7 +34,7 @@ int main() {
 		printf("trunc con - %.2f\n", truncCon.x);
 
 
-		printf("tester\n", lab::Matrix<float, 3, 3>(1.f).GetInverse().Transposed().At(0, 0));
+		printf("tester %.2f\n", lab::Matrix<float, 3, 3>(1.f).GetInverse().Transposed().At(0, 0));
 	}
 
 	{
