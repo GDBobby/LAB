@@ -80,7 +80,7 @@ namespace lab {
 			//return data[column * ColumnAlignment + row];
 			return columns[column][row];
 		}
-/*
+
 		LAB_constexpr F& operator[](const uint8_t index) {
 			const uint8_t row = index % ColumnAlignment;
 			const uint8_t column = (index - row) / ColumnAlignment;
@@ -95,7 +95,7 @@ namespace lab {
 
 			return At(column, row);
 		}
-*/
+
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix& operator*=(Matrix<F, Columns, Rows, Alignment> const& other) const {
 			Matrix tempCopy = *this;
