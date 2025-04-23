@@ -220,9 +220,9 @@ int main() {
 		printf("mod comparison : (%.10f):(%.10f)\n", modRet, std::fmod(22.f, lab::GetPI<float, true>(2.f)));
 		printf("mod comparison : (%.10f):(%.10f)\n", lab::Mod(-25.f, lab::GetPI<float, true>(2.f)), std::fmod(-25.f, lab::GetPI<float, true>(2.f)));
 
-		LAB_constexpr float piPhase1 = lab::PhaseToPi(lab::GetPI(2.f), -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
-		LAB_constexpr float piPhase2 = lab::PhaseToPi(-lab::PI<float>, -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
-		LAB_constexpr float piPhase3 = lab::PhaseToPi(4.f, -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
+		LAB_constexpr float piPhase1 = lab::PhaseTo(lab::GetPI(2.f), -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
+		LAB_constexpr float piPhase2 = lab::PhaseTo(-lab::PI<float>, -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
+		LAB_constexpr float piPhase3 = lab::PhaseTo(4.f, -lab::GetPI_DividedBy(2.f), lab::GetPI_DividedBy(2.f));
 
 		outFile.write(reinterpret_cast<const char*>(&piPhase1), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&piPhase2), sizeof(float));
