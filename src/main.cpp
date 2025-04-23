@@ -30,7 +30,8 @@ int main() {
 		lab::Vector<float, 3> testCon2{1.f, lab::Vector<float, 2>{1.f}};
 		printf("con test - %.2f:%.2f\n", testCon.x, testCon2.y);
 
-		
+		lab::Vector<float, 3> truncCon{lab::Vector<float, 4>{1.f}};
+		printf("trunc con - %.2f\n", truncCon.x);
 	}
 
 	{
