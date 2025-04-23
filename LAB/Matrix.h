@@ -21,23 +21,33 @@ namespace lab {
 
 		LAB_constexpr Matrix() : columns{} {}
 
-		LAB_constexpr Matrix(F const initValue) {
-			if constexpr(Columns == 2){
-				columns[0] = Vector<F, ColumnAlignment>{initValue};
-				columns[1] = Vector<F, ColumnAlignment>{initValue};
+		//identity matrix construction
+		LAB_constexpr Matrix(F const initVal) {
+			if constexpr(Columns == Rows){
+				if(Columns == 2){
+					At(0, 0) = initVal;
+					At(0, 1) = F(0);
+					At(1, 0) = F(0);
+					At(1, 1) = F(0);
+				}
+				else if constexpr (Columns == 2){
+					At(0, 0) = initVal; At(0, 1) = F(0); At(0, 2) = F(0);
+					At(1, 0) = F(0); At(1, 1) = initVal; At(1, 2) = F(0);
+					At(2, 0) = F(0); At(2, 1) = F(0); At(2, 2) = initVal;
+				}
+				if constexpr(Columns == 4){
+					At(0, 0) = initVal; At(0, 1) = F(0); At(0, 2) = F(0); At(0, 3) = F(0);
+					At(1, 0) = F(0); At(1, 1) = initVal; At(1, 2) = F(0); At(1, 3) = F(0);
+					At(2, 0) = F(0); At(2, 1) = F(0); At(2, 2) = initVal; At(2, 3) = F(0);
+					At(3, 0) = F(0); At(3, 1) = F(0); At(3, 2) = F(0); At(3, 3) = initVal;
+				}
 			}
-			else if constexpr (Columns == 3){
-				columns[0] = Vector<F, ColumnAlignment>{initValue};
-				columns[1] = Vector<F, ColumnAlignment>{initValue};
-				columns[2] = Vector<F, ColumnAlignment>{initValue};
-
-			}
-			else if constexpr (Columns == 4){
-				columns[0] = Vector<F, ColumnAlignment>{initValue};
-				columns[1] = Vector<F, ColumnAlignment>{initValue};
-				columns[2] = Vector<F, ColumnAlignment>{initValue};
-				columns[3] = Vector<F, ColumnAlignment>{initValue};
-
+			else{
+				for(uint8_t column = 0; column < Columns; column++){
+					for(uint8_t row = 0; row < Rows; row++){
+						At(column, row) = initVal;
+					}
+				}
 			}
 		}
 		LAB_constexpr Matrix(Matrix const& other){
@@ -188,6 +198,76 @@ namespace lab {
 					return ret;
 				}
 			}
+		}
+		
+		LAB_constexpr Matrix& operator*=(F const multiplier) {
+			for(uint8_t column = 0; column < Columns; column++){
+				for(uint8_t row = 0; row < Rows; row++){
+					At(column, row) *= multiplier;
+				}
+			}
+			return *this;
+		}
+		LAB_constexpr Matrix operator*(F const multiplier) const {
+			Matrix ret = *this;
+			return ret *= multiplier;
+		}
+		LAB_constexpr Matrix& operator/=(F const divider) const{
+			for(uint8_t column = 0; column < Columns; column++){
+				for(uint8_t row = 0; row < Rows; row++){
+					At(column, row) /= divider;
+				}
+			}
+			return *this;
+		}
+		LAB_constexpr Matrix operator/(F const divider) const {
+			Matrix ret = *this;
+			return ret *= divider;
+		}
+
+		template<uint8_t Alignment = ColumnAlignment>
+		LAB_constexpr Matrix<F, Rows, Columns, Alignment> Transposed() {
+			Matrix<F, Rows, Columns, Alignment> ret;
+			for(uint8_t column = 0; column < Columns; column++){
+				for(uint8_t row = 0; row < Rows; row++){
+					ret.At(row, column) = At(column, row);
+				}
+			}
+			return ret;
+		}
+
+
+		LAB_constexpr F GetDeterminant() const requires(Columns == Rows)  {
+			if constexpr(Columns == 2){
+				return At(0, 0) * At(1, 1) - At(1, 0) * At(0, 1);
+			}
+			else if constexpr (Columns == 3){
+				const F first = At(0,0) * (At(1, 1) * At(2, 2) - At(2, 1) * At(2, 1));
+				const F second =At(1,0) * (At(0, 1) * At(2, 2) - At(2, 1) * At(2, 0));
+				const F third = At(2,0) * (At(0, 1) * At(1, 2) - At(1, 1) * At(0, 2));
+	
+				return first - second + third;
+			}
+			else if constexpr (Columns == 4){
+				//ill come back to this later
+				return F(0);
+			}
+		}
+
+		LAB_constexpr Matrix Invert() requires(Columns == Rows){
+			const F determinent = GetDeterminant();
+			//if(determinent == F(0)){
+				//bad, LAB_debug here
+			//}
+			return operator/=(determinent);
+		}
+
+		LAB_constexpr Matrix GetInverse() const requires(Columns == Rows) {
+			const F determinent = GetDeterminant();
+			//if(determinent == F(0)){
+				//bad, LAB_debug here
+			//}
+			return operator/(determinent);
 		}
 	};
 

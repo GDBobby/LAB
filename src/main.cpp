@@ -32,6 +32,9 @@ int main() {
 
 		lab::Vector<float, 3> truncCon{lab::Vector<float, 4>{1.f}};
 		printf("trunc con - %.2f\n", truncCon.x);
+
+
+		printf("tester\n", lab::Matrix<float, 3, 3>(1.f).GetInverse().Transposed().At(0, 0));
 	}
 
 	{

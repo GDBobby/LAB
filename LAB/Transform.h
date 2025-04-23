@@ -188,6 +188,30 @@ namespace lab {
 			return ret;
 		}
 	
+		template<uint8_t Alignment = 4> requires(Alignment >= 3)
+		LAB_constexpr Matrix<F, 3, 3, Alignment> GetNormalMatrix(){
+			Matrix<F, 3, 3, Alignment> ret{0.f};
+			const F cosZ = Cos(rotation.z);
+			const F sinZ = Sin(rotation.z);
+			const F cosY = Cos(rotation.y);
+			const F sinY = Sin(rotation.y);
+			const F cosX = Cos(rotation.x);
+			const F sinX = Sin(rotation.x);
+
+			ret.At(0, 0) = scale.x * (cosY * cosZ + sinY * sinX * sinZ);
+			ret.At(0, 1) = scale.x * (cosX * sinZ);
+			ret.At(0, 2) = scale.x * (cosY * sinX * sinZ - cosZ * sinY);
+
+			ret.At(1, 0) = scale.y * (cosZ * sinY * sinX - cosY * sinZ);
+			ret.At(1, 1) = scale.y * (cosX * cosZ);
+			ret.At(1, 2) = scale.y * (cosY * cosZ * sinX + sinY * sinZ);
+
+			ret.At(2, 0) = scale.z * (cosX * sinY);
+			ret.At(2, 1) = scale.z * (-sinX);
+			ret.At(2, 2) = scale.z * (cosY * cosX);
+
+		}
+
 		//this needs coordinate system branching
 		LAB_constexpr Vector<F, 3> GetForwardDir(){
 			return Vector<F, 3>{
