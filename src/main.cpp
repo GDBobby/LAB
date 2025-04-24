@@ -2,7 +2,6 @@
 #include "Matrix.h"
 #include "Transform.h"
 #include "Camera.h"
-#include "IntVector.h"
 
 #include <cstdio>
 #include <fstream>
@@ -162,14 +161,15 @@ int main() {
 		
 		LAB_constexpr lab::Transform<float, 3> transformScale{};
 		LAB_constexpr auto scaleMat = transformScale.GetScaleMatrix();
-		LAB_constexpr lab::Matrix<float, 4, 4> identityMat{lab::Identity<float, 4>(1.f)};
+		LAB_constexpr lab::Matrix<float, 4, 4> identityMat{1.f};
 		LAB_static_assert(scaleMat.columns[0][0] == 1.f);
 		LAB_static_assert(identityMat.columns[0][0] == 1.f);
 
 		LAB_static_assert(scaleMat == identityMat);
 		printf("scale and identity - %.2f:%.2f\n", scaleMat.columns[0][0], identityMat.columns[0][0]);
 
-		transformScale.GetNormalMatrix();
+		auto normMat = transformScale.GetNormalMatrix();
+		printf("normMat 0,0 - %.2f\n", normMat.At(0, 0));
 	}
 	{ //camera functions
 		LAB_constexpr auto proj = lab::CreateProjectionMatrix<float>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);

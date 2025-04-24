@@ -13,6 +13,11 @@ namespace lab {
 
 //#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
+//swap to debugging levels
+//debug level 0 == nothing
+//debug level 1 == asserts
+//debug level 2 == nan and inf checks
+
 #ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #include <concepts>

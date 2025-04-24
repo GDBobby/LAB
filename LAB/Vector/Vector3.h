@@ -69,7 +69,7 @@ namespace lab{
         LAB_constexpr bool operator==(Vector const other) const {
             return (x == other.x) && (y == other.y) && (z == other.z);
         }
-        LAB_constexpr void operator +=(Vector const other) {
+        LAB_constexpr void operator+=(Vector const other) {
             x += other.x;
             y += other.y;
             z += other.z;
@@ -112,6 +112,12 @@ namespace lab{
                 z * other.z
             };
         }
+        LAB_constexpr Vector& operator*=(Vector const other){
+            x *= other.x;
+            y *= other.y;
+            z *= other.z;
+            return *this;
+        }
         LAB_constexpr void operator/=(F const divisor) {
             x /= divisor;
             y /= divisor;
@@ -123,12 +129,6 @@ namespace lab{
                 y / divisor,
                 z / divisor
             };
-        }
-        LAB_constexpr Vector& operator*=(Vector const other){
-            x *= other.x;
-            y *= other.y;
-            z *= other.z;
-            return *this;
         }
         
         LAB_constexpr F SquaredMagnitude() const {

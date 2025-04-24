@@ -1,8 +1,11 @@
 #pragma once
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4f.h"
-#include "Vector4d.h"
+
+
+#include "Vector/Vector2.h"
+#include "Vector/Vector3.h"
+#include "Vector/Vector4f.h"
+#include "Vector/Vector4d.h"
+#include "Vector/IntVector.h"
 
 namespace lab{
 
