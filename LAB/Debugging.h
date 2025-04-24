@@ -1,15 +1,5 @@
 #pragma once
 
-namespace lab {
-	[[noreturn]] inline void Unreachable() {
-#if defined(_MSC_VER) && !defined(__clang__) // MSVC
-		__assume(false);
-#else // GCC, Clang
-		__builtin_unreachable();
-#endif
-	}
-}
-
 
 //#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
@@ -18,7 +8,37 @@ namespace lab {
 //debug level 1 == asserts
 //debug level 2 == nan and inf checks
 
-#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
+#ifndef LAB_DEBUG_LEVEL
+#define LAB_DEBUG_LEVEL 0
+#endif
+
+#define LAB_DEBUG_ASSERT_ACCESS 1
+#define LAB_DEBUG_FLOAT_ANOMALIES 2
+
+#if LAB_DEBUG_LEVEL >= LAB_DEBUG_ASSERT_ACCESS
+#include <cassert>
+#define LAB_DEBUGGING_ACCESS 1
+#else
+#define LAB_DEBUGGING_ACCESS 0
+#endif
+
+namespace lab {
+#if LAB_DEBUGGING_ACCESS
+	#define LAB_UNREACHABLE	assert(false)
+#else
+	#if defined(_MSC_VER) && !defined(__clang__) // MSVC
+		#define LAB_UNREACHABLE	__assume(false);
+	#else // GCC, Clang
+		#define LAB_UNREACHABLE	__builtin_unreachable();
+	#endif
+#endif
+}
+
+#if LAB_DEBUG_LEVEL < LAB_DEBUG_FLOAT_ANOMALIES
+
+#define LAB_DEBUGGING_FLOAT_ANOMALIES 0
+#else
+#define LAB_DEBUGGING_FLOAT_ANOMALIES 1
 
 #include <concepts>
 #include <bit>

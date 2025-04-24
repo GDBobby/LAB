@@ -2,9 +2,6 @@
 
 #include "Vector.h"
 #include "Debugging.h"
-#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
-#include <cassert>
-#endif
 #include <concepts>
 #include <type_traits> //can i remove this?
 #include <array> //i want to replace this with initializer list
@@ -59,13 +56,13 @@ namespace lab {
 		}
 
 		LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < Columns) && (row < Rows));
 #endif
 			return columns[column][row];
 		}
 		LAB_constexpr F At(const uint8_t column, const uint8_t row) const {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUG_LEVEL >= LAB_DEBUG_ASSERT_ACCESS
 			assert((column < Columns) && (row < Rows));
 #endif
 			return columns[column][row];
@@ -74,7 +71,7 @@ namespace lab {
 		LAB_constexpr F& operator[](const uint8_t index) {
 			const uint8_t row = index % ColumnAlignment;
 			const uint8_t column = (index - row) / ColumnAlignment;
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < Columns) && (row < Rows));
 #endif
 
@@ -83,7 +80,7 @@ namespace lab {
 		LAB_constexpr F operator[](const uint8_t index) const {
 			const uint8_t row = index % ColumnAlignment;
 			const uint8_t column = (index - row) / ColumnAlignment;
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < Columns) && (row < Rows));
 #endif
 

@@ -3,9 +3,6 @@
 
 #include "Vector.h"
 #include "Debugging.h"
-#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
-#include <cassert>
-#endif
 #include <concepts>
 #include <type_traits> //can i remove this?
 #include <cstring> //for memcpy
@@ -57,13 +54,13 @@ namespace lab {
         {}
 
 		LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 3) && (row < 3));
 #endif
 			return columns[column][row];
 		}
 		LAB_constexpr F At(const uint8_t column, const uint8_t row) const {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 3) && (row < 3));
 #endif
 			return columns[column][row];
@@ -72,7 +69,7 @@ namespace lab {
 		LAB_constexpr F& operator[](const uint8_t index) {
 			const uint8_t row = index % 3;
 			const uint8_t column = (index - row) / 3;
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 3) && (row < 3));
 #endif
 			return columns[column][row];
@@ -80,7 +77,7 @@ namespace lab {
 		LAB_constexpr F operator[](const uint8_t index) const {
 			const uint8_t row = index % 3;
 			const uint8_t column = (index - row) / 3;
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
             assert((column < 3) && (row < 3));
 #endif
 
@@ -113,20 +110,20 @@ namespace lab {
 
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix operator*(Matrix<F, 3, 3, Alignment> const& other) const {
-				Matrix ret;
-                
-				ret.columns[0][0] = columns[0][0] * other.columns[0][0] + columns[1][0] * other.columns[0][1] + columns[2][0] * other.columns[0][2];
-				ret.columns[0][1] = columns[0][1] * other.columns[0][0] + columns[1][1] * other.columns[0][1] + columns[2][1] * other.columns[0][2];
-				ret.columns[0][2] = columns[0][2] * other.columns[0][0] + columns[1][2] * other.columns[0][1] + columns[2][2] * other.columns[0][2];
+			Matrix ret;
+			
+			ret.columns[0][0] = columns[0][0] * other.columns[0][0] + columns[1][0] * other.columns[0][1] + columns[2][0] * other.columns[0][2];
+			ret.columns[0][1] = columns[0][1] * other.columns[0][0] + columns[1][1] * other.columns[0][1] + columns[2][1] * other.columns[0][2];
+			ret.columns[0][2] = columns[0][2] * other.columns[0][0] + columns[1][2] * other.columns[0][1] + columns[2][2] * other.columns[0][2];
 
-				ret.columns[1][0] = columns[0][0] * other.columns[1][0] + columns[1][0] + other.columns[1][1] + columns[2][0] * other.columns[1][2];
-				ret.columns[1][1] = columns[0][1] * other.columns[1][0] + columns[1][1] + other.columns[1][1] + columns[2][1] * other.columns[1][2];
-				ret.columns[1][2] = columns[0][2] * other.columns[1][0] + columns[1][2] + other.columns[1][1] + columns[2][2] * other.columns[1][2];
+			ret.columns[1][0] = columns[0][0] * other.columns[1][0] + columns[1][0] + other.columns[1][1] + columns[2][0] * other.columns[1][2];
+			ret.columns[1][1] = columns[0][1] * other.columns[1][0] + columns[1][1] + other.columns[1][1] + columns[2][1] * other.columns[1][2];
+			ret.columns[1][2] = columns[0][2] * other.columns[1][0] + columns[1][2] + other.columns[1][1] + columns[2][2] * other.columns[1][2];
 
-				ret.columns[2][0] = columns[0][0] * other.columns[2][0] + columns[1][0] + other.columns[2][1] + columns[2][0] * other.columns[2][2];
-				ret.columns[2][1] = columns[0][1] * other.columns[2][0] + columns[1][1] + other.columns[2][1] + columns[2][1] * other.columns[2][2];
-				ret.columns[2][2] = columns[0][2] * other.columns[2][0] + columns[1][2] + other.columns[2][1] + columns[2][2] * other.columns[2][2];
-				return ret;
+			ret.columns[2][0] = columns[0][0] * other.columns[2][0] + columns[1][0] + other.columns[2][1] + columns[2][0] * other.columns[2][2];
+			ret.columns[2][1] = columns[0][1] * other.columns[2][0] + columns[1][1] + other.columns[2][1] + columns[2][1] * other.columns[2][2];
+			ret.columns[2][2] = columns[0][2] * other.columns[2][0] + columns[1][2] + other.columns[2][1] + columns[2][2] * other.columns[2][2];
+			return ret;
         }
 		
 		template<uint8_t Alignment>
@@ -182,7 +179,7 @@ namespace lab {
 
 		LAB_constexpr Matrix Invert() {
 			const F determinent = GetDeterminant();
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             assert(determinent != F(0));
 #endif
 			return operator/=(determinent);
@@ -190,7 +187,7 @@ namespace lab {
 
 		LAB_constexpr Matrix GetInverse() const {
 			const F determinent = GetDeterminant();
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             assert(determinent != F(0));
 #endif
 			return operator/(determinent);
@@ -208,6 +205,11 @@ namespace lab {
         Matrix GetRotated(F const angle, Vector<F, 2> const axis) const {
             F const cosine = Cos(angle);
             F const sine = Sin(angle);
+#if LAB_DEBUGGING_FLOAT_ANOMALY
+			//ensure axis is normalized
+			const Vector<F, 3> axisNormDiff  axis - axis.Normalized();
+			assert(abs(axis.x < F(0.001)) && (axis.y < F(0.001)) && (axis.z < F(0.001)));
+#endif
             const Vector<F, 2> temp{ axis * (F(1) - cosine) };
 
             //not implemented yet
@@ -270,13 +272,13 @@ namespace lab {
         {}
 
 		LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 3) && (row < 3));
 #endif
 			return columns[column][row];
 		}
 		LAB_constexpr F At(const uint8_t column, const uint8_t row) const {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 3) && (row < 3));
 #endif
 			return columns[column][row];
@@ -285,7 +287,7 @@ namespace lab {
 		LAB_constexpr F& operator[](const uint8_t index) {
 			const uint8_t row = index % 3;
 			const uint8_t column = (index - row) / 3;
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 3) && (row < 3));
 #endif
 			return columns[column][row];
@@ -293,7 +295,7 @@ namespace lab {
 		LAB_constexpr F operator[](const uint8_t index) const {
 			const uint8_t row = index % 3;
 			const uint8_t column = (index - row) / 3;
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
             assert((column < 3) && (row < 3));
 #endif
 
@@ -361,7 +363,7 @@ namespace lab {
             };
 		}
 		LAB_constexpr Matrix& operator/=(F const divider) {
-#if LAB_DEBUG_LEVEL >= 2
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             //handle divider == 0
 #endif
 			for(uint8_t column = 0; column < 3; column++){
@@ -370,7 +372,7 @@ namespace lab {
 			return *this;
 		}
 		LAB_constexpr Matrix operator/(F const divider) const {
-#if LAB_DEBUG_LEVEL >= 2
+#if LAB_DEBUGGING_FLOAT_ANOMALY
 			//handle divider == 0
 #endif
             return Matrix{
@@ -408,7 +410,7 @@ namespace lab {
 
 		LAB_constexpr Matrix Invert() {
 			const F determinent = GetDeterminant();
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             assert(determinent != F(0));
 #endif
 			return operator/=(determinent);
@@ -416,7 +418,7 @@ namespace lab {
 
 		LAB_constexpr Matrix GetInverse() const {
 			const F determinent = GetDeterminant();
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             assert(determinent != F(0));
 #endif
 			return operator/(determinent);
@@ -434,6 +436,12 @@ namespace lab {
         Matrix GetRotated(F const angle, Vector<F, 2> const axis) const {
             F const cosine = Cos(angle);
             F const sine = Sin(angle);
+			
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
+			//ensure axis is normalized
+			const Vector<F, 3> axisNormDiff  axis - axis.Normalized();
+			assert(abs(axis.x < F(0.001)) && (axis.y < F(0.001)) && (axis.z < F(0.001)));
+#endif
             const Vector<F, 2> temp{ axis * (F(1) - cosine) };
 
             //not implemented yet

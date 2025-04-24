@@ -4,7 +4,6 @@
 #include "Vector.h"
 #include "Debugging.h"
 
-#include <cassert>
 #include <concepts>
 #include <utility>
 #include <type_traits> //can i remove this?
@@ -61,25 +60,33 @@ namespace lab {
         {}
 
 		LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 4) && (row < 4));
+#endif
 			return columns[column][row];
 		}
 		LAB_constexpr F At(const uint8_t column, const uint8_t row) const {
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 4) && (row < 4));
+#endif
 			return columns[column][row];
 		}
 
 		LAB_constexpr F& operator[](const uint8_t index) {
 			const uint8_t row = index % 4;
 			const uint8_t column = (index - row) / 4;
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 4) && (row < 4));
+#endif
 
 			return columns[column][row];
 		}
 		LAB_constexpr F operator[](const uint8_t index) const {
 			const uint8_t row = index % 4;
 			const uint8_t column = (index - row) / 4;
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 4) && (row < 4));
+#endif
 
 			return columns[column][row];
 		}
@@ -158,7 +165,7 @@ namespace lab {
             };
 		}
 		LAB_constexpr Matrix& operator/=(F const divider) {
-#if LAB_DEBUG_LEVEL >= 2
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
             //handle divider == 0
 #endif
 			for(uint8_t column = 0; column < 4; column++){
@@ -167,7 +174,7 @@ namespace lab {
 			return *this;
 		}
 		LAB_constexpr Matrix operator/(F const divider) const {
-#if LAB_DEBUG_LEVEL >= 2
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
             //handle divider == 0
 #endif
             return Matrix{
@@ -224,9 +231,11 @@ namespace lab {
         LAB_constexpr Matrix GetRotated(F const angle, Vector<F, 3> const axis) const{
             F const cosine = Cos(angle);
             F const sine = Sin(angle);
-    #if MATH_DEBUGGING
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
             //ensure axis is normalized
-    #endif
+            const Vector<F, 3> axisNormDiff  axis - axis.Normalized();
+            assert(abs(axis.x < F(0.001)) && (axis.y < F(0.001)) && (axis.z < F(0.001)));
+#endif
             const Vector<F, 3> temp{ axis * (F(1) - cosine) };
             Matrix<F, 3, 3> rotation; //its a 4x4 matrix, but the outer parts dont matter
             rotation.columns[0].x = cosine + temp.x * axis.x;

@@ -56,9 +56,7 @@ namespace lab{
             else if (row == 1) {
                 return y;
             }
-            assert(row < 2);
-            return x;
-            
+            LAB_UNREACHABLE;
         }
         LAB_constexpr F operator[](uint8_t const row) const {
             if (row == 0) {
@@ -67,9 +65,7 @@ namespace lab{
             else if (row == 1) {
                 return y;
             }
-            assert(row < 2);
-            return x;
-            
+            LAB_UNREACHABLE;
         }
 
         template<uint8_t DimensionsOther>

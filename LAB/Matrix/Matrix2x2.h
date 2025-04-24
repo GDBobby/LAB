@@ -6,9 +6,6 @@
 
 #include "Vector.h"
 #include "Debugging.h"
-#ifdef LAB_DEBUGGING_FLOAT_ANOMALIES
-#include <cassert>
-#endif
 #include <concepts>
 #include <type_traits> //can i remove this?
 #include <array> //i want to replace this with initializer list
@@ -41,26 +38,26 @@ namespace lab {
         LAB_constexpr explicit Matrix(Vector<F, 2> const vec0, Vector<F, 2> const vec1) : columns{vec0, vec1} {}
 
 		LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 2) && (row < 2));
 #endif
 			return columns[column * 2 + row];
 		}
 		LAB_constexpr F At(const uint8_t column, const uint8_t row) const {
-            #if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert((column < 2) && (row < 2));
 #endif
 			return columns[column * 2 + row];
 		}
 
 		LAB_constexpr F& operator[](const uint8_t index) {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert(index < 4);
 #endif
 			return columns[index];
 		}
 		LAB_constexpr F operator[](const uint8_t index) const {
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_ACCESS
 			assert(index < 4);
 #endif
 			return columns[index];
@@ -114,14 +111,14 @@ namespace lab {
             };
 		}
 		LAB_constexpr Matrix& operator/=(F const divider) {
-#if LAB_DEBUG_LEVEL >= 2
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             //handle divider == 0
 #endif
 			columns /= divider;
 			return *this;
 		}
 		LAB_constexpr Matrix operator/(F const divider) const {
-#if LAB_DEBUG_LEVEL >= 2
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             //handle divider == 0
 #endif
 			return Matrix{
@@ -147,7 +144,7 @@ namespace lab {
 
 		LAB_constexpr Matrix Invert() {
 			const F determinent = GetDeterminant();
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             assert(determinent != F(0));
 #endif
 			return operator/=(determinent);
@@ -155,7 +152,7 @@ namespace lab {
 
 		LAB_constexpr Matrix GetInverse() const {
 			const F determinent = GetDeterminant();
-#if LAB_DEBUG_LEVEL >= 1
+#if LAB_DEBUGGING_FLOAT_ANOMALY
             assert(determinent != F(0));
 #endif
 			return operator/(determinent);

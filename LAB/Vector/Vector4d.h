@@ -36,8 +36,7 @@ namespace lab{
             else if (row == 3) {
                 return w;
             }
-            assert(row < 4);
-            return x;
+            LAB_UNREACHABLE;
         }
         LAB_constexpr double operator[](uint8_t const row) const {
             if (row == 0) {
@@ -52,8 +51,7 @@ namespace lab{
             else if (row == 3) {
                 return w;
             }
-            assert(row < 4);
-            return x;
+            LAB_UNREACHABLE;
         }
 
         template<uint8_t DimensionsOther>
