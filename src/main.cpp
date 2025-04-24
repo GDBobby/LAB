@@ -21,7 +21,18 @@ int main() {
 	if (!outFile.is_open()) {
 		return EXIT_FAILURE;
 	}
-	{
+
+#if 1 //force a compiler mismatch
+#ifdef _MSC_VER
+	outFile << 0.0;
+#elif defined(__clang__)
+	outFile << 1.0;
+#elif defined(__GNUC__)
+	outFile << 2.0;
+#endif
+#endif
+
+	{ //vector constructor testing
 		lab::ivec2 test{1};
 		printf("int vec test : %d\n", test.x);
 
@@ -31,9 +42,6 @@ int main() {
 
 		lab::Vector<float, 3> truncCon{lab::Vector<float, 4>{1.f}};
 		printf("trunc con - %.2f\n", truncCon.x);
-
-
-		printf("tester %.2f\n", lab::Matrix<float, 3, 3>(1.f).GetInverse().Transposed().At(0, 0));
 	}
 
 	{
@@ -48,6 +56,9 @@ int main() {
 		lab::Matrix<float, 4, 4> crossTest2{2.f};
 		lab::Matrix<float, 4, 4> crossTestOut = crossTest * crossTest2;
 		outFile.write(reinterpret_cast<const char*>(&crossTestOut.columns), sizeof(float) * 4 * 4);
+
+		const auto normalMat = lab::Matrix<float, 3, 3>(5.f).GetInverse().Transposed();
+		outFile.write(reinterpret_cast<const char*>(&normalMat), sizeof(normalMat));
 	}
 
 	{ //vectors
