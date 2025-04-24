@@ -22,7 +22,7 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-#if 1 //force a compiler mismatch
+#if 0 //force a compiler mismatch, for testing the github workflow comparison (it works)
 #ifdef _MSC_VER
 	outFile << 0.0;
 #elif defined(__clang__)
