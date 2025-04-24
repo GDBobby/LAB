@@ -235,6 +235,7 @@ namespace lab {
 		}
 	};
 
-
+	using Transform3 = Transform<float, 3>;
+	using Transform2 = Transform<float, 2>;
 }
 

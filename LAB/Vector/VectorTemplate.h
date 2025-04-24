@@ -1,7 +1,6 @@
 #pragma once
 
 #include "SupportingMath.h"
-#include "CoordinateSystems.h"
 #include "Debugging.h"
 
 #include <cstdint>

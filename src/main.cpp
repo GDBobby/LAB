@@ -10,6 +10,9 @@
 
 #include <cmath>
 
+using MyCS = lab::CoordinateSystem<lab::Direction::XDir<true>, lab::Direction::YDir<true>, lab::Direction::ZDir<true>>;
+
+
 int main() {
 #ifdef _MSC_VER
 	std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
@@ -133,7 +136,7 @@ int main() {
 		LAB_static_assert(testFloat0 != testFloat1);
 
 		LAB_constexpr lab::Matrix<float, 4, 4> matrix1(1.f);
-		LAB_constexpr auto rotatedMat = lab::Rotate(matrix1, 0.5f, lab::Vector<float, 3>::Up());
+		LAB_constexpr auto rotatedMat = lab::Rotate(matrix1, 0.5f, MyCS::unitUpVector);
 
 		LAB_constexpr auto translatedMat = lab::Translate(rotatedMat, lab::Vector<float, 3>{0.f, 1.f, 2.f});
 		LAB_constexpr auto scaledMat = lab::Scale(translatedMat, testVec);
@@ -189,7 +192,7 @@ int main() {
 		printf("normMat 0,0 - %.2f\n", normMat.At(0, 0));
 	}
 	{ //camera functions
-		LAB_constexpr auto proj = lab::CreateProjectionMatrix<float>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
+		LAB_constexpr auto proj = lab::CreateProjectionMatrix<lab::Perspective::Vulkan>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
 	
 		for(uint8_t x = 0; x < 4; x++){
 			for(uint8_t y = 0; y < 4; y++){
@@ -197,7 +200,7 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
 			}
 		}
-		LAB_constexpr auto viewMat = lab::CreateViewMatrix(lab::Vector<float, 3>(0.f), lab::Vector<float, 3>::Forward());
+		LAB_constexpr auto viewMat = lab::CreateViewMatrix<MyCS>(lab::Vector<float, 3>(0.f), MyCS::unitForwardVector);
 		for (uint8_t x = 0; x < 4; x++) {
 			for (uint8_t y = 0; y < 4; y++) {
 				const float tempVal = viewMat.At(x, y);
