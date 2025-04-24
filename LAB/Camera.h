@@ -101,7 +101,8 @@ namespace lab{
     //view matrix is recreated at least once per frame
     //i need to be a bit more careful with this
 
-    template<CoordinateSystem CS, std::floating_point F>
+    template<typename CS, std::floating_point F>
+    requires(CS::unitForwardVector)
     LAB_constexpr Matrix<F, 4, 4> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
         Matrix<F, 4, 4> ret{0.f};
         const Vector<float, 3> right = Cross(forward, CS::unitUpVector).Normalized();
@@ -151,7 +152,8 @@ namespace lab{
     }
 
     //the final row needs to be set to 0,0,0,1 outside of this function
-    template<std::floating_point F, CoordinateSystem CS>
+    template<typename CS, std::floating_point F>
+    requires(CS::unitForwardVector)
     LAB_constexpr void CreateViewMatrix(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward){
         const Vector<float, 3> right = Cross(forward, CS::unitUpVector).Normalized();
         const Vector<float, 3> up = Cross(right, forward).Normalized();
