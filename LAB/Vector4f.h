@@ -49,6 +49,7 @@ namespace lab{
                 w = other.w;
             }
             else{
+                //i need to benchmark if this is actually better
                 vec = other.vec;
             }
             return *this;
@@ -152,6 +153,7 @@ namespace lab{
             y *= multiplier;
             z *= multiplier;
             w *= multiplier;
+            return *this;
         }
         LAB_constexpr Vector operator*(float const multiplier) const {
             return Vector{
@@ -166,6 +168,7 @@ namespace lab{
             y /= divisor;
             z /= divisor;
             w /= divisor;
+            return *this;
         }
         LAB_constexpr Vector operator/(float const divisor) const {
             return Vector{
@@ -210,19 +213,6 @@ namespace lab{
                 return temp.x + temp.y + temp.z + temp.w;
             }
         }
-
-        LAB_constexpr static Vector Forward() {
-            return { float(1), float(0), float(0), float(0) };
-        }
-        LAB_constexpr static Vector Up() {
-            return { float(0), float(0), float(1), float(0) };
-        }
-        LAB_constexpr static Vector Right() {
-            return { float(0), float(1), float(0), float(0) };
-        }
-        LAB_constexpr static Vector Ahead() {
-            return { float(0), float(0), float(0), float(1) };
-        }
     };
 
 
@@ -234,7 +224,6 @@ namespace lab{
             f / vec.w
         };
     }
-    template<float>
     Vector<float, 4> operator-(float const f, Vector<float, 4> const vec){
         return {
             f - vec.x,
