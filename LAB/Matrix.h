@@ -23,19 +23,19 @@ namespace lab {
 
 		//identity matrix construction
 		LAB_constexpr Matrix(F const initVal) {
-			if constexpr(Columns == Rows){
-				if(Columns == 2){
+			if constexpr(Columns == Rows) {
+				if constexpr (Columns == 2) {
 					columns[0].x = initVal;
 					columns[0].y = F(0);
 					columns[1].x = F(0);
 					columns[1].y = F(0);
 				}
-				else if constexpr (Columns == 2){
-					columns[0][0] = initVal; columns(0, 1) = F(0); columns(0, 2) = F(0);
+				else if constexpr (Columns == 2) {
+					columns[0][0] = initVal; columns[0][1] = F(0); columns[0][2] = F(0);
 					columns[1][0] = F(0); columns[1][1] = initVal; columns[1][2] = F(0);
 					columns[2][0] = F(0); columns[2][1] = F(0); columns[2][2] = initVal;
 				}
-				if constexpr(Columns == 4){
+				else if constexpr (Columns == 4) {
 					columns[0][0] = initVal; columns[0][1] = F(0); columns[0][2] = F(0); columns[0][3] = F(0);
 					columns[1][0] = F(0); columns[1][1] = initVal; columns[1][2] = F(0); columns[1][3] = F(0);
 					columns[2][0] = F(0); columns[2][1] = F(0); columns[2][2] = initVal; columns[2][3] = F(0);
