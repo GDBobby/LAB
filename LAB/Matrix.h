@@ -25,28 +25,24 @@ namespace lab {
 		LAB_constexpr Matrix(F const initVal) {
 			if constexpr(Columns == Rows) {
 				if constexpr (Columns == 2) {
-					columns[0].x = initVal;
-					columns[0].y = F(0);
-					columns[1].x = F(0);
-					columns[1].y = F(0);
+					columns[0] = Vector<F, 2>(initVal, F(0));
+					columns[1] = Vector<F, 2>(F(0), initVal);
 				}
 				else if constexpr (Columns == 2) {
-					columns[0][0] = initVal; columns[0][1] = F(0); columns[0][2] = F(0);
-					columns[1][0] = F(0); columns[1][1] = initVal; columns[1][2] = F(0);
-					columns[2][0] = F(0); columns[2][1] = F(0); columns[2][2] = initVal;
+					columns[0] = Vector<F, 3>(initVal, F(0), F(0));
+					columns[1] = Vector<F, 3>(F(0), initVal, F(0));
+					columns[2] = Vector<F, 3>(F(0), F(0), initVal);
 				}
 				else if constexpr (Columns == 4) {
-					columns[0][0] = initVal; columns[0][1] = F(0); columns[0][2] = F(0); columns[0][3] = F(0);
-					columns[1][0] = F(0); columns[1][1] = initVal; columns[1][2] = F(0); columns[1][3] = F(0);
-					columns[2][0] = F(0); columns[2][1] = F(0); columns[2][2] = initVal; columns[2][3] = F(0);
-					columns[3][0] = F(0); columns[3][1] = F(0); columns[3][2] = F(0); columns[3][3] = initVal;
+					columns[0] = Vector<F, 4>(initVal, F(0), F(0), F(0));
+					columns[1] = Vector<F, 4>(F(0), initVal, F(0), F(0));
+					columns[2] = Vector<F, 4>(F(0), F(0), initVal, F(0));
+					columns[2] = Vector<F, 4>(F(0), F(0), F(0), initVal);
 				}
 			}
 			else{
 				for(uint8_t column = 0; column < Columns; column++){
-					for(uint8_t row = 0; row < Rows; row++){
-						columns[column][row] = initVal;
-					}
+					columns[column] = Vector<F, Rows>(initVal);
 				}
 			}
 		}
@@ -176,7 +172,7 @@ namespace lab {
 			}
 			else if constexpr(Columns == 4 && Rows == 4){
 				if constexpr (std::is_constant_evaluated()) {
-					Matrix ret{F(0)};
+					Matrix ret{};
 					//matrix * vector operator
 					ret.columns[0] = this->operator*(other.columns[0]);
 					ret.columns[1] = this->operator*(other.columns[1]);
