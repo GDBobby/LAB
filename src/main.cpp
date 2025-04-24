@@ -31,6 +31,12 @@ int main() {
 	outFile << 2.0;
 #endif
 #endif
+	{ //oblong matrix
+		lab::Matrix<float, 3, 2> mat32{std::array{lab::Vector<float, 2>(1.f), lab::Vector<float, 2>{2.f}, lab::Vector<float, 2>(3.f)}};
+		lab::Matrix<float, 2, 3> mat23 = mat32.Transposed();
+
+		outFile.write(reinterpret_cast<const char*>(&mat23), sizeof(mat23));
+	}
 
 	{ //vector constructor testing
 		lab::ivec2 test{1};

@@ -143,7 +143,7 @@ namespace lab {
 			return ret /= divider;
 		}
 
-		template<uint8_t Alignment = ColumnAlignment>
+		template<uint8_t Alignment = Columns>
 		LAB_constexpr Matrix<F, Rows, Columns, Alignment> Transposed() const {
 			Matrix<F, Rows, Columns, Alignment> ret{};
 			for(uint8_t column = 0; column < Columns; column++){
