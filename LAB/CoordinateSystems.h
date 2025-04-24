@@ -41,4 +41,11 @@ namespace lab {
         static constexpr Vector<F, 3> unitUpVector = Vector<F, 3>(F(1)* (u_axis == 0), F(1) * (u_axis == 1), F(1) * (u_axis == 2));
         static constexpr Vector<F, 3> unitRightVector = Vector<F, 3>(F(1) * (r_axis == 0), F(1) * (r_axis == 1), F(1) * (r_axis == 2));
     };
+
+    template<typename T>
+    struct IsCoordinateSystem : std::false_type {};
+    
+    template<typename ForwardDir, typename RightDir, typename UpDir, typename F>
+    struct IsCoordinateSystem<CoordinateSystem<ForwardDir, RightDir, UpDir, F>> : std::true_type {};
+
 }

@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <concepts>
 
-#include <immintrin.h>
-
 namespace lab {
 	template<std::integral F, uint8_t Dimensions> 
 	requires((Dimensions > 1) && (Dimensions <= 4))
