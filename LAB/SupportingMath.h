@@ -324,12 +324,12 @@ namespace lab {
 
 	template<std::floating_point F>
 	LAB_constexpr F DegreesToRadians(F const theta){
-		return theta * GetPI<F, true>(F(180));
+		return theta * GetPI_DividedBy(F(180));
 	}
 
 	template<std::floating_point F>
 	LAB_constexpr F RadiansToDegrees(F const theta){
-		return theta * GetPI_DividedBy(F(180)); 
+		return theta * GetPI<F, true>(F(180)); 
 	}
 }
 
