@@ -44,18 +44,18 @@ namespace lab{
     LAB_constexpr void ProjectionMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const near, F const far)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        projMat = ProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
+        projMat = ProjectionMatrix<PerspectiveAPI>(field_of_view_radians, aspectRatio, near, far);
     }
     template<Perspective::API PerspectiveAPI, std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> PerspectiveMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
-        return ProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
+        return ProjectionMatrix<PerspectiveAPI>(field_of_view_radians, aspectRatio, near, far);
     }
 
     template<Perspective::API PerspectiveAPI, std::floating_point F>
     LAB_constexpr void PerspectiveMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const near, F const far)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        projMat = ProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
+        projMat = ProjectionMatrix<PerspectiveAPI>(field_of_view_radians, aspectRatio, near, far);
     }
 
     template<std::floating_point F>

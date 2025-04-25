@@ -4,7 +4,7 @@
 
 #include "Matrix.h"
 
-//this is for quickly testing runtimes, not recommended for deployment
+//this is for quickly swapping coordinate systems, not recommended for deployment
 
 namespace lab {
     namespace Runtime{
