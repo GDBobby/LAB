@@ -21,7 +21,7 @@ namespace lab{
     }
     //idk if this is correct
     template<Perspective::API PerspectiveAPI, std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4> CreateProjectionMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
+    LAB_constexpr Matrix<F, 4, 4> ProjectionMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
         Matrix<F, 4, 4> ret{0.f};
 
         const F scale = F(1) / Tan(field_of_view_radians * F(0.5));
@@ -46,25 +46,25 @@ namespace lab{
     }
 
     template<Perspective::API PerspectiveAPI, std::floating_point F>
-    LAB_constexpr void CreateProjectionMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const near, F const far)  {
+    LAB_constexpr void ProjectionMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const near, F const far)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        projMat = CreateProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
+        projMat = ProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
     }
     template<Perspective::API PerspectiveAPI, std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4> CreatePerspectiveMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
-        return CreateProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
+    LAB_constexpr Matrix<F, 4, 4> PerspectiveMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
+        return ProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
     }
 
     template<Perspective::API PerspectiveAPI, std::floating_point F>
-    LAB_constexpr void CreatePerspectiveMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const near, F const far)  {
+    LAB_constexpr void PerspectiveMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const near, F const far)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        projMat = CreateProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
+        projMat = ProjectionMatrix(field_of_view_radians, aspectRatio, near, far);
     }
 
     template<std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4> CreateOrthographicMatrix(F const bottom, F const top, F const left, F const right, F const near, F const far) {
+    LAB_constexpr Matrix<F, 4, 4> OrthographicMatrix(F const bottom, F const top, F const left, F const right, F const near, F const far) {
 
         const F rMl = right - left;
         const F tMb = top - bottom;
@@ -93,10 +93,10 @@ namespace lab{
         return ret;
     }
     template<std::floating_point F>
-    LAB_constexpr void CreateOrthographicMatrix(Matrix<F, 4, 4>& orthoMat, F const bottom, F const top, F const left, F const right, F const near, F const far)  {
+    LAB_constexpr void OrthographicMatrix(Matrix<F, 4, 4>& orthoMat, F const bottom, F const top, F const left, F const right, F const near, F const far)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        orthoMat = CreateOrthographicMatrix(bottom, top, left, right, near, far);
+        orthoMat = OrthographicMatrix(bottom, top, left, right, near, far);
     }
     
     //view matrix is recreated at least once per frame
@@ -104,9 +104,9 @@ namespace lab{
 
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr Matrix<F, 4, 4> CreateViewMatrix(Vector<F, 3> const position, Vector<F, 3> const forward){
-        Matrix<F, 4, 4> ret{0.f};
-        const Vector<float, 3> right = Cross(forward, CS::unitUpVector).Normalized();
+    LAB_constexpr Matrix<F, 4, 4> ViewDirection(Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const up = CS::unitUpVector){
+        Matrix<F, 4, 4> ret{};
+        const Vector<float, 3> right = Cross(forward, up).Normalized();
         const Vector<float, 3> up = Cross(right, forward).Normalized();
         
         if constexpr(CS::f_sign){
@@ -155,8 +155,8 @@ namespace lab{
     //the final row needs to be set to 0,0,0,1 outside of this function
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr void CreateViewMatrix(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward){
-        const Vector<float, 3> right = Cross(forward, CS::unitUpVector).Normalized();
+    LAB_constexpr void ViewDirection(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const up = CS::unitUpVector){
+        const Vector<float, 3> right = Cross(forward, up).Normalized();
         const Vector<float, 3> up = Cross(right, forward).Normalized();
 
         if constexpr(CS::f_sign){
@@ -200,4 +200,51 @@ namespace lab{
 #endif
     }
 
+    template<typename CS>
+    requires(IsCoordinateSystem<CS>::value)
+    LAB_constexpr void ViewRotation(Matrix<float, 4, 4>& view, lab::vec3 const position, lab::vec3 const rotation) {
+        const float c3 = lab::Cos(rotation.z);
+        const float s3 = lab::Sin(rotation.z);
+        const float c2 = lab::Cos(rotation.x);
+        const float s2 = lab::Sin(rotation.x);
+        const float c1 = lab::Cos(rotation.y);
+        const float s1 = lab::Sin(rotation.y);
+
+        if constexpr (CS::f_sign) {
+            view.columns[0][CS::f_axis] = -(c2 * s1);
+            view.columns[1][CS::f_axis] = s2;
+            view.columns[2][CS::f_axis] = -(c1 * c2);
+            view.columns[3][CS::f_axis] = fx * position.x + fy * position.y + fz * position.z;
+        } else {
+            view.columns[0][CS::f_axis] = (c2 * s1);
+            view.columns[1][CS::f_axis] = -s2;
+            view.columns[2][CS::f_axis] = (c1 * c2);
+            view.columns[3][CS::f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
+        }
+
+        if constexpr (CS::u_sign) {
+            view.columns[0][CS::u_axis] = -(c3 * s1 * s2 - c1 * s3);
+            view.columns[1][CS::u_axis] = -(c2 * c3);
+            view.columns[2][CS::u_axis] = -(c1 * c3 * s2 + s1 * s3);
+            view.columns[3][CS::u_axis] = ux * position.x + uy * position.y + uz * position.z;
+        } else {
+            view.columns[0][CS::u_axis] = (c3 * s1 * s2 - c1 * s3);
+            view.columns[1][CS::u_axis] = (c2 * c3);
+            view.columns[2][CS::u_axis] = (c1 * c3 * s2 + s1 * s3);
+            view.columns[3][CS::u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
+        }
+
+        // Right axis
+        if constexpr (CS::r_sign) {
+            view.columns[0][CS::r_axis] = -(c1 * c3 + s1 * s2 * s3);
+            view.columns[1][CS::r_axis] = -(c2 * s3);
+            view.columns[2][CS::r_axis] = -(c1 * s2 * s3 - c3 * s1);
+            view.columns[3][CS::r_axis] = rx * position.x + ry * position.y + rz * position.z;
+        } else {
+            view.columns[0][CS::r_axis] = (c1 * c3 + s1 * s2 * s3);
+            view.columns[1][CS::r_axis] = (c2 * s3);
+            view.columns[2][CS::r_axis] = (c1 * s2 * s3 - c3 * s1);
+            view.columns[3][CS::r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
+        }
+    }
 }

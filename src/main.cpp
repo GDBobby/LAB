@@ -58,7 +58,7 @@ int main() {
 		printf("trunc con - %.2f\n", truncCon.x);
 	}
 
-	{
+	{ //matrix multiplcation, inverse transpose
 		LAB_constexpr lab::Matrix<float, 4, 4> test1(0.f);
 		LAB_constexpr lab::Matrix<float, 4, 4> test2(1.f);
 
@@ -197,7 +197,7 @@ int main() {
 		printf("normMat 0,0 - %.2f\n", normMat.At(0, 0));
 	}
 	{ //camera functions
-		LAB_constexpr auto proj = lab::CreateProjectionMatrix<lab::Perspective::Vulkan>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
+		LAB_constexpr auto proj = lab::ProjectionMatrix<lab::Perspective::Vulkan>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
 	
 		for(uint8_t x = 0; x < 4; x++){
 			for(uint8_t y = 0; y < 4; y++){
@@ -205,13 +205,16 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
 			}
 		}
-		LAB_constexpr auto viewMat = lab::CreateViewMatrix<MyCS>(lab::Vector<float, 3>(0.f), MyCS::unitForwardVector);
+		LAB_constexpr auto viewMat = lab::ViewDirection<MyCS>(lab::Vector<float, 3>(0.f), MyCS::unitForwardVector);
 		for (uint8_t x = 0; x < 4; x++) {
 			for (uint8_t y = 0; y < 4; y++) {
 				const float tempVal = viewMat.At(x, y);
 				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
 			}
 		}
+		lab::mat4 tempMat(0.f);
+		lab::ViewRotation<MyCS>(tempMat, lab::vec3(0.f), MyCS::unitForwardVector);
+		outFile.write(reinterpret_cast<const char*>(&tempMat), sizeof(tempMat));
 	}
 	{ //trig functions
 		LAB_constexpr float trigInput = 50.f;
