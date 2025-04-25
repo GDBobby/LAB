@@ -147,21 +147,5 @@ namespace lab{
             return x * other.x + y * other.y;
         }
     };
-
-    template<std::floating_point F>
-    Vector<F, 2> operator/(F const f, Vector<F, 2> const vec){
-        return {
-            f / vec.x,
-            f / vec.y
-        };
-    }
-    
-    template<std::floating_point F>
-    Vector<F, 2> operator-(F const f, Vector<F, 2> const vec){
-        return {
-            f - vec.x,
-            f - vec.y
-        };
-    }
 } //namespace lab
 

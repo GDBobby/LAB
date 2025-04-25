@@ -172,22 +172,4 @@ namespace lab{
             return x * other.x + y * other.y + z * other.z + w * other.w;
         }
     };
-
-    Vector<double, 4> operator/(double const f, Vector<double, 4> const vec){
-        return {
-            f / vec.x,
-            f / vec.y,
-            f / vec.z,
-            f / vec.w
-        };
-    }
-    template<double>
-    Vector<double, 4> operator-(double const f, Vector<double, 4> const vec){
-        return {
-            f - vec.x,
-            f - vec.y,
-            f - vec.z,
-            f - vec.w
-        };
-    }
 }

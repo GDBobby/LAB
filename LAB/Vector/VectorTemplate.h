@@ -14,5 +14,14 @@ namespace lab {
 	template<std::floating_point F, uint8_t Dimensions> 
 		requires((Dimensions > 1) && (Dimensions <= 4))
 	struct Vector{};
+
+	template<std::floating_point F, uint8_t Dimensions>
+	Vector<F, Dimensions> operator/(float const f, Vector<F, Dimensions> const vec){
+		return vec;
+	}
+	template<std::floating_point F, uint8_t Dimensions>
+    Vector<F, Dimensions> operator-(float const f, Vector<F, Dimensions> const vec){
+		return vec;
+	}
 }
 

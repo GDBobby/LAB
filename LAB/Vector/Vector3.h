@@ -155,22 +155,4 @@ namespace lab{
             };
         }
     };
-
-    template<std::floating_point F>
-    Vector<F, 3> operator/(F const f, Vector<F, 3> const vec){
-        return {
-            f / vec.x,
-            f / vec.y,
-            f / vec.z
-        };
-    }
-    
-    template<std::floating_point F>
-    Vector<F, 3> operator-(F const f, Vector<F, 3> const vec){
-        return {
-            f - vec.x,
-            f - vec.y,
-            f - vec.z
-        };
-    }
 }

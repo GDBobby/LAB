@@ -212,22 +212,4 @@ namespace lab{
             }
         }
     };
-
-
-    Vector<float, 4> operator/(float const f, Vector<float, 4> const vec){
-        return {
-            f / vec.x,
-            f / vec.y,
-            f / vec.z,
-            f / vec.w
-        };
-    }
-    Vector<float, 4> operator-(float const f, Vector<float, 4> const vec){
-        return {
-            f - vec.x,
-            f - vec.y,
-            f - vec.z,
-            f - vec.w
-        };
-    }
 }
