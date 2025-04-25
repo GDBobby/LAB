@@ -104,9 +104,9 @@ namespace lab{
 
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr Matrix<F, 4, 4> ViewDirection(Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const up = CS::unitUpVector){
+    LAB_constexpr Matrix<F, 4, 4> ViewDirection(Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const upDir = CS::unitUpVector){
         Matrix<F, 4, 4> ret{};
-        const Vector<float, 3> right = Cross(forward, up).Normalized();
+        const Vector<float, 3> right = Cross(forward, upDir).Normalized();
         const Vector<float, 3> up = Cross(right, forward).Normalized();
         
         if constexpr(CS::f_sign){
@@ -155,9 +155,9 @@ namespace lab{
     //the final row needs to be set to 0,0,0,1 outside of this function
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr void ViewDirection(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const up = CS::unitUpVector){
-        const Vector<float, 3> right = Cross(forward, up).Normalized();
-        const Vector<float, 3> up = Cross(right, forward).Normalized();
+    LAB_constexpr void ViewDirection(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const upDir = CS::unitUpVector){
+        const Vector<F, 3> right = Cross(forward, upDir).Normalized();
+        const Vector<F, 3> up = Cross(right, forward).Normalized();
 
         if constexpr(CS::f_sign){
             viewMat.columns[0][CS::f_axis] = -forward.x;
@@ -200,9 +200,9 @@ namespace lab{
 #endif
     }
 
-    template<typename CS>
+    template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr void ViewRotation(Matrix<float, 4, 4>& view, lab::vec3 const position, lab::vec3 const rotation) {
+    LAB_constexpr void ViewRotation(Matrix<F, 4, 4>& view, lab::Vector<F, 3> const position, lab::Vector<F, 3> const rotation) {
         const float c3 = lab::Cos(rotation.z);
         const float s3 = lab::Sin(rotation.z);
         const float c2 = lab::Cos(rotation.x);
@@ -246,5 +246,74 @@ namespace lab{
             view.columns[2][CS::r_axis] = (c1 * s2 * s3 - c3 * s1);
             view.columns[3][CS::r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
         }
+    }
+
+    template<typename CS, std::floating_point F>
+    requires(IsCoordinateSystem<CS>::value)
+    LAB_constexpr void ViewRotation(lab::Vector<F, 3> const position, lab::Vector<F, 3> const rotation){
+        lab::mat4 view;
+        const float c3 = lab::Cos(rotation.z);
+        const float s3 = lab::Sin(rotation.z);
+        const float c2 = lab::Cos(rotation.x);
+        const float s2 = lab::Sin(rotation.x);
+        const float c1 = lab::Cos(rotation.y);
+        const float s1 = lab::Sin(rotation.y);
+
+        if constexpr (CS::f_sign) {
+            view.columns[0][CS::f_axis] = -(c2 * s1);
+            view.columns[1][CS::f_axis] = s2;
+            view.columns[2][CS::f_axis] = -(c1 * c2);
+            view.columns[3][CS::f_axis] = fx * position.x + fy * position.y + fz * position.z;
+        } else {
+            view.columns[0][CS::f_axis] = (c2 * s1);
+            view.columns[1][CS::f_axis] = -s2;
+            view.columns[2][CS::f_axis] = (c1 * c2);
+            view.columns[3][CS::f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
+        }
+
+        if constexpr (CS::u_sign) {
+            view.columns[0][CS::u_axis] = -(c3 * s1 * s2 - c1 * s3);
+            view.columns[1][CS::u_axis] = -(c2 * c3);
+            view.columns[2][CS::u_axis] = -(c1 * c3 * s2 + s1 * s3);
+            view.columns[3][CS::u_axis] = ux * position.x + uy * position.y + uz * position.z;
+        } else {
+            view.columns[0][CS::u_axis] = (c3 * s1 * s2 - c1 * s3);
+            view.columns[1][CS::u_axis] = (c2 * c3);
+            view.columns[2][CS::u_axis] = (c1 * c3 * s2 + s1 * s3);
+            view.columns[3][CS::u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
+        }
+
+        // Right axis
+        if constexpr (CS::r_sign) {
+            view.columns[0][CS::r_axis] = -(c1 * c3 + s1 * s2 * s3);
+            view.columns[1][CS::r_axis] = -(c2 * s3);
+            view.columns[2][CS::r_axis] = -(c1 * s2 * s3 - c3 * s1);
+            view.columns[3][CS::r_axis] = rx * position.x + ry * position.y + rz * position.z;
+        } else {
+            view.columns[0][CS::r_axis] = (c1 * c3 + s1 * s2 * s3);
+            view.columns[1][CS::r_axis] = (c2 * s3);
+            view.columns[2][CS::r_axis] = (c1 * s2 * s3 - c3 * s1);
+            view.columns[3][CS::r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
+        }
+
+        ret.columns[0].w = F(0);
+        ret.columns[1].w = F(0);
+        ret.columns[2].w = F(0);
+        ret.columns[3].w = F(1);
+        return ret;
+    }
+
+    template<typename CS, std::floating_point F>
+    requires(IsCoordinateSystem<CS>::value)
+    LAB_constexpr Matrix<F, 4, 4> ViewTarget(lab::Vector<F, 3> const position, lab::Vector<F, 3> target, Vector<F, 3> const up = CS::unitUpVector){
+        const lab::Vector<F, 3> direction = (target - position).Normalize();
+        return ViewDirection(position, direction, up);
+    }
+    
+    template<typename CS, std::floating_point F>
+    requires(IsCoordinateSystem<CS>::value)
+    LAB_constexpr void ViewTarget(Matrix<F, 4, 4>& viewMat, lab::Vector<F, 3> const position, lab::Vector<F, 3> target, Vector<F, 3> const up = CS::unitUpVector){
+        const lab::Vector<F, 3> direction = (target - position).Normalize();
+        ViewDirection(viewMat, position, direction, up);
     }
 }
