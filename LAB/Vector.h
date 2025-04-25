@@ -35,7 +35,7 @@ namespace lab{
 			};
 		}
 		if constexpr(Dimensions == 4){
-			return <Vector<F, 4>{
+			return Vector<F, 4>{
 				f / vec.x,
 				f / vec.y,
 				f / vec.z,
@@ -47,20 +47,20 @@ namespace lab{
     template<std::floating_point F, uint8_t Dimensions>
     Vector<F, 3> operator-(F const f, Vector<F, 3> const vec){
 		if constexpr(Dimensions == 2){
-			return <Vector<F, 2>{
+			return Vector<F, 2>{
 				f - vec.x,
 				f - vec.y
 			};
 		}
 		if constexpr(Dimensions == 3){
-			return <Vector<F, 3>{
+			return Vector<F, 3>{
 				f - vec.x,
 				f - vec.y,
 				f - vec.z
 			};
 		}
 		if constexpr(Dimensions == 4){
-			return <Vector<F, 4>{
+			return Vector<F, 4>{
 				f - vec.x,
 				f - vec.y,
 				f - vec.z
