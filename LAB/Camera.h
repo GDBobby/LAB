@@ -1,3 +1,4 @@
+#pragma once
 #include "Matrix.h"
 #include "SupportingMath.h"
 #include "CoordinateSystems.h"

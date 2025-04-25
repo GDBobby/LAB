@@ -2,6 +2,7 @@
 #include "Matrix.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "Vector/Hash.h"
 
 #include <cstdio>
 #include <fstream>
@@ -34,6 +35,10 @@ int main() {
 	outFile << 2.0;
 #endif
 #endif
+	{//hash test
+		std::size_t seed = 0;
+		seed ^= std::hash<lab::vec2>{}(lab::vec2(1.f, 0.f));
+	}
 	{ //oblong matrix
 		lab::Matrix<float, 3, 2> mat32{std::array{lab::Vector<float, 2>(1.f), lab::Vector<float, 2>{2.f}, lab::Vector<float, 2>(3.f)}};
 		lab::Matrix<float, 2, 3> mat23 = mat32.Transposed();
