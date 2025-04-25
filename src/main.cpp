@@ -205,7 +205,7 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
 			}
 		}
-		LAB_constexpr auto viewMat = lab::ViewDirection<MyCS>(lab::Vector<float, 3>(0.f), MyCS::unitForwardVector);
+		LAB_constexpr lab::mat4 viewMat = lab::ViewDirection<MyCS>(lab::Vector<float, 3>(0.f), MyCS::unitForwardVector);
 		for (uint8_t x = 0; x < 4; x++) {
 			for (uint8_t y = 0; y < 4; y++) {
 				const float tempVal = viewMat.At(x, y);
@@ -214,6 +214,7 @@ int main() {
 		}
 		lab::mat4 tempMat(0.f);
 		lab::ViewRotation<MyCS>(tempMat, lab::vec3(0.f), MyCS::unitForwardVector);
+		LAB_constexpr lab::mat4 tempMat2 = lab::ViewRotation<MyCS>(lab::vec3(0.f), MyCS::unitForwardVector);
 		outFile.write(reinterpret_cast<const char*>(&tempMat), sizeof(tempMat));
 	}
 	{ //trig functions

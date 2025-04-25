@@ -202,110 +202,131 @@ namespace lab{
 
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr void ViewRotation(Matrix<F, 4, 4>& view, lab::Vector<F, 3> const position, lab::Vector<F, 3> const rotation) {
-        const float c3 = lab::Cos(rotation.z);
-        const float s3 = lab::Sin(rotation.z);
-        const float c2 = lab::Cos(rotation.x);
-        const float s2 = lab::Sin(rotation.x);
-        const float c1 = lab::Cos(rotation.y);
-        const float s1 = lab::Sin(rotation.y);
-
+    LAB_constexpr Matrix<F, 4, 4> ViewRotation(lab::Vector<F, 3> const position, lab::Vector<F, 3> const rotation){
+        lab::mat4 view{};
+        
+        const F c3 = lab::Cos(rotation.z);
+        const F s3 = lab::Sin(rotation.z);
+        const F c2 = lab::Cos(rotation.x);
+        const F s2 = lab::Sin(rotation.x);
+        const F c1 = lab::Cos(rotation.y);
+        const F s1 = lab::Sin(rotation.y);
+    
+        const F fx = (c2 * s1);
+        const F fy = (-s2);
+        const F fz = (c1 * c2);
         if constexpr (CS::f_sign) {
-            view.columns[0][CS::f_axis] = -(c2 * s1);
-            view.columns[1][CS::f_axis] = s2;
-            view.columns[2][CS::f_axis] = -(c1 * c2);
-            view.columns[3][CS::f_axis] = fx * position.x + fy * position.y + fz * position.z;
+            view.columns[0][CS::f_axis] = -fx;
+            view.columns[1][CS::f_axis] = -fy;
+            view.columns[2][CS::f_axis] = -fz;
+            view.columns[3][CS::f_axis] = (fx * position.x + fy * position.y + fz * position.z);
         } else {
-            view.columns[0][CS::f_axis] = (c2 * s1);
-            view.columns[1][CS::f_axis] = -s2;
-            view.columns[2][CS::f_axis] = (c1 * c2);
+            view.columns[0][CS::f_axis] = fx;
+            view.columns[1][CS::f_axis] = fy;
+            view.columns[2][CS::f_axis] = fz;
             view.columns[3][CS::f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
         }
 
+        const F ux = (c3 * s1 * s2 - c1 * s3);
+        const F uy = (c2 * c3);
+        const F uz = (c1 * c3 * s2 + s1 * s3);
         if constexpr (CS::u_sign) {
-            view.columns[0][CS::u_axis] = -(c3 * s1 * s2 - c1 * s3);
-            view.columns[1][CS::u_axis] = -(c2 * c3);
-            view.columns[2][CS::u_axis] = -(c1 * c3 * s2 + s1 * s3);
+            view.columns[0][CS::u_axis] = -ux;
+            view.columns[1][CS::u_axis] = -uy;
+            view.columns[2][CS::u_axis] = -uz;
             view.columns[3][CS::u_axis] = ux * position.x + uy * position.y + uz * position.z;
         } else {
-            view.columns[0][CS::u_axis] = (c3 * s1 * s2 - c1 * s3);
-            view.columns[1][CS::u_axis] = (c2 * c3);
-            view.columns[2][CS::u_axis] = (c1 * c3 * s2 + s1 * s3);
+            view.columns[0][CS::u_axis] = ux;
+            view.columns[1][CS::u_axis] = uy;
+            view.columns[2][CS::u_axis] = uz;
             view.columns[3][CS::u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
         }
 
-        // Right axis
+        const F rx = (c1 * c3 + s1 * s2 * s3);
+        const F ry = (c2 * s3);
+        const F rz = (c1 * s2 * s3 - c3 * s1);
         if constexpr (CS::r_sign) {
-            view.columns[0][CS::r_axis] = -(c1 * c3 + s1 * s2 * s3);
-            view.columns[1][CS::r_axis] = -(c2 * s3);
-            view.columns[2][CS::r_axis] = -(c1 * s2 * s3 - c3 * s1);
+            view.columns[0][CS::r_axis] = -rx;
+            view.columns[1][CS::r_axis] = -ry;
+            view.columns[2][CS::r_axis] = -rz;
             view.columns[3][CS::r_axis] = rx * position.x + ry * position.y + rz * position.z;
         } else {
-            view.columns[0][CS::r_axis] = (c1 * c3 + s1 * s2 * s3);
-            view.columns[1][CS::r_axis] = (c2 * s3);
-            view.columns[2][CS::r_axis] = (c1 * s2 * s3 - c3 * s1);
+            view.columns[0][CS::r_axis] = rx;
+            view.columns[1][CS::r_axis] = ry;
+            view.columns[2][CS::r_axis] = rz;
             view.columns[3][CS::r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
         }
+
+        view.columns[0].w = F(0);
+        view.columns[1].w = F(0);
+        view.columns[2].w = F(0);
+        view.columns[3].w = F(1);
+        return view;
     }
 
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
-    LAB_constexpr void ViewRotation(lab::Vector<F, 3> const position, lab::Vector<F, 3> const rotation){
-        lab::mat4 view;
-        const float c3 = lab::Cos(rotation.z);
-        const float s3 = lab::Sin(rotation.z);
-        const float c2 = lab::Cos(rotation.x);
-        const float s2 = lab::Sin(rotation.x);
-        const float c1 = lab::Cos(rotation.y);
-        const float s1 = lab::Sin(rotation.y);
-
+    LAB_constexpr void ViewRotation(Matrix<F, 4, 4>& view, lab::Vector<F, 3> const position, lab::Vector<F, 3> const rotation) {
+        const F c3 = lab::Cos(rotation.z);
+        const F s3 = lab::Sin(rotation.z);
+        const F c2 = lab::Cos(rotation.x);
+        const F s2 = lab::Sin(rotation.x);
+        const F c1 = lab::Cos(rotation.y);
+        const F s1 = lab::Sin(rotation.y);
+    
+        const F fx = (c2 * s1);
+        const F fy = (-s2);
+        const F fz = (c1 * c2);
         if constexpr (CS::f_sign) {
-            view.columns[0][CS::f_axis] = -(c2 * s1);
-            view.columns[1][CS::f_axis] = s2;
-            view.columns[2][CS::f_axis] = -(c1 * c2);
-            view.columns[3][CS::f_axis] = fx * position.x + fy * position.y + fz * position.z;
+            view.columns[0][CS::f_axis] = -fx;
+            view.columns[1][CS::f_axis] = -fy;
+            view.columns[2][CS::f_axis] = -fz;
+            view.columns[3][CS::f_axis] = (fx * position.x + fy * position.y + fz * position.z);
         } else {
-            view.columns[0][CS::f_axis] = (c2 * s1);
-            view.columns[1][CS::f_axis] = -s2;
-            view.columns[2][CS::f_axis] = (c1 * c2);
+            view.columns[0][CS::f_axis] = fx;
+            view.columns[1][CS::f_axis] = fy;
+            view.columns[2][CS::f_axis] = fz;
             view.columns[3][CS::f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
         }
 
+        const F ux = (c3 * s1 * s2 - c1 * s3);
+        const F uy = (c2 * c3);
+        const F uz = (c1 * c3 * s2 + s1 * s3);
         if constexpr (CS::u_sign) {
-            view.columns[0][CS::u_axis] = -(c3 * s1 * s2 - c1 * s3);
-            view.columns[1][CS::u_axis] = -(c2 * c3);
-            view.columns[2][CS::u_axis] = -(c1 * c3 * s2 + s1 * s3);
+            view.columns[0][CS::u_axis] = -ux;
+            view.columns[1][CS::u_axis] = -uy;
+            view.columns[2][CS::u_axis] = -uz;
             view.columns[3][CS::u_axis] = ux * position.x + uy * position.y + uz * position.z;
         } else {
-            view.columns[0][CS::u_axis] = (c3 * s1 * s2 - c1 * s3);
-            view.columns[1][CS::u_axis] = (c2 * c3);
-            view.columns[2][CS::u_axis] = (c1 * c3 * s2 + s1 * s3);
+            view.columns[0][CS::u_axis] = ux;
+            view.columns[1][CS::u_axis] = uy;
+            view.columns[2][CS::u_axis] = uz;
             view.columns[3][CS::u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
         }
 
-        // Right axis
+        const F rx = (c1 * c3 + s1 * s2 * s3);
+        const F ry = (c2 * s3);
+        const F rz = (c1 * s2 * s3 - c3 * s1);
         if constexpr (CS::r_sign) {
-            view.columns[0][CS::r_axis] = -(c1 * c3 + s1 * s2 * s3);
-            view.columns[1][CS::r_axis] = -(c2 * s3);
-            view.columns[2][CS::r_axis] = -(c1 * s2 * s3 - c3 * s1);
+            view.columns[0][CS::r_axis] = -rx;
+            view.columns[1][CS::r_axis] = -ry;
+            view.columns[2][CS::r_axis] = -rz;
             view.columns[3][CS::r_axis] = rx * position.x + ry * position.y + rz * position.z;
         } else {
-            view.columns[0][CS::r_axis] = (c1 * c3 + s1 * s2 * s3);
-            view.columns[1][CS::r_axis] = (c2 * s3);
-            view.columns[2][CS::r_axis] = (c1 * s2 * s3 - c3 * s1);
+            view.columns[0][CS::r_axis] = rx;
+            view.columns[1][CS::r_axis] = ry;
+            view.columns[2][CS::r_axis] = rz;
             view.columns[3][CS::r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
         }
-
-        ret.columns[0].w = F(0);
-        ret.columns[1].w = F(0);
-        ret.columns[2].w = F(0);
-        ret.columns[3].w = F(1);
-        return ret;
     }
+
 
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
     LAB_constexpr Matrix<F, 4, 4> ViewTarget(lab::Vector<F, 3> const position, lab::Vector<F, 3> target, Vector<F, 3> const up = CS::unitUpVector){
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
+        //warning for target == position
+#endif
         const lab::Vector<F, 3> direction = (target - position).Normalize();
         return ViewDirection(position, direction, up);
     }
@@ -313,6 +334,9 @@ namespace lab{
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
     LAB_constexpr void ViewTarget(Matrix<F, 4, 4>& viewMat, lab::Vector<F, 3> const position, lab::Vector<F, 3> target, Vector<F, 3> const up = CS::unitUpVector){
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
+        //warning for target == position
+#endif
         const lab::Vector<F, 3> direction = (target - position).Normalize();
         ViewDirection(viewMat, position, direction, up);
     }
