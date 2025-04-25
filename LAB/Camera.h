@@ -7,11 +7,6 @@
 namespace lab{
     //https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/projection-matrices-what-you-need-to-know-first.html
     //both Projection and Ortho functions copied from here
-
-    struct VULKAN_API_PROJECTION_HELPER{};
-    struct DIRECTX_API_PROJECTION_HELPER{};
-    struct OPENGL_API_PROJECTION_HELPER{};
-
     namespace Perspective { 
         enum API{
             Vulkan = 0,

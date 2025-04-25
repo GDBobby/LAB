@@ -3,7 +3,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Vector/Hash.h"
-#include "CoordinateSystem_Iteration_Helper.h"
+#include "CameraCSRuntime.h"
 
 #include <cstdio>
 #include <fstream>
@@ -219,7 +219,8 @@ int main() {
 		LAB_constexpr lab::mat4 tempMat2 = lab::ViewRotation<MyCS>(lab::vec3(0.f), MyCS::unitForwardVector);
 		outFile.write(reinterpret_cast<const char*>(&tempMat), sizeof(tempMat));
 
-		lab::DispatchCSFunction(lab::Direction::X, true, lab::Direction::Y, true, lab::Direction::Z, true, lab::ViewTarget, lab::vec3(0.f), lab::vec3(1.f));
+		lab::Runtime::CoordinateSystem rCS;
+		lab::Runtime::ViewRotation(rCS, lab::vec3(0.f), MyCS::unitForwardVector);
 	}
 	{ //trig functions
 		LAB_constexpr float trigInput = 50.f;
