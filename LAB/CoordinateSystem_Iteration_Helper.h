@@ -13,7 +13,7 @@ namespace lab {
         template<bool Sign> struct MakeDir<Direction::Z, Sign> { using type = Direction::ZDir<Sign>; };
         
         template<Direction::Axis Axis, bool Sign>
-        using MakeDir_t = typename MakeDir<Direction::Axis, Sign>::type;
+        using MakeDir_t = typename MakeDir<Axis, Sign>::type;
     
         using DefaultCS = CoordinateSystem<Direction::XDir<true>, Direction::YDir<true>, Direction::ZDir<true>>;
     } // namespace CS_Helper
