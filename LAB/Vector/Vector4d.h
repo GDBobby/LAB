@@ -168,21 +168,8 @@ namespace lab{
             return operator*(invMag);
         }
 
-        LAB_constexpr double Dot(Vector const& other) const {
+        LAB_constexpr double Dot(Vector const other) const {
             return x * other.x + y * other.y + z * other.z + w * other.w;
-        }
-
-        LAB_constexpr static Vector Forward() {
-            return { double(1), double(0), double(0), double(0) };
-        }
-        LAB_constexpr static Vector Up() {
-            return { double(0), double(0), double(1), double(0) };
-        }
-        LAB_constexpr static Vector Right() {
-            return { double(0), double(1), double(0), double(0) };
-        }
-        LAB_constexpr static Vector Ahead() {
-            return { double(0), double(0), double(0), double(1) };
         }
     };
 

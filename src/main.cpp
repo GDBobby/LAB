@@ -38,6 +38,7 @@ int main() {
 	{//hash test
 		std::size_t seed = 0;
 		seed ^= std::hash<lab::vec2>{}(lab::vec2(1.f, 0.f));
+		outFile.write(reinterpret_cast<const char*>(&seed), sizeof(std::size_t));
 	}
 	{ //oblong matrix
 		lab::Matrix<float, 3, 2> mat32{std::array{lab::Vector<float, 2>(1.f), lab::Vector<float, 2>{2.f}, lab::Vector<float, 2>(3.f)}};

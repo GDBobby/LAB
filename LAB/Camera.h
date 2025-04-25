@@ -98,9 +98,6 @@ namespace lab{
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
         orthoMat = OrthographicMatrix(bottom, top, left, right, near, far);
     }
-    
-    //view matrix is recreated at least once per frame
-    //i need to be a bit more careful with this
 
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)

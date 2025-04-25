@@ -49,7 +49,6 @@ namespace lab{
             }
             LAB_UNREACHABLE;
         }
-
         template<uint8_t DimensionsOther> 
         LAB_constexpr Vector& operator=(Vector<F, DimensionsOther> const& other) {
             if constexpr (DimensionsOther == 2) {
@@ -63,7 +62,6 @@ namespace lab{
             }
             return *this;
         }
-
         LAB_constexpr bool operator==(Vector const other) const {
             return (x == other.x) && (y == other.y) && (z == other.z);
         }
@@ -104,7 +102,7 @@ namespace lab{
             };
         }
         LAB_constexpr Vector operator*(Vector const other) const {
-            return {
+            return Vector{
                 x * other.x,
                 y * other.y,
                 z * other.z
@@ -146,12 +144,11 @@ namespace lab{
             const auto invMag = InverseSqrt(SquaredMagnitude());
             return operator*(invMag);
         }
-
-        LAB_constexpr F Dot(Vector const& other) const {
+        LAB_constexpr F Dot(Vector const other) const {
             return x * other.x + y * other.y + z * other.z;
         }
-        LAB_constexpr Vector Cross(Vector const& other) const {		
-            return Vector<F, 3>{
+        LAB_constexpr Vector Cross(Vector const other) const {		
+            return Vector{
                 y * other.z - z * other.y,
                 z * other.x - x * other.z,
                 x * other.y - y * other.x
