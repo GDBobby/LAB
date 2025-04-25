@@ -19,7 +19,7 @@ namespace lab {
     } // namespace CS_Helper
 
     template<typename Func, typename... Args>
-    requires(std::is_invocable_v<Func, DefaultCS, Args...>)
+    requires(std::is_invocable_v<Func, CS_Helper::DefaultCS, Args...>)
     void DispatchCSFunction(
         Direction::Axis forwardAxis, bool forwardSign,
         Direction::Axis rightAxis, bool rightSign,
