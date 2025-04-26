@@ -97,7 +97,7 @@ namespace lab{
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
     LAB_constexpr Matrix<F, 4, 4> ViewDirection(Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const upDir = CS::unitUpVector){
-        Matrix<F, 4, 4> ret{F(0)};
+        Matrix<F, 4, 4> ret{};
         const Vector<float, 3> right = Cross(forward, upDir).Normalized();
         const Vector<float, 3> up = Cross(right, forward).Normalized();
         

@@ -13,11 +13,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(is_project_root ON)
 endif()
 
-option(USE_SSE "Enable SSE optimizations" ON)
-option(USE_AVX2 "Enable AVX2 optimizations" OFF)
-
 message(STATUS "Project source dir : ${PROJECT_SOURCE_DIR}")
 message(STATUS "CMAKE source dir : ${CMAKE_SOURCE_DIR}")
+
+option(USE_SSE_INTERNAL "Enable SSE optimizations" OFF)
+option(USE_AVX2_INTERNAL "Enable AVX2 optimizations" ON)
 
 add_library(LinearAlgebra-compile-options INTERFACE)
 add_library(LinearAlgebra::LinearAlgebra-compile-options ALIAS LinearAlgebra-compile-options)
@@ -54,27 +54,30 @@ set_target_properties(LinearAlgebra PROPERTIES
     LINKER_LANGUAGE CXX
 )
 
-message(STATUS "${USE_SSE} - ${USE_AVX2}")
-
-if(USE_SSE)
-    message(STATUS "Enabling SSE ")
-    add_compile_definitions(LAB_USING_SSE)
-    if(MSVC)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
-    else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
-  endif()
-elseif(USE_AVX2)
-    message(STATUS "Enabling AVX2")
-    add_compile_definitions(LAB_USING_AVX2)
-    if(MSVC)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
-    else()
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
-    endif()
-endif()
-
 if(is_project_root)
+
+message(STATUS "${USE_SSE_INTERNAL} - ${USE_AVX2_INTERNAL}")
+
+
+
+  if(USE_SSE_INTERNAL)
+      message(STATUS "Enabling SSE ")
+      add_compile_definitions(LAB_USING_SSE)
+      if(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
+      else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+    endif()
+  elseif(USE_AVX2_INTERNAL)
+      message(STATUS "Enabling AVX2")
+      add_compile_definitions(LAB_USING_AVX2)
+      if(MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
+      else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+      endif()
+  endif()
+
   message(STATUS "LinearAlgebra is project root")
   project(LinearAlgebraExample)
   file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
