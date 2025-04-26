@@ -1,7 +1,7 @@
 #pragma once
 #include "VectorTemplate.h"
 
-#if defined(USING_SSE) || (USING_AVX2)
+#if defined(LAB_USING_SSE) || (LAB_USING_AVX2)
 #define USING_SIMD
 #include <immintrin.h>
 #endif

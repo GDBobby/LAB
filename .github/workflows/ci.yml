@@ -91,9 +91,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: configure
-        run: cmake -S . --preset=vs22 -B build
+        run: cmake -S . --preset=vs22 -B build -DUSE_SSE=ON -DUSE_AVX2=OFF
       - name: build
-        run: cmake --build build --config=Release -DUSE_SSE=ON -DUSE_AVX2=OFF
+        run: cmake --build build --config=Release 
 
       - name: Run msvc Program and Save Output
         run: |
@@ -111,9 +111,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: configure
-        run: cmake -S . --preset=vs22 -B build
+        run: cmake -S . --preset=vs22 -B build -DUSE_SSE=OFF -DUSE_AVX2=ON
       - name: build
-        run: cmake --build build --config=Release -DUSE_SSE=OFF -DUSE_AVX2=ON
+        run: cmake --build build --config=Release
 
       - name: Run msvc Program and Save Output
         run: |
