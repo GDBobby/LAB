@@ -58,12 +58,19 @@ message(STATUS "${USE_SSE} - ${USE_AVX2}")
 
 if(USE_SSE)
     message(STATUS "Enabling SSE ")
-    add_compile_definitions(USING_SSE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1") # or -msse2 depending on what you need
+    add_compile_definitions(LAB_USING_SSE)
+    if(MSVC)
+    add_compile_options(/arch:SSE2)
+    else()
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1") # or -msse2 depending on what you need
+  endif()
 elseif(USE_AVX2)
     message(STATUS "Enabling AVX2")
-    add_compile_definitions(USING_AVX2)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+    if(MSVC)
+      add_compile_definitions(LAB_USING_AVX2)
+    else()
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+    endif()
 endif()
 
 if(is_project_root)
