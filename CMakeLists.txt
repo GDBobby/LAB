@@ -13,6 +13,9 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set(is_project_root ON)
 endif()
 
+option(USE_SSE "Enable SSE optimizations" ON)
+option(USE_AVX2 "Enable AVX2 optimizations" OFF)
+
 message(STATUS "Project source dir : ${PROJECT_SOURCE_DIR}")
 message(STATUS "CMAKE source dir : ${CMAKE_SOURCE_DIR}")
 
@@ -50,6 +53,18 @@ set_target_properties(LinearAlgebra PROPERTIES
     RELEASE_POSTFIX ""   # No postfix in Release mode
     LINKER_LANGUAGE CXX
 )
+
+message(STATUS "${USE_SSE} - ${USE_AVX2}")
+
+if(USE_SSE)
+    message(STATUS "Enabling SSE ")
+    add_compile_definitions(USING_SSE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1") # or -msse2 depending on what you need
+elseif(USE_AVX2)
+    message(STATUS "Enabling AVX2")
+    add_compile_definitions(USING_AVX2)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+endif()
 
 if(is_project_root)
   message(STATUS "LinearAlgebra is project root")

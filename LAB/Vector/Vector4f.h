@@ -1,10 +1,8 @@
 #pragma once
 #include "VectorTemplate.h"
 
-#if 1//AVX
+#ifdef USING_SSE
 #include <immintrin.h>
-#elif SSE
-#include <xmmintrin.h>
 #endif
 
 namespace lab{

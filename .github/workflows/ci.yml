@@ -1,12 +1,12 @@
 name: ci
 on: [push]
 jobs:
-  build-gcc:
+  build-gcc-sse:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: configure gcc
-        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13
+        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13 -DUSE_SSE=ON -DUSE_AVX2=OFF
       - name: check gcc version
         run: g++ --version
       - name: build gcc
@@ -18,17 +18,38 @@ jobs:
       - name: Upload Output
         uses: actions/upload-artifact@v4
         with:
-          name: gcc_output.txt
-          path: gcc_output.txt
+          name: gcc_output_sse.txt
+          path: gcc_output_sse.txt
 
-  build-clang:
+          
+  build-gcc-avx2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: configure gcc
+        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13 -DUSE_SSE=OFF -DUSE_AVX2=ON
+      - name: check gcc version
+        run: g++ --version
+      - name: build gcc
+        run: cmake --build build --config=Release
+      - name: Run GCC Program and Save Output
+        run: |
+          ./build/Release/LinearAlgebraExample
+
+      - name: Upload Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: gcc_output_avx2.txt
+          path: gcc_output_avx2.txt
+
+  build-clang-sse:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: init
         run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
       - name: configure clang
-        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18
+        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18 -DUSE_SSE=ON -DUSE_AVX2=OFF
       - name: check clang version
         run: clang++ --version
       - name: build clang
@@ -40,17 +61,39 @@ jobs:
       - name: Upload Clang Output
         uses: actions/upload-artifact@v4
         with:
-          name: clang_output.txt
-          path: clang_output.txt
+          name: clang_output_sse.txt
+          path: clang_output_sse.txt
+  
+  build-clang-avx2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: init
+        run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
+      - name: configure clang
+        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18 -DUSE_SSE=OFF -DUSE_AVX2=ON
+      - name: check clang version
+        run: clang++ --version
+      - name: build clang
+        run: cmake --build clang --config=Release
+      - name: Run clang Program and Save Output
+        run: |
+          ./clang/Release/LinearAlgebraExample
 
-  build-windows:
+      - name: Upload Clang Output
+        uses: actions/upload-artifact@v4
+        with:
+          name: clang_output_avx2.txt
+          path: clang_output_avx2.txt
+
+  build-windows-sse:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - name: configure
         run: cmake -S . --preset=vs22 -B build
       - name: build
-        run: cmake --build build --config=Release
+        run: cmake --build build --config=Release -DUSE_SSE=ON -DUSE_AVX2=OFF
 
       - name: Run msvc Program and Save Output
         run: |
@@ -59,44 +102,84 @@ jobs:
       - name: Upload Windows
         uses: actions/upload-artifact@v4
         with:
-          name: msvc_output.txt
-          path: msvc_output.txt
+          name: msvc_output_sse.txt
+          path: msvc_output_sse.txt
+
+
+  build-windows-avx2:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: configure
+        run: cmake -S . --preset=vs22 -B build
+      - name: build
+        run: cmake --build build --config=Release -DUSE_SSE=OFF -DUSE_AVX2=ON
+
+      - name: Run msvc Program and Save Output
+        run: |
+          ./build/Release/LinearAlgebraExample.exe
+
+      - name: Upload Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: msvc_output_avx2.txt
+          path: msvc_output_avx2.txt
 
   compare-results:
     name: Compare Outputs
-    needs: [build-gcc, build-clang, build-windows]
+    needs: [build-gcc-sse, build-gcc-avx2, build-clang-sse, build-clang-avx2, build-windows-avx2, build-windows-sse]
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Windows msvc Output
+      - name: Download Windows msvc avx2 Output
         uses: actions/download-artifact@v4
         with:
-          name: msvc_output.txt
+          name: msvc_output_avx2.txt
+      
+      - name: Download Windows msvc sse Output
+        uses: actions/download-artifact@v4
+        with:
+          name: msvc_output_sse.txt
 
-      - name: Download Linux gcc Output
+      - name: Download Linux gcc sse Output
         uses: actions/download-artifact@v4
         with:
-          name: gcc_output.txt
+          name: gcc_output_sse.txt
+
+      - name: Download Linux gcc avx2 Output
+        uses: actions/download-artifact@v4
+        with:
+          name: gcc_output_avx2.txt
+          
+      - name: compare msvc SSE and AVX2 outputs
+        run: |
+          diff -u msvc_output_sse.txt msvc_output_avx2.txt || (echo "Mismatch detected between msvc sse and avx2!" && exit 1)
 
       - name: Compare gcc and msvc Outputs
         run: |
-          diff -u gcc_output.txt msvc_output.txt || (echo "Mismatch detected between gcc and msvc!" && exit 1)
+          diff -u gcc_output_avx2.txt msvc_output_avx2.txt || (echo "Mismatch detected between gcc and msvc!" && exit 1)
       
+      - name: Compare gcc sse and AVX2
+        run: |
+          diff -u gcc_output_sse.txt gcc_output_avx2.txt || (echo "Mismatch detected between gcc sse and avx2!" && exit 1)
+
           
-      - name: Download Linux clang Output
+      - name: Download Linux clang sse Output
         uses: actions/download-artifact@v4
         with:
-          name: clang_output.txt
+          name: clang_output_sse.txt
       
+      - name: Download Linux clang avx2 Output
+        uses: actions/download-artifact@v4
+        with:
+          name: clang_output_avx2.txt
       
+      - name: Compare gcc sse and AVX2
+        run: |
+          diff -u clang_output_sse.txt clang_output_avx2.txt || (echo "Mismatch detected between clang sse and avx2!" && exit 1)
       - name: Compare clang msvc Outputs
         run: |
-          diff -u clang_output.txt msvc_output.txt || (echo "Mismatch detected between clang and msvc!" && exit 1)
-      
-      
-      - name: Compare clang gcc Outputs
-        run: |
-          diff -u clang_output.txt gcc_output.txt || (echo "Mismatch detected between clang and gcc!" && exit 1)
+          diff -u clang_output_avx2.txt msvc_output_avx2.txt || (echo "Mismatch detected between clang and msvc!" && exit 1)
