@@ -207,6 +207,8 @@ int main() {
 				outFile.write(reinterpret_cast<const char*>(&tempVal), sizeof(float));
 			}
 		}
+
+		//the constexpr error here is with simd somehow
 		LAB_constexpr lab::mat4 viewMat = lab::ViewDirection<MyCS>(lab::Vector<float, 3>(0.f), MyCS::unitForwardVector);
 		for (uint8_t x = 0; x < 4; x++) {
 			for (uint8_t y = 0; y < 4; y++) {
