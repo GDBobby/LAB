@@ -1,13 +1,15 @@
 #pragma once
 #include "VectorTemplate.h"
 
-#ifdef USING_SSE
+#if defined(USING_SSE) || (USING_AVX2)
+#define USING_SIMD
 #include <immintrin.h>
 #endif
 
 namespace lab{
     template<>
     struct Vector<float, 4> {
+#ifdef USING_SIMD
         union{
             struct {
                 float x;
@@ -17,6 +19,12 @@ namespace lab{
             };
             __m128 vec;
         };
+#else
+        float x;
+        float y;
+        float z;
+        float w;
+#endif
 
         LAB_constexpr Vector() {}
         LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
@@ -37,19 +45,25 @@ namespace lab{
         LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
         
         //simd cant be constexpr (currently)
+#ifdef USING_SIMD
         Vector(__m128 const& vec) : vec{vec} {}
+#endif
 
         LAB_constexpr Vector& operator=(Vector const& other){
+#ifdef USING_SIMD
             if constexpr (std::is_constant_evaluated()){
+#endif
                 x = other.x;
                 y = other.y;
                 z = other.z;
                 w = other.w;
+#ifdef USING_SIMD
             }
             else{
                 //i need to benchmark if this is actually better
                 vec = other.vec;
             }
+#endif
             return *this;
         }
 
@@ -137,6 +151,9 @@ namespace lab{
             w -= other.w;
         }
         LAB_constexpr Vector operator-(Vector const other) const {
+#ifdef USING_SIMD
+
+#endif
             return Vector{
                 x - other.x,
                 y - other.y,
@@ -201,13 +218,17 @@ namespace lab{
         }
 
         LAB_constexpr float Dot(Vector const other) const {
+#ifdef USING_SIMD
             if constexpr (std::is_constant_evaluated()){
+#endif
                 return x * other.x + y * other.y + z * other.z + w * other.w;
+#ifdef USING_SIMD
             }
             else{
                 Vector temp{_mm_mul_ps(vec, other.vec)};
                 return temp.x + temp.y + temp.z + temp.w;
             }
+#endif
         }
     };
 }

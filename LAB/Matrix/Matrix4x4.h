@@ -101,12 +101,15 @@ namespace lab {
 		}
 
 		LAB_constexpr Vector<F, 4> operator*(Vector<F, 4> const vector) const {
+#ifdef USING_SIMD
 			if constexpr (std::is_constant_evaluated()){
+#endif
                 const Vector<F, 4> mul0 = columns[0] * vector.x;
                 const Vector<F, 4> mul1 = columns[1] * vector.y;
                 const Vector<F, 4> mul2 = columns[2] * vector.z;
                 const Vector<F, 4> mul3 = columns[3] * vector.w;
-                return mul0 + mul1 + mul2 + mul3;
+                return mul0 + mul1 + mul2 + mul3; 
+#ifdef USING_SIMD
 			}
 			else {
 				//copying glm implementation, minor tweaks
@@ -117,10 +120,13 @@ namespace lab {
 				const __m128 Mul3 = __mm_mul_ps(columns[3].vec, _mm_set1_ps(vector.w));
 				return Vector<F, 4>{_mm_add_ps(_mm_add_ps(Mul0, Mul1), _mm_add_ps(Mul2, Mul3))};
 			}
+#endif
 		}
 
 		LAB_constexpr Matrix operator*(Matrix<F, 4, 4, 4> const& other) const {
+#ifdef USING_SIMD
             if constexpr (std::is_constant_evaluated()) {
+#endif
                 Matrix ret{};
                 //matrix * vector operator
                 ret.columns[0] = this->operator*(other.columns[0]);
@@ -128,6 +134,7 @@ namespace lab {
                 ret.columns[2] = this->operator*(other.columns[2]);
                 ret.columns[3] = this->operator*(other.columns[3]);
                 return ret;
+#ifdef USING_SIMD
             }
             else {
                 Matrix ret;
@@ -142,6 +149,7 @@ namespace lab {
                 }
                 return ret;
             }
+#endif
 		}
         
 		LAB_constexpr Matrix& operator*=(Matrix<F, 4, 4, 4> const& other) const {
