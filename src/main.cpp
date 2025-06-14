@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Vector/Hash.h"
 #include "CameraCSRuntime.h"
+#include "Quaternion.h"
 
 #include <cstdio>
 #include <fstream>

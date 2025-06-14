@@ -24,6 +24,14 @@ namespace lab{
             z = other.z;
             return *this;
         }
+        
+        LAB_constexpr Vector operator-() const{
+            return Vector{
+                -x,
+                -y,
+                -z
+            };
+        }
 
         LAB_constexpr F& operator[](uint8_t const row) {
             if (row == 0) {

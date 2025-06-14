@@ -17,9 +17,7 @@
 
 #if LAB_DEBUG_LEVEL >= LAB_DEBUG_ASSERT_ACCESS
 #include <cassert>
-#define LAB_DEBUGGING_ACCESS 1
-#else
-#define LAB_DEBUGGING_ACCESS 0
+#define LAB_DEBUGGING_ACCESS
 #endif
 
 namespace lab {
@@ -36,9 +34,8 @@ namespace lab {
 
 #if LAB_DEBUG_LEVEL < LAB_DEBUG_FLOAT_ANOMALIES
 
-#define LAB_DEBUGGING_FLOAT_ANOMALIES 0
 #else
-#define LAB_DEBUGGING_FLOAT_ANOMALIES 1
+#define LAB_DEBUGGING_FLOAT_ANOMALIES
 
 #include <concepts>
 #include <bit>

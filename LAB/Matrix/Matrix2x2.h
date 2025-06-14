@@ -4,12 +4,8 @@
 
 #pragma once
 
-#include "Vector.h"
-#include "Debugging.h"
-#include <concepts>
-#include <type_traits> //can i remove this?
-#include <array> //i want to replace this with initializer list
-#include <cstring> //for memcpy
+#include "../Vector.h"
+#include "../Debugging.h"
 
 namespace lab {
 	//im moving all TxT, T == T into their own separate files, so branching for square matrices not requried anymore

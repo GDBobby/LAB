@@ -203,82 +203,162 @@ namespace lab {
 			return ret;
 		}
 
-    /* for the normal matrix, a 3x3 matrix is extracted, and transpose(inverse(3x3))
-		LAB_constexpr F GetDeterminant() const requires(4 == 4)  {
+        LAB_constexpr F GetDeterminant() const {
+            F const SubFactor00 = columns[2][2] * columns[3][3] - columns[3][2] * columns[2][3];
+            F const SubFactor01 = columns[2][1] * columns[3][3] - columns[3][1] * columns[2][3];
+            F const SubFactor02 = columns[2][1] * columns[3][2] - columns[3][1] * columns[2][2];
+            F const SubFactor03 = columns[2][0] * columns[3][3] - columns[3][0] * columns[2][3];
+            F const SubFactor04 = columns[2][0] * columns[3][2] - columns[3][0] * columns[2][2];
+            F const SubFactor05 = columns[2][0] * columns[3][1] - columns[3][0] * columns[2][1];
 
-				//ill come back to this later, is there even a use for the 4d determinent in gaming?
-			
-		}
+            Vector<F, 4> DetCof(
+                +(columns[1][1] * SubFactor00 - columns[1][2] * SubFactor01 + columns[1][3] * SubFactor02),
+                -(columns[1][0] * SubFactor00 - columns[1][2] * SubFactor03 + columns[1][3] * SubFactor04),
+                +(columns[1][0] * SubFactor01 - columns[1][1] * SubFactor03 + columns[1][3] * SubFactor05),
+                -(columns[1][0] * SubFactor02 - columns[1][1] * SubFactor04 + columns[1][2] * SubFactor05)
+            );
 
-		LAB_constexpr Matrix Invert() {
-			const F determinent = GetDeterminant();
-			//if(determinent == F(0)){
-				//bad, LAB_debug here
-			//}
-			return operator/=(determinent);
-		}
-
-		LAB_constexpr Matrix GetInverse() const  {
-			const F determinent = GetDeterminant();
-			//if(determinent == F(0)){
-				//bad, LAB_debug here
-			//}
-			return operator/(determinent);
-		}
-    */
-
-        LAB_constexpr Matrix GetTranslated(Vector<F, 3> const transVec) const {
-            Matrix ret = *this;
-            for(uint8_t row = 0; row < 3; row++){
-                ret.columns[3][row] += columns[0][row] * transVec.x;
-                ret.columns[3][row] += columns[1][row] * transVec.y;
-                ret.columns[3][row] += columns[2][row] * transVec.z;
-            }
-            return ret;
+            return
+                columns[0][0] * DetCof[0] + columns[0][1] * DetCof[1] +
+                columns[0][2] * DetCof[2] + columns[0][3] * DetCof[3];
         }
-        LAB_constexpr Matrix GetRotated(F const angle, Vector<F, 3> const axis) const{
-            F const cosine = Cos(angle);
-            F const sine = Sin(angle);
-#if LAB_DEBUGGING_FLOAT_ANOMALIES
-            //ensure axis is normalized
-            const Vector<F, 3> axisNormDiff  axis - axis.Normalized();
-            assert(abs(axis.x < F(0.001)) && (axis.y < F(0.001)) && (axis.z < F(0.001)));
-#endif
-            const Vector<F, 3> temp{ axis * (F(1) - cosine) };
-            Matrix<F, 3, 3> rotation; //its a 4x4 matrix, but the outer parts dont matter
-            rotation.columns[0].x = cosine + temp.x * axis.x;
-            rotation.columns[0].y = temp.x * axis.y + sine * axis.z;
-            rotation.columns[0].z = temp.x * axis.z - sine * axis.y;
-    
-            rotation.columns[1].x = temp.y * axis.x - sine * axis.z;
-            rotation.columns[1].y = cosine + temp.y * axis.y;
-            rotation.columns[1].z = temp.y * axis.z + sine * axis.x;
-    
-            rotation.columns[2].x = temp.z * axis.x + sine * axis.y;
-            rotation.columns[2].y = temp.z * axis.y - sine * axis.x;
-            rotation.columns[2].z = cosine + temp.z * axis.z;
-    
-            Matrix retMat = *this;
-            for (uint8_t column = 0; column < 3; column++) {
-                for (uint8_t row = 0; row < 4; row++) {
-                    //need an intermediate copy
-                    retMat.columns[column][row] = columns[0][row] * rotation.columns[column].x 
-                                                + columns[1][row] * rotation.columns[column].y 
-                                                + columns[2][row] * rotation.columns[column].z;
-                }
-            }
-    
-            return retMat;
+
+        LAB_constexpr Matrix& Invert() {
+            const F determinent = GetDeterminant();
+            //if(determinent == F(0)){
+                //bad, LAB_debug here
+            //}
+            return operator/=(determinent);
         }
-	
-        LAB_constexpr Matrix GetScaled(Vector<F, 3> const scalingVec) const {
-            Matrix<F, 4, 4, 4> retMat = *this;
-            for (uint8_t column = 0; column < 3; column++) {
-                for (uint8_t row = 0; row < 4; row++) {
-                    retMat.columns[column][row] *= scalingVec[column];
-                }
-            }
-            return retMat; 
+        LAB_constexpr Matrix GetInverse() const {
+            Matrix inv;
+
+            float invOut[16];
+
+            invOut[0] = At(1, 1) * At(2, 2) * At(3, 3) -
+                At(1, 1) * At(2, 3) * At(3, 2) -
+                At(2, 1) * At(1, 2) * At(3, 3) +
+                At(2, 1) * At(1, 3) * At(3, 2) +
+                At(3, 1) * At(1, 2) * At(2, 3) -
+                At(3, 1) * At(1, 3) * At(2, 2);
+
+            invOut[1] = -At(0, 1) * At(2, 2) * At(3, 3) +
+                At(0, 1) * At(2, 3) * At(3, 2) +
+                At(2, 1) * At(0, 2) * At(3, 3) -
+                At(2, 1) * At(0, 3) * At(3, 2) -
+                At(3, 1) * At(0, 2) * At(2, 3) +
+                At(3, 1) * At(0, 3) * At(2, 2);
+
+            invOut[2] = At(0, 1) * At(1, 2) * At(3, 3) -
+                At(0, 1) * At(1, 3) * At(3, 2) -
+                At(1, 1) * At(0, 2) * At(3, 3) +
+                At(1, 1) * At(0, 3) * At(3, 2) +
+                At(3, 1) * At(0, 2) * At(1, 3) -
+                At(3, 1) * At(0, 3) * At(1, 2);
+
+            invOut[3] = -At(0, 1) * At(1, 2) * At(2, 3) +
+                At(0, 1) * At(1, 3) * At(2, 2) +
+                At(1, 1) * At(0, 2) * At(2, 3) -
+                At(1, 1) * At(0, 3) * At(2, 2) -
+                At(2, 1) * At(0, 2) * At(1, 3) +
+                At(2, 1) * At(0, 3) * At(1, 2);
+
+            invOut[4] = -At(1, 0) * At(2, 2) * At(3, 3) +
+                At(1, 0) * At(2, 3) * At(3, 2) +
+                At(2, 0) * At(1, 2) * At(3, 3) -
+                At(2, 0) * At(1, 3) * At(3, 2) -
+                At(3, 0) * At(1, 2) * At(2, 3) +
+                At(3, 0) * At(1, 3) * At(2, 2);
+
+            invOut[5] = At(0, 0) * At(2, 2) * At(3, 3) -
+                At(0, 0) * At(2, 3) * At(3, 2) -
+                At(2, 0) * At(0, 2) * At(3, 3) +
+                At(2, 0) * At(0, 3) * At(3, 2) +
+                At(3, 0) * At(0, 2) * At(2, 3) -
+                At(3, 0) * At(0, 3) * At(2, 2);
+
+            invOut[6] = -At(0, 0) * At(1, 2) * At(3, 3) +
+                At(0, 0) * At(1, 3) * At(3, 2) +
+                At(1, 0) * At(0, 2) * At(3, 3) -
+                At(1, 0) * At(0, 3) * At(3, 2) -
+                At(3, 0) * At(0, 2) * At(1, 3) +
+                At(3, 0) * At(0, 3) * At(1, 2);
+
+            invOut[7] = At(0, 0) * At(1, 2) * At(2, 3) -
+                At(0, 0) * At(1, 3) * At(2, 2) -
+                At(1, 0) * At(0, 2) * At(2, 3) +
+                At(1, 0) * At(0, 3) * At(2, 2) +
+                At(2, 0) * At(0, 2) * At(1, 3) -
+                At(2, 0) * At(0, 3) * At(1, 2);
+
+            invOut[8] = At(1, 0) * At(2, 1) * At(3, 3) -
+                At(1, 0) * At(2, 3) * At(3, 1) -
+                At(2, 0) * At(1, 1) * At(3, 3) +
+                At(2, 0) * At(1, 3) * At(3, 1) +
+                At(3, 0) * At(1, 1) * At(2, 3) -
+                At(3, 0) * At(1, 3) * At(2, 1);
+
+            invOut[9] = -At(0, 0) * At(2, 1) * At(3, 3) +
+                At(0, 0) * At(2, 3) * At(3, 1) +
+                At(2, 0) * At(0, 1) * At(3, 3) -
+                At(2, 0) * At(0, 3) * At(3, 1) -
+                At(3, 0) * At(0, 1) * At(2, 3) +
+                At(3, 0) * At(0, 3) * At(2, 1);
+
+            invOut[10] = At(0, 0) * At(1, 1) * At(3, 3) -
+                At(0, 0) * At(1, 3) * At(3, 1) -
+                At(1, 0) * At(0, 1) * At(3, 3) +
+                At(1, 0) * At(0, 3) * At(3, 1) +
+                At(3, 0) * At(0, 1) * At(1, 3) -
+                At(3, 0) * At(0, 3) * At(1, 1);
+
+            invOut[11] = -At(0, 0) * At(1, 1) * At(2, 3) +
+                At(0, 0) * At(1, 3) * At(2, 1) +
+                At(1, 0) * At(0, 1) * At(2, 3) -
+                At(1, 0) * At(0, 3) * At(2, 1) -
+                At(2, 0) * At(0, 1) * At(1, 3) +
+                At(2, 0) * At(0, 3) * At(1, 1);
+
+            invOut[12] = -At(1, 0) * At(2, 1) * At(3, 2) +
+                At(1, 0) * At(2, 2) * At(3, 1) +
+                At(2, 0) * At(1, 1) * At(3, 2) -
+                At(2, 0) * At(1, 2) * At(3, 1) -
+                At(3, 0) * At(1, 1) * At(2, 2) +
+                At(3, 0) * At(1, 2) * At(2, 1);
+
+            invOut[13] = At(0, 0) * At(2, 1) * At(3, 2) -
+                At(0, 0) * At(2, 2) * At(3, 1) -
+                At(2, 0) * At(0, 1) * At(3, 2) +
+                At(2, 0) * At(0, 2) * At(3, 1) +
+                At(3, 0) * At(0, 1) * At(2, 2) -
+                At(3, 0) * At(0, 2) * At(2, 1);
+
+            invOut[14] = -At(0, 0) * At(1, 1) * At(3, 2) +
+                At(0, 0) * At(1, 2) * At(3, 1) +
+                At(1, 0) * At(0, 1) * At(3, 2) -
+                At(1, 0) * At(0, 2) * At(3, 1) -
+                At(3, 0) * At(0, 1) * At(1, 2) +
+                At(3, 0) * At(0, 2) * At(1, 1);
+
+            invOut[15] = At(0, 0) * At(1, 1) * At(2, 2) -
+                At(0, 0) * At(1, 2) * At(2, 1) -
+                At(1, 0) * At(0, 1) * At(2, 2) +
+                At(1, 0) * At(0, 2) * At(2, 1) +
+                At(2, 0) * At(0, 1) * At(1, 2) -
+                At(2, 0) * At(0, 2) * At(1, 1);
+
+            float det = At(0, 0) * invOut[0] + At(0, 1) * invOut[4] + At(0, 2) * invOut[8] + At(0, 3) * invOut[12];
+
+            if (lab::Abs(det) < 1e-6f)
+                return {}; // Singular, return identity or zero
+
+            det = 1.0f / det;
+
+            float* dest = reinterpret_cast<float*>(&inv);
+            for (int i = 0; i < 16; i++)
+                dest[i] = invOut[i] * det;
+
+            return inv;
         }
     };
 

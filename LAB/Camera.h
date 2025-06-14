@@ -21,22 +21,11 @@ namespace lab{
 
         const F scale = F(1) / Tan(field_of_view_radians * F(0.5));
         ret.columns[0][0] = scale / aspectRatio;
-        if constexpr (PerspectiveAPI == Perspective::API::Vulkan){
-            ret.columns[1][1] = -scale;
-        }
-        else{
-            ret.columns[1][1] = scale;
-        }
+        ret.columns[1][1] = scale;
         ret.columns[3][2] = -far * near / (far - near);
 
-        if(PerspectiveAPI == Perspective::API::DirectX){
-            ret.columns[2][2] = far / (far - near);
-            ret.columns[2][3] = F(1);
-        }
-        else{
-            ret.columns[2][2] = -far / (far - near);
-            ret.columns[2][3] = F(-1);
-        }
+        ret.columns[2][2] = far / (far - near);
+        ret.columns[2][3] = F(1);
         return ret;
     }
 
@@ -320,7 +309,7 @@ namespace lab{
         //warning for target == position
 #endif
         const lab::Vector<F, 3> direction = (target - position).Normalize();
-        return ViewDirection(position, direction, up);
+        return ViewDirection<CS>(position, direction, up);
     }
     
     template<typename CS, std::floating_point F>
@@ -330,6 +319,6 @@ namespace lab{
         //warning for target == position
 #endif
         const lab::Vector<F, 3> direction = (target - position).Normalize();
-        ViewDirection(viewMat, position, direction, up);
+        ViewDirection<CS>(viewMat, position, direction, up);
     }
 }

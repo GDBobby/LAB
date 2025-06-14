@@ -73,6 +73,15 @@ namespace lab{
             }
             return *this;
         }
+        
+        LAB_constexpr Vector operator-() const{
+            return Vector{
+                -x,
+                -y,
+                -z,
+                -w
+            };
+        }
 
         LAB_constexpr bool operator==(Vector const other) const {
             return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);

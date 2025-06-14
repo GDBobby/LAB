@@ -34,17 +34,33 @@ namespace lab {
 		return PI<F> / divisor;
 	}
 
+	template<std::floating_point F>
+	inline constexpr F epsilon = F(1e-6); //potentially bigger for double?
 	
 
 	template<typename T>
+	requires(std::is_fundamental_v<T>)
 	LAB_constexpr T Max(T const a, T const b){
 		const bool aBigger = a > b;
 		return a * aBigger + b * !aBigger;
 	}
 	template<typename T>
+		requires(std::is_fundamental_v<T>)
 	LAB_constexpr T Min(T const a, T const b){
 		const bool aSmaller = a < b;
 		return a * aSmaller + b * !aSmaller;
+	}
+	template<typename T>
+		requires(std::is_fundamental_v<T>)
+	LAB_constexpr T Clamp(T const val, T const min, T const max) {
+		return Min(Max(val, min), max);
+	}
+	template<std::floating_point F>
+	LAB_constexpr F Mix(F const lhs, F const rhs, F const weight){
+#if DEBUGGING_FLOAT_ANOMALY
+		//assert weight > 0 < 1
+#endif
+		return lhs * (F(1) - weight) + rhs * weight;
 	}
 
 

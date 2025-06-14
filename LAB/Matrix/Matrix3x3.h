@@ -1,11 +1,8 @@
 #pragma once
 #include "MatrixTxT.h"
 
-#include "Vector.h"
-#include "Debugging.h"
-#include <concepts>
-#include <type_traits> //can i remove this?
-#include <cstring> //for memcpy
+#include "../Vector.h"
+#include "../Debugging.h"
 
 namespace lab {
 	//im moving all TxT, T == T into their own separate files, so branching for square matrices not requried anymore

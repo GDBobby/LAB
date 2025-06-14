@@ -40,8 +40,8 @@ namespace lab{
         LAB_constexpr Vector(float const x, Vector<float, 3> const vec) : x{x}, y{vec.x}, z{vec.y}, w{vec.z} {}
         //copy constructors, including vec2 and vec3
         //do i need to make these explicit?
-        LAB_constexpr Vector(Vector<float, 2> const& other) : x{ other.x }, y{ other.y }, z{ float(0)}, w{float(0)} {}
-        LAB_constexpr Vector(Vector<float, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ float(0) } {}
+        explicit LAB_constexpr Vector(Vector<float, 2> const& other) : x{ other.x }, y{ other.y }, z{ float(0)}, w{float(0)} {}
+        explicit LAB_constexpr Vector(Vector<float, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ float(0) } {}
         LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
         
         //simd cant be constexpr (currently)
@@ -65,6 +65,15 @@ namespace lab{
             }
 #endif
             return *this;
+        }
+        
+        LAB_constexpr Vector operator-() const{
+            return Vector{
+                -x,
+                -y,
+                -z,
+                -w
+            };
         }
 
         LAB_constexpr float& operator[](uint8_t const row) {
