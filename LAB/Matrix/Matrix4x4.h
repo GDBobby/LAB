@@ -360,6 +360,40 @@ namespace lab {
 
             return inv;
         }
+		
+		        LAB_constexpr Matrix GetRotated(F const angle, Vector<F, 3> const axis) const{
+            F const cosine = Cos(angle);
+            F const sine = Sin(angle);
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
+            //ensure axis is normalized
+            const Vector<F, 3> axisNormDiff  axis - axis.Normalized();
+            assert(abs(axis.x < F(0.001)) && (axis.y < F(0.001)) && (axis.z < F(0.001)));
+#endif
+            const Vector<F, 3> temp{ axis * (F(1) - cosine) };
+            Matrix<F, 3, 3> rotation; //its a 4x4 matrix, but the outer parts dont matter
+            rotation.columns[0].x = cosine + temp.x * axis.x;
+            rotation.columns[0].y = temp.x * axis.y + sine * axis.z;
+            rotation.columns[0].z = temp.x * axis.z - sine * axis.y;
+    
+            rotation.columns[1].x = temp.y * axis.x - sine * axis.z;
+            rotation.columns[1].y = cosine + temp.y * axis.y;
+            rotation.columns[1].z = temp.y * axis.z + sine * axis.x;
+    
+            rotation.columns[2].x = temp.z * axis.x + sine * axis.y;
+            rotation.columns[2].y = temp.z * axis.y - sine * axis.x;
+            rotation.columns[2].z = cosine + temp.z * axis.z;
+    
+            Matrix retMat = *this;
+            for (uint8_t column = 0; column < 3; column++) {
+                for (uint8_t row = 0; row < 4; row++) {
+                    //need an intermediate copy
+                    retMat.columns[column][row] = columns[0][row] * rotation.columns[column].x 
+                                                + columns[1][row] * rotation.columns[column].y 
+                                                + columns[2][row] * rotation.columns[column].z;
+                }
+            }
+    
+            return retMat;
     };
 
     template<std::floating_point F>
