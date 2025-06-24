@@ -14,60 +14,20 @@ namespace lab{
         LAB_constexpr Quaternion() : x{F(0)}, y{F(0)}, z{F(0)}, w{F(0)} {}
         LAB_constexpr Quaternion(F const x, F const y, F const z, F const w) : x{x}, y{y}, z{z}, w{w} {}
 
-        LAB_constexpr Quaternion(Matrix<F, 4, 4> const& mat){
-            //copied directly from glm
-            const F first = mat.columns[0][0] - mat.columns[1][1] - mat.columns[2][2];
-            const F second = mat.columns[1][1] - mat.columns[0][0] - mat.columns[2][2];
-            const F third = mat.columns[2][2] - mat.columns[0][0] - mat.columns[1][1];
-            const F fourth = mat.columns[0][0] + mat.columns[1][1] + mat.columns[2][2];
-
-            int biggestIndex = 0;
-            F biggest = fourth;
-            if(first > biggest){
-                biggest = first;
-                biggest = 1;
+        LAB_constexpr Quaternion(Matrix<F, 4, 4> const& matrix){
+            w = lab::Sqrt(lab::Max(0.0, 1.0 + matrix.columns[0][0] + matrix.columns[1][1] + matrix.columns[2][2])) / 2.0;
+            x = lab::Sqrt(lab::Max(0.0, 1.0 + matrix.columns[0][0] - matrix.columns[1][1] - matrix.columns[2][2])) / 2.0;
+            y = lab::Sqrt(lab::Max(0.0, 1.0 - matrix.columns[0][0] + matrix.columns[1][1] - matrix.columns[2][2])) / 2.0;
+            z = lab::Sqrt(lab::Max(0.0, 1.0 - matrix.columns[0][0] - matrix.columns[1][1] + matrix.columns[2][2])) / 2.0;
+            if (matrix.columns[1][2] < matrix.columns[2][1]) {
+                x = -x;
             }
-            if(second > biggest){
-                biggest = second;
-                biggest = 2;
+            if (matrix.columns[2][0] < matrix.columns[0][2]) {
+                y = -y;
             }
-            if(third > biggest){
-                biggest = third;
-                biggest = 3;
+            if (matrix.columns[0][1] < matrix.columns[1][0]) {
+                z = -z;
             }
-
-            const F biggestVal = lab::Sqrt(biggest + F(1) * F(0.5));
-            const F mult = F(0.25) / biggestVal;
-            switch(biggestIndex)
-            {
-            case 0:
-                x = biggestVal;
-                y = (mat.columns[1][2] - mat.columns[2][1]) * mult; 
-                z = (mat.columns[2][0] - mat.columns[0][2]) * mult; 
-                w = (mat.columns[0][1] - mat.columns[1][0]) * mult;
-                break;
-            case 1:
-                x = (mat.columns[1][2] - mat.columns[2][1]) * mult;
-                y = biggestVal;
-                z = (mat.columns[0][1] + mat.columns[1][0]) * mult;
-                w = (mat.columns[2][0] + mat.columns[0][2]) * mult;
-                break;
-            case 2:
-                x = (mat.columns[2][0] - mat.columns[0][2]) * mult;
-                y = (mat.columns[0][1] + mat.columns[1][0]) * mult;
-                z = biggestVal;
-                w = (mat.columns[1][2] + mat.columns[2][1]) * mult;
-                break;
-            case 3:
-                x = (mat.columns[0][1] - mat.columns[1][0]) * mult;
-                y = (mat.columns[2][0] + mat.columns[0][2]) * mult;
-                z = (mat.columns[1][2] + mat.columns[2][1]) * mult;
-                w = biggestVal;
-                break;
-            default: // Silence a -Wswitch-default warning in GCC. Should never actually get here. Assert is just for sanity.
-                LAB_UNREACHABLE;
-            }
-            LAB_UNREACHABLE;
         }
 
         LAB_constexpr F SquaredMagnitude() const{
@@ -154,16 +114,17 @@ namespace lab{
 
         LAB_constexpr Matrix<F, 4, 4> ToMat4() const {
             Matrix<F, 4, 4> ret{};
+            Quaternion reflected = this->operator-();
 
-            const F xx = x * x;
-            const F yy = y * y;
-            const F zz = z * z;
-            const F xy = x * y;
-            const F xz = x * z;
-            const F yz = y * z;
-            const F wx = w * x;
-            const F wy = w * y;
-            const F wz = w * z;
+            const F xx = reflected.x * reflected.x;
+            const F yy = reflected.y * reflected.y;
+            const F zz = reflected.z * reflected.z;
+            const F xy = reflected.x * reflected.y;
+            const F xz = reflected.x * reflected.z;
+            const F yz = reflected.y * reflected.z;
+            const F wx = reflected.w * reflected.x;
+            const F wy = reflected.w * reflected.y;
+            const F wz = reflected.w * reflected.z;
         
             ret.columns[0][0] = F(1) - F(2) * (yy + zz);
             ret.columns[0][1] = F(2) * (xy + wz);
@@ -187,6 +148,7 @@ namespace lab{
         
             return ret;
         }
+
 
 
         static LAB_constexpr Quaternion Mix(Quaternion const& q1, Quaternion const& q2, F const weight){
@@ -225,17 +187,15 @@ namespace lab{
         }
     
         static LAB_constexpr Quaternion AxisToAxis(Vector<F, 3> const from, Vector<F, 3> const to){
-            const Vector<F, 3> normFrom = from.Normalized();
-            const Vector<F, 3> normTo = to.Normalized();
-            Vector<F, 3> axis = normFrom.Cross(normTo);
-#if LAB_DEBUGGING_FLOAT_ANOMALY
-            if (axis.SquaredMagnitude() == 0.f) {
-                return lab::vec4(F(1), F(0), F(0), F(0));
-            }
-#endif
-            axis.Normalize();
-            const F angle = lab::ArcCos(lab::Clamp(lab::Dot(normFrom, normTo), F(-1), F(1)));
-            return AngleAxis(angle, axis);
+            Vector<F, 3> vA = from.Normalized();
+            Vector<F, 3> vHalf = (vA + to.Normalized()).Normalized();
+            Vector<F, 3> vAxis = vA.Cross(vHalf);
+            return Quaternion(
+                vAxis.x,
+                vAxis.y,
+                vAxis.z,
+                vA.Dot(vHalf)
+            );
         }
 
         static LAB_constexpr Quaternion Slerp(Quaternion const& q1, Quaternion const& q2, F const weight){

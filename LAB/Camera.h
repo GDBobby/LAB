@@ -17,7 +17,7 @@ namespace lab{
     //idk if this is correct
     template<Perspective::API PerspectiveAPI, std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> ProjectionMatrix(F const field_of_view_radians, F const aspectRatio, F const near, F const far)  { 
-        Matrix<F, 4, 4> ret{0.f};
+        Matrix<F, 4, 4> ret{F(0)};
 
         const F scale = F(1) / Tan(field_of_view_radians * F(0.5));
         ret.columns[0][0] = scale / aspectRatio;
@@ -137,8 +137,14 @@ namespace lab{
     template<typename CS, std::floating_point F>
     requires(IsCoordinateSystem<CS>::value)
     LAB_constexpr void ViewDirection(Matrix<F, 4, 4>& viewMat, Vector<F, 3> const position, Vector<F, 3> const forward, Vector<F, 3> const upDir = CS::unitUpVector){
+#if 1//def LAB_LEFT_HANDED
+        const Vector<F, 3> right = Cross(upDir, forward).Normalized();
+        const Vector<F, 3> up = Cross(forward, right).Normalized();
+#else
         const Vector<F, 3> right = Cross(forward, upDir).Normalized();
         const Vector<F, 3> up = Cross(right, forward).Normalized();
+#endif
+        
 
         if constexpr(CS::f_sign){
             viewMat.columns[0][CS::f_axis] = -forward.x;
