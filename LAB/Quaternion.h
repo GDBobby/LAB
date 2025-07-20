@@ -4,6 +4,9 @@
 #include "Matrix.h"
 
 namespace lab{
+    //this is row major and left handed, while the rest of the lib is right handed and column major. idk when I'll fix it
+
+
     template<std::floating_point F>
     struct Quaternion {
         F x;

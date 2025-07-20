@@ -10,8 +10,6 @@
 #endif
 
 namespace lab {
-    //im moving all TxT, T == T into their own separate files, so branching for square matrices not requried anymore
-
     template<std::floating_point F>
     struct Matrix<F, 4, 4, 4> {
 
@@ -25,7 +23,7 @@ namespace lab {
                 Vector<F, 4>(F(0), initVal, F(0), F(0)),
                 Vector<F, 4>(F(0), F(0), initVal, F(0)),
                 Vector<F, 4>(F(0), F(0), F(0), initVal)
-        }
+            }
         {}
 
         LAB_constexpr Matrix(Matrix const& other) :
@@ -34,9 +32,8 @@ namespace lab {
                 other.columns[1],
                 other.columns[2],
                 other.columns[3]
-        }
-        {
-        }
+            }
+        {}
 
         LAB_constexpr Matrix& operator=(Matrix const& other) {
             if (std::is_constant_evaluated()) {
@@ -56,9 +53,8 @@ namespace lab {
                 vector1,
                 vector2,
                 vector3
-        }
-        {
-        }
+            }
+        {}
 
         LAB_constexpr F& At(const uint8_t column, const uint8_t row) {
 #if LAB_DEBUGGING_ACCESS
@@ -114,7 +110,6 @@ namespace lab {
             }
             else {
                 //copying glm implementation, minor tweaks
-
                 const __m128 Mul0 = __mm_mul_ps(columns[0].vec, _mm_set1_ps(vector.x));
                 const __m128 Mul1 = __mm_mul_ps(columns[1].vec, _mm_set1_ps(vector.y));
                 const __m128 Mul2 = __mm_mul_ps(columns[2].vec, _mm_set1_ps(vector.z));
@@ -327,7 +322,7 @@ namespace lab {
             F const SubFactor04 = columns[2][0] * columns[3][2] - columns[3][0] * columns[2][2];
             F const SubFactor05 = columns[2][0] * columns[3][1] - columns[3][0] * columns[2][1];
 
-            Vector<F, 4> DetCof(
+            Vector<F, 4> DetCoeff(
                 +(columns[1][1] * SubFactor00 - columns[1][2] * SubFactor01 + columns[1][3] * SubFactor02),
                 -(columns[1][0] * SubFactor00 - columns[1][2] * SubFactor03 + columns[1][3] * SubFactor04),
                 +(columns[1][0] * SubFactor01 - columns[1][1] * SubFactor03 + columns[1][3] * SubFactor05),
@@ -335,19 +330,11 @@ namespace lab {
             );
 
             return
-                columns[0][0] * DetCof[0] + columns[0][1] * DetCof[1] +
-                columns[0][2] * DetCof[2] + columns[0][3] * DetCof[3];
-        }
-
-        LAB_constexpr Matrix& Invert() {
-            const F determinent = GetDeterminant();
-            //if(determinent == F(0)){
-                //bad, LAB_debug here
-            //}
-            return operator/=(determinent);
+                columns[0][0] * DetCoeff[0] + columns[0][1] * DetCoeff[1] +
+                columns[0][2] * DetCoeff[2] + columns[0][3] * DetCoeff[3];
         }
         LAB_constexpr Matrix GetInverse() const {
-            Matrix inv;
+            Matrix inv{F(0)};
 
             float invOut[16];
 
@@ -465,6 +452,10 @@ namespace lab {
 
             float det = At(0, 0) * invOut[0] + At(0, 1) * invOut[4] + At(0, 2) * invOut[8] + At(0, 3) * invOut[12];
 
+//wrap this in a debug expression?
+#if LAB_DEBUGGING_FLOAT_ANOMALIES
+            //if (lab::Abs(det) < 1e-6f)
+#endif
             if (lab::Abs(det) < 1e-6f)
                 return {}; // Singular, return identity or zero
 
@@ -503,7 +494,7 @@ namespace lab {
 #endif
     
         F const cosine = Cos(angle);
-#if 1//def LAB_LEFT_HANDED
+#ifdef LAB_LEFT_HANDED
         F const sine = -Sin(angle);
 #else
         F const sine = Sin(angle);
@@ -520,7 +511,7 @@ namespace lab {
     template<std::floating_point F>
     Matrix<F, 4, 4> RotateAroundX(F const angle) {
         F const cosine = Cos(angle);       
-#if 1//def LAB_LEFT_HANDED
+#ifdef LAB_LEFT_HANDED
         F const sine = -Sin(angle);
 #else
         F const sine = Sin(angle);
@@ -537,7 +528,7 @@ namespace lab {
     template<std::floating_point F>
     Matrix<F, 4, 4> RotateAroundY(F const angle) {
         F const cosine = Cos(angle);       
-#if 1//def LAB_LEFT_HANDED
+#ifdef LAB_LEFT_HANDED
         F const sine = -Sin(angle);
 #else
         F const sine = Sin(angle);
@@ -553,7 +544,7 @@ namespace lab {
     template<std::floating_point F>
     Matrix<F, 4, 4> RotateAroundZ(F const angle) {
         F const cosine = Cos(angle);        
-#if 1//def LAB_LEFT_HANDED
+#ifdef LAB_LEFT_HANDED
         F const sine = -Sin(angle);
 #else
         F const sine = Sin(angle);
