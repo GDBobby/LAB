@@ -1,30 +1,14 @@
 #pragma once
 #include "VectorTemplate.h"
 
-#if defined(LAB_USING_SSE) || (LAB_USING_AVX2)
-#define USING_SIMD
-#include <immintrin.h>
-#endif
 
 namespace lab{
     template<>
     struct Vector<float, 4> {
-#ifdef USING_SIMD
-        union{
-            struct {
-                float x;
-                float y;
-                float z;
-                float w;
-            };
-            __m128 vec;
-        };
-#else
         float x;
         float y;
         float z;
         float w;
-#endif
 
         LAB_constexpr Vector() {}
         LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
@@ -43,27 +27,12 @@ namespace lab{
         explicit LAB_constexpr Vector(Vector<float, 2> const& other) : x{ other.x }, y{ other.y }, z{ float(0)}, w{float(0)} {}
         explicit LAB_constexpr Vector(Vector<float, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ float(0) } {}
         LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
-        
-        //simd cant be constexpr (currently)
-#ifdef USING_SIMD
-        Vector(__m128 const& vec) : vec{vec} {}
-#endif
 
         LAB_constexpr Vector& operator=(Vector const& other){
-#ifdef USING_SIMD
-            if constexpr (std::is_constant_evaluated()){
-#endif
-                x = other.x;
-                y = other.y;
-                z = other.z;
-                w = other.w;
-#ifdef USING_SIMD
-            }
-            else{
-                //i need to benchmark if this is actually better
-                vec = other.vec;
-            }
-#endif
+            x = other.x;
+            y = other.y;
+            z = other.z;
+            w = other.w;
             return *this;
         }
         
@@ -109,20 +78,14 @@ namespace lab{
 
         template<uint8_t DimensionsOther>
         LAB_constexpr Vector& operator=(Vector<float, DimensionsOther> const& other) {
-            if constexpr (DimensionsOther == 2) {
                 x = other.x;
                 y = other.y;
-            }
-            else if constexpr (DimensionsOther == 3) {
-                x = other.x;
-                y = other.y;
+            if constexpr (DimensionsOther == 3) {
                 z = other.z;
             }
             else if constexpr (DimensionsOther == 4) {
-                x = other.x;
-                y = other.y;
-                z = other.z;
-                w = other.w;
+                //this should be getting caught by the copy assignment operator
+                assert(false);
             }
             return *this;
         }
@@ -160,9 +123,6 @@ namespace lab{
             w -= other.w;
         }
         LAB_constexpr Vector operator-(Vector const other) const {
-#ifdef USING_SIMD
-
-#endif
             return Vector{
                 x - other.x,
                 y - other.y,

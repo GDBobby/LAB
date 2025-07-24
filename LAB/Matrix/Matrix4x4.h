@@ -12,7 +12,14 @@
 namespace lab {
     template<std::floating_point F>
     struct Matrix<F, 4, 4, 4> {
+#ifdef USING_SIMD
+        union{
+            Vector<F, 4> component;
+            VectorSIMD vec;
+        } columns[4];
+#else
 
+#endif
         Vector<F, 4> columns[4];
         LAB_constexpr Matrix() : columns{} {}
 
@@ -90,7 +97,7 @@ namespace lab {
 
         LAB_constexpr bool operator==(Matrix<F, 4, 4, 4> const& other) const {
             for (uint8_t column = 0; column < 4; column++) {
-                if (columns[column] != other.columns[column]) {
+                if (!(columns[column].vec == other.columns[column].vec)) {
                     return false;
                 }
             }
@@ -101,20 +108,22 @@ namespace lab {
 #ifdef USING_SIMD
             if constexpr (std::is_constant_evaluated()) {
 #endif
-                const Vector<F, 4> mul0 = columns[0] * vector.x;
-                const Vector<F, 4> mul1 = columns[1] * vector.y;
-                const Vector<F, 4> mul2 = columns[2] * vector.z;
-                const Vector<F, 4> mul3 = columns[3] * vector.w;
+                const Vector<F, 4> mul0 = columns[0].component * vector.x;
+                const Vector<F, 4> mul1 = columns[1].component * vector.y;
+                const Vector<F, 4> mul2 = columns[2].component * vector.z;
+                const Vector<F, 4> mul3 = columns[3].component * vector.w;
                 return mul0 + mul1 + mul2 + mul3;
 #ifdef USING_SIMD
             }
             else {
                 //copying glm implementation, minor tweaks
-                const __m128 Mul0 = __mm_mul_ps(columns[0].vec, _mm_set1_ps(vector.x));
-                const __m128 Mul1 = __mm_mul_ps(columns[1].vec, _mm_set1_ps(vector.y));
-                const __m128 Mul2 = __mm_mul_ps(columns[2].vec, _mm_set1_ps(vector.z));
-                const __m128 Mul3 = __mm_mul_ps(columns[3].vec, _mm_set1_ps(vector.w));
-                return Vector<F, 4>{_mm_add_ps(_mm_add_ps(Mul0, Mul1), _mm_add_ps(Mul2, Mul3))};
+                const VectorSIMD Mul0 = (columns[0].vec * vector.x);
+                const VectorSIMD Mul1 = (columns[1].vec * vector.y);
+                const VectorSIMD Mul2 = (columns[2].vec * vector.z);
+                const VectorSIMD Mul3 = (columns[3].vec * vector.w);
+                Vector<F, 4> ret;
+                _mm_storeu_ps(&ret, (Mul0 + Mul1) + (Mul2 + Mul3));
+                return ret;
             }
 #endif
         }

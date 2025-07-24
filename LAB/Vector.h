@@ -4,6 +4,7 @@
 #include "Vector/Vector2.h"
 #include "Vector/Vector3.h"
 #include "Vector/Vector4f.h"
+#include "Vector/Vector4SIMD.h"
 #include "Vector/Vector4d.h"
 #include "Vector/IntVector.h"
 
@@ -11,11 +12,11 @@ namespace lab{
 
 
     template<std::floating_point F, uint8_t Dimensions>
-    Vector<F, Dimensions> operator*(F const f, Vector<F, Dimensions> const vec){
+    Vector<F, Dimensions> operator*(F const f, Vector<F, Dimensions> const vec) {
         return vec * f;
     }
     template<std::floating_point F, uint8_t Dimensions>
-    Vector<F, Dimensions> operator+(F const f, Vector<F, Dimensions> const vec){
+    Vector<F, Dimensions> operator+(F const f, Vector<F, Dimensions> const vec) {
         return vec + f;
     }
     //minus and divide operators are per dimension since order of operations matters
