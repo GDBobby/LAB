@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Vector.h"
-#include "Debugging.h"
+#include "../Vector.h"
+#include "../Debugging.h"
 #include <concepts>
 #include <type_traits> //can i remove this?
 #include <array> //i want to replace this with initializer list

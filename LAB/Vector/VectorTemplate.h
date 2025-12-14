@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SupportingMath.h"
-#include "Debugging.h"
+#include "../SupportingMath.h"
+#include "../Debugging.h"
 
 #include <cstdint>
 #include <concepts>

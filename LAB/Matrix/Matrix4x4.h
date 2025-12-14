@@ -4,13 +4,15 @@
 #include "../Vector.h"
 #include "../Debugging.h"
 
+#include <concepts>
+
 #ifdef LAB_ROW_MAJOR
 #define XM_PERMUTE_PS( v, c ) _mm_shuffle_ps((v), (v), c )
 #define XM_FMADD_PS( a, b, c ) _mm_add_ps(_mm_mul_ps((a), (b)), (c))
 #endif
 
 namespace lab {
-    template<std::floating_point F>
+    template<::std::floating_point F>
     struct Matrix<F, 4, 4, 4> {
 #ifdef USING_SIMD
         union{
@@ -24,7 +26,7 @@ namespace lab {
         LAB_constexpr Matrix() : columns{} {}
 
         //identity matrix construction
-        LAB_constexpr Matrix(F const initVal) :
+        [[nodiscard]] explicit LAB_constexpr Matrix(F const initVal) :
             columns{
                 Vector<F, 4>(initVal, F(0), F(0), F(0)),
                 Vector<F, 4>(F(0), initVal, F(0), F(0)),
@@ -108,10 +110,10 @@ namespace lab {
 #ifdef USING_SIMD
             if constexpr (std::is_constant_evaluated()) {
 #endif
-                const Vector<F, 4> mul0 = columns[0].component * vector.x;
-                const Vector<F, 4> mul1 = columns[1].component * vector.y;
-                const Vector<F, 4> mul2 = columns[2].component * vector.z;
-                const Vector<F, 4> mul3 = columns[3].component * vector.w;
+                const Vector<F, 4> mul0 = columns[0] * vector.x;
+                const Vector<F, 4> mul1 = columns[1] * vector.y;
+                const Vector<F, 4> mul2 = columns[2] * vector.z;
+                const Vector<F, 4> mul3 = columns[3] * vector.w;
                 return mul0 + mul1 + mul2 + mul3;
 #ifdef USING_SIMD
             }
