@@ -67,7 +67,7 @@ int main() {
 
 		LAB_constexpr lab::Matrix<float, 4 ,4> test3 = test1 * test2;
 		LAB_constexpr lab::Vector<float, 4> test4 = test1 * lab::Vector<float, 4>{1.f};
-		printf("test mat multiplpication print : %.2f - %.2f\n", test3.columns[0][0], test4.x);
+		printf("test mat multiplpication print : %.2f - %.2f\n", test3.columns[0].component[0], test4.x);
 
 		lab::Matrix<float, 4, 4> crossTest{1.f};
 		lab::Matrix<float, 4, 4> crossTest2{2.f};
@@ -143,11 +143,10 @@ int main() {
 		LAB_constexpr float testFloat1 = testVec[1];
 		LAB_static_assert(testFloat0 != testFloat1);
 
-		LAB_constexpr lab::Matrix<float, 4, 4> matrix1(1.f);
-		LAB_constexpr auto rotatedMat = lab::Rotate(matrix1, 0.5f, MyCS::unitUpVector);
+		LAB_constexpr auto rotatedMat = lab::RotateAroundAxis(0.5f, MyCS::unitUpVector);
 
-		LAB_constexpr auto translatedMat = lab::Translate(rotatedMat, lab::Vector<float, 3>{0.f, 1.f, 2.f});
-		LAB_constexpr auto scaledMat = lab::Scale(translatedMat, testVec);
+		LAB_constexpr auto translatedMat = rotatedMat * lab::IdentityTranslation(lab::Vector<float, 3>{0.f, 1.f, 2.f});
+		LAB_constexpr auto scaledMat = translatedMat * lab::IdentityScale(testVec);
 		LAB_static_assert(scaledMat.At(0, 0) != scaledMat.At(3, 2));
 		printf("scaledMat 0 - %.2f\n", scaledMat.At(0, 0));
 
@@ -190,11 +189,11 @@ int main() {
 		LAB_constexpr lab::Transform<float, 3> transformScale{};
 		LAB_constexpr auto scaleMat = transformScale.GetScaleMatrix();
 		LAB_constexpr lab::Matrix<float, 4, 4> identityMat{1.f};
-		LAB_static_assert(scaleMat.columns[0][0] == 1.f);
-		LAB_static_assert(identityMat.columns[0][0] == 1.f);
+		LAB_static_assert(scaleMat.columns[0].component[0] == 1.f);
+		LAB_static_assert(identityMat.columns[0].component[0] == 1.f);
 
 		LAB_static_assert(scaleMat == identityMat);
-		printf("scale and identity - %.2f:%.2f\n", scaleMat.columns[0][0], identityMat.columns[0][0]);
+		printf("scale and identity - %.2f:%.2f\n", scaleMat.columns[0].component[0], identityMat.columns[0].component[0]);
 
 		auto normMat = transformScale.GetNormalMatrix();
 		printf("normMat 0,0 - %.2f\n", normMat.At(0, 0));

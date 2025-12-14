@@ -29,45 +29,45 @@ namespace lab {
             const Vector<float, 3> up = Cross(right, forward).Normalized();
             
             if (csR.f_sign){
-                ret.columns[0][csR.f_axis] = -forward.x;
-                ret.columns[1][csR.f_axis] = -forward.y;
-                ret.columns[2][csR.f_axis] = -forward.z;
-                ret.columns[3][csR.f_axis] = position.Dot(forward);
+                ret.columns[0].component[csR.f_axis] = -forward.x;
+                ret.columns[1].component[csR.f_axis] = -forward.y;
+                ret.columns[2].component[csR.f_axis] = -forward.z;
+                ret.columns[3].component[csR.f_axis] = position.Dot(forward);
             }
             else{
-                ret.columns[0][csR.f_axis] = forward.x;
-                ret.columns[1][csR.f_axis] = forward.y;
-                ret.columns[2][csR.f_axis] = forward.z;
-                ret.columns[3][csR.f_axis] = -position.Dot(forward);
+                ret.columns[0].component[csR.f_axis] = forward.x;
+                ret.columns[1].component[csR.f_axis] = forward.y;
+                ret.columns[2].component[csR.f_axis] = forward.z;
+                ret.columns[3].component[csR.f_axis] = -position.Dot(forward);
             }
             if (csR.u_sign) {
-                ret.columns[0][csR.u_axis] = -up.x;
-                ret.columns[1][csR.u_axis] = -up.y;
-                ret.columns[2][csR.u_axis] = -up.z;
-                ret.columns[3][csR.u_axis] = position.Dot(up);
+                ret.columns[0].component[csR.u_axis] = -up.x;
+                ret.columns[1].component[csR.u_axis] = -up.y;
+                ret.columns[2].component[csR.u_axis] = -up.z;
+                ret.columns[3].component[csR.u_axis] = position.Dot(up);
             }
             else{
-                ret.columns[0][csR.u_axis] = up.x;
-                ret.columns[1][csR.u_axis] = up.y;
-                ret.columns[2][csR.u_axis] = up.z;
-                ret.columns[3][csR.u_axis] = -position.Dot(up);
+                ret.columns[0].component[csR.u_axis] = up.x;
+                ret.columns[1].component[csR.u_axis] = up.y;
+                ret.columns[2].component[csR.u_axis] = up.z;
+                ret.columns[3].component[csR.u_axis] = -position.Dot(up);
             }
             if (csR.r_sign) {
-                ret.columns[0][csR.r_axis] = -right.x;
-                ret.columns[1][csR.r_axis] = -right.y;
-                ret.columns[2][csR.r_axis] = -right.z;
-                ret.columns[3][csR.r_axis] = position.Dot(right);
+                ret.columns[0].component[csR.r_axis] = -right.x;
+                ret.columns[1].component[csR.r_axis] = -right.y;
+                ret.columns[2].component[csR.r_axis] = -right.z;
+                ret.columns[3].component[csR.r_axis] = position.Dot(right);
             }
             else{
-                ret.columns[0][csR.r_axis] = right.x;
-                ret.columns[1][csR.r_axis] = right.y;
-                ret.columns[2][csR.r_axis] = right.z;
-                ret.columns[3][csR.r_axis] = -position.Dot(right);
+                ret.columns[0].component[csR.r_axis] = right.x;
+                ret.columns[1].component[csR.r_axis] = right.y;
+                ret.columns[2].component[csR.r_axis] = right.z;
+                ret.columns[3].component[csR.r_axis] = -position.Dot(right);
             }
-            ret.columns[0][3] = F(0);
-            ret.columns[1][3] = F(0);
-            ret.columns[2][3] = F(0);
-            ret.columns[3][3] = F(1);
+            ret.columns[0].component[3] = F(0);
+            ret.columns[1].component[3] = F(0);
+            ret.columns[2].component[3] = F(0);
+            ret.columns[3].component[3] = F(1);
             return ret;
         }
 
@@ -78,40 +78,40 @@ namespace lab {
             const Vector<F, 3> up = Cross(right, forward).Normalized();
 
             if (csR.f_sign){
-                viewMat.columns[0][csR.f_axis] = -forward.x;
-                viewMat.columns[1][csR.f_axis] = -forward.y;
-                viewMat.columns[2][csR.f_axis] = -forward.z;
-                viewMat.columns[3][csR.f_axis] = position.Dot(forward);
+                viewMat.columns[0].component[csR.f_axis] = -forward.x;
+                viewMat.columns[1].component[csR.f_axis] = -forward.y;
+                viewMat.columns[2].component[csR.f_axis] = -forward.z;
+                viewMat.columns[3].component[csR.f_axis] = position.Dot(forward);
             }
             else{
-                viewMat.columns[0][csR.f_axis] = forward.x;
-                viewMat.columns[1][csR.f_axis] = forward.y;
-                viewMat.columns[2][csR.f_axis] = forward.z;
-                viewMat.columns[3][csR.f_axis] = -position.Dot(forward);
+                viewMat.columns[0].component[csR.f_axis] = forward.x;
+                viewMat.columns[1].component[csR.f_axis] = forward.y;
+                viewMat.columns[2].component[csR.f_axis] = forward.z;
+                viewMat.columns[3].component[csR.f_axis] = -position.Dot(forward);
             }
             if (csR.u_sign) {
-                viewMat.columns[0][csR.u_axis] = -up.x;
-                viewMat.columns[1][csR.u_axis] = -up.y;
-                viewMat.columns[2][csR.u_axis] = -up.z;
-                viewMat.columns[3][csR.u_axis] = position.Dot(up);
+                viewMat.columns[0].component[csR.u_axis] = -up.x;
+                viewMat.columns[1].component[csR.u_axis] = -up.y;
+                viewMat.columns[2].component[csR.u_axis] = -up.z;
+                viewMat.columns[3].component[csR.u_axis] = position.Dot(up);
             }
             else{
-                viewMat.columns[0][csR.u_axis] = up.x;
-                viewMat.columns[1][csR.u_axis] = up.y;
-                viewMat.columns[2][csR.u_axis] = up.z;
-                viewMat.columns[3][csR.u_axis] = -position.Dot(up);
+                viewMat.columns[0].component[csR.u_axis] = up.x;
+                viewMat.columns[1].component[csR.u_axis] = up.y;
+                viewMat.columns[2].component[csR.u_axis] = up.z;
+                viewMat.columns[3].component[csR.u_axis] = -position.Dot(up);
             }
             if (csR.r_sign) {
-                viewMat.columns[0][csR.r_axis] = -right.x;
-                viewMat.columns[1][csR.r_axis] = -right.y;
-                viewMat.columns[2][csR.r_axis] = -right.z;
-                viewMat.columns[3][csR.r_axis] = position.Dot(right);
+                viewMat.columns[0].component[csR.r_axis] = -right.x;
+                viewMat.columns[1].component[csR.r_axis] = -right.y;
+                viewMat.columns[2].component[csR.r_axis] = -right.z;
+                viewMat.columns[3].component[csR.r_axis] = position.Dot(right);
             }
             else{
-                viewMat.columns[0][csR.r_axis] = right.x;
-                viewMat.columns[1][csR.r_axis] = right.y;
-                viewMat.columns[2][csR.r_axis] = right.z;
-                viewMat.columns[3][csR.r_axis] = -position.Dot(right);
+                viewMat.columns[0].component[csR.r_axis] = right.x;
+                viewMat.columns[1].component[csR.r_axis] = right.y;
+                viewMat.columns[2].component[csR.r_axis] = right.z;
+                viewMat.columns[3].component[csR.r_axis] = -position.Dot(right);
             }
     #if LAB_DEBUGGING_FLOAT_ANOMALY
             //just make it a warning since setting the final values later is fine
@@ -133,51 +133,51 @@ namespace lab {
             const F fy = (-s2);
             const F fz = (c1 * c2);
             if (csR.f_sign) {
-                view.columns[0][csR.f_axis] = -fx;
-                view.columns[1][csR.f_axis] = -fy;
-                view.columns[2][csR.f_axis] = -fz;
-                view.columns[3][csR.f_axis] = (fx * position.x + fy * position.y + fz * position.z);
+                view.columns[0].component[csR.f_axis] = -fx;
+                view.columns[1].component[csR.f_axis] = -fy;
+                view.columns[2].component[csR.f_axis] = -fz;
+                view.columns[3].component[csR.f_axis] = (fx * position.x + fy * position.y + fz * position.z);
             } else {
-                view.columns[0][csR.f_axis] = fx;
-                view.columns[1][csR.f_axis] = fy;
-                view.columns[2][csR.f_axis] = fz;
-                view.columns[3][csR.f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
+                view.columns[0].component[csR.f_axis] = fx;
+                view.columns[1].component[csR.f_axis] = fy;
+                view.columns[2].component[csR.f_axis] = fz;
+                view.columns[3].component[csR.f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
             }
 
             const F ux = (c3 * s1 * s2 - c1 * s3);
             const F uy = (c2 * c3);
             const F uz = (c1 * c3 * s2 + s1 * s3);
             if (csR.u_sign) {
-                view.columns[0][csR.u_axis] = -ux;
-                view.columns[1][csR.u_axis] = -uy;
-                view.columns[2][csR.u_axis] = -uz;
-                view.columns[3][csR.u_axis] = ux * position.x + uy * position.y + uz * position.z;
+                view.columns[0].component[csR.u_axis] = -ux;
+                view.columns[1].component[csR.u_axis] = -uy;
+                view.columns[2].component[csR.u_axis] = -uz;
+                view.columns[3].component[csR.u_axis] = ux * position.x + uy * position.y + uz * position.z;
             } else {
-                view.columns[0][csR.u_axis] = ux;
-                view.columns[1][csR.u_axis] = uy;
-                view.columns[2][csR.u_axis] = uz;
-                view.columns[3][csR.u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
+                view.columns[0].component[csR.u_axis] = ux;
+                view.columns[1].component[csR.u_axis] = uy;
+                view.columns[2].component[csR.u_axis] = uz;
+                view.columns[3].component[csR.u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
             }
 
             const F rx = (c1 * c3 + s1 * s2 * s3);
             const F ry = (c2 * s3);
             const F rz = (c1 * s2 * s3 - c3 * s1);
             if (csR.r_sign) {
-                view.columns[0][csR.r_axis] = -rx;
-                view.columns[1][csR.r_axis] = -ry;
-                view.columns[2][csR.r_axis] = -rz;
-                view.columns[3][csR.r_axis] = rx * position.x + ry * position.y + rz * position.z;
+                view.columns[0].component[csR.r_axis] = -rx;
+                view.columns[1].component[csR.r_axis] = -ry;
+                view.columns[2].component[csR.r_axis] = -rz;
+                view.columns[3].component[csR.r_axis] = rx * position.x + ry * position.y + rz * position.z;
             } else {
-                view.columns[0][csR.r_axis] = rx;
-                view.columns[1][csR.r_axis] = ry;
-                view.columns[2][csR.r_axis] = rz;
-                view.columns[3][csR.r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
+                view.columns[0].component[csR.r_axis] = rx;
+                view.columns[1].component[csR.r_axis] = ry;
+                view.columns[2].component[csR.r_axis] = rz;
+                view.columns[3].component[csR.r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
             }
 
-            view.columns[0].w = F(0);
-            view.columns[1].w = F(0);
-            view.columns[2].w = F(0);
-            view.columns[3].w = F(1);
+            view.columns[0].component.w = F(0);
+            view.columns[1].component.w = F(0);
+            view.columns[2].component.w = F(0);
+            view.columns[3].component.w = F(1);
             return view;
         }
 
@@ -194,45 +194,45 @@ namespace lab {
             const F fy = (-s2);
             const F fz = (c1 * c2);
             if (csR.f_sign) {
-                view.columns[0][csR.f_axis] = -fx;
-                view.columns[1][csR.f_axis] = -fy;
-                view.columns[2][csR.f_axis] = -fz;
-                view.columns[3][csR.f_axis] = (fx * position.x + fy * position.y + fz * position.z);
+                view.columns[0].component[csR.f_axis] = -fx;
+                view.columns[1].component[csR.f_axis] = -fy;
+                view.columns[2].component[csR.f_axis] = -fz;
+                view.columns[3].component[csR.f_axis] = (fx * position.x + fy * position.y + fz * position.z);
             } else {
-                view.columns[0][csR.f_axis] = fx;
-                view.columns[1][csR.f_axis] = fy;
-                view.columns[2][csR.f_axis] = fz;
-                view.columns[3][csR.f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
+                view.columns[0].component[csR.f_axis] = fx;
+                view.columns[1].component[csR.f_axis] = fy;
+                view.columns[2].component[csR.f_axis] = fz;
+                view.columns[3].component[csR.f_axis] = -(fx * position.x + fy * position.y + fz * position.z);
             }
 
             const F ux = (c3 * s1 * s2 - c1 * s3);
             const F uy = (c2 * c3);
             const F uz = (c1 * c3 * s2 + s1 * s3);
             if (csR.u_sign) {
-                view.columns[0][csR.u_axis] = -ux;
-                view.columns[1][csR.u_axis] = -uy;
-                view.columns[2][csR.u_axis] = -uz;
-                view.columns[3][csR.u_axis] = ux * position.x + uy * position.y + uz * position.z;
+                view.columns[0].component[csR.u_axis] = -ux;
+                view.columns[1].component[csR.u_axis] = -uy;
+                view.columns[2].component[csR.u_axis] = -uz;
+                view.columns[3].component[csR.u_axis] = ux * position.x + uy * position.y + uz * position.z;
             } else {
-                view.columns[0][csR.u_axis] = ux;
-                view.columns[1][csR.u_axis] = uy;
-                view.columns[2][csR.u_axis] = uz;
-                view.columns[3][csR.u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
+                view.columns[0].component[csR.u_axis] = ux;
+                view.columns[1].component[csR.u_axis] = uy;
+                view.columns[2].component[csR.u_axis] = uz;
+                view.columns[3].component[csR.u_axis] = -(ux * position.x + uy * position.y + uz * position.z);
             }
 
             const F rx = (c1 * c3 + s1 * s2 * s3);
             const F ry = (c2 * s3);
             const F rz = (c1 * s2 * s3 - c3 * s1);
             if (csR.r_sign) {
-                view.columns[0][csR.r_axis] = -rx;
-                view.columns[1][csR.r_axis] = -ry;
-                view.columns[2][csR.r_axis] = -rz;
-                view.columns[3][csR.r_axis] = rx * position.x + ry * position.y + rz * position.z;
+                view.columns[0].component[csR.r_axis] = -rx;
+                view.columns[1].component[csR.r_axis] = -ry;
+                view.columns[2].component[csR.r_axis] = -rz;
+                view.columns[3].component[csR.r_axis] = rx * position.x + ry * position.y + rz * position.z;
             } else {
-                view.columns[0][csR.r_axis] = rx;
-                view.columns[1][csR.r_axis] = ry;
-                view.columns[2][csR.r_axis] = rz;
-                view.columns[3][csR.r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
+                view.columns[0].component[csR.r_axis] = rx;
+                view.columns[1].component[csR.r_axis] = ry;
+                view.columns[2].component[csR.r_axis] = rz;
+                view.columns[3].component[csR.r_axis] = -(rx * position.x + ry * position.y + rz * position.z);
             }
         }
 

@@ -17,21 +17,53 @@ namespace lab{
         LAB_constexpr Quaternion() : x{F(0)}, y{F(0)}, z{F(0)}, w{F(0)} {}
         LAB_constexpr Quaternion(F const x, F const y, F const z, F const w) : x{x}, y{y}, z{z}, w{w} {}
 
-        LAB_constexpr Quaternion(Matrix<F, 4, 4> const& matrix){
-            w = lab::Sqrt(lab::Max(0.0, 1.0 + matrix.columns[0][0] + matrix.columns[1][1] + matrix.columns[2][2])) / 2.0;
-            x = lab::Sqrt(lab::Max(0.0, 1.0 + matrix.columns[0][0] - matrix.columns[1][1] - matrix.columns[2][2])) / 2.0;
-            y = lab::Sqrt(lab::Max(0.0, 1.0 - matrix.columns[0][0] + matrix.columns[1][1] - matrix.columns[2][2])) / 2.0;
-            z = lab::Sqrt(lab::Max(0.0, 1.0 - matrix.columns[0][0] - matrix.columns[1][1] + matrix.columns[2][2])) / 2.0;
-            if (matrix.columns[1][2] < matrix.columns[2][1]) {
-                x = -x;
+        LAB_constexpr Quaternion(const Matrix<F, 4, 4>& matrix) {
+            const F trace = matrix.At(0, 0) + matrix.At(1, 1) + matrix.At(2, 2) + F(1);
+
+            if (trace > F(1)) {
+                const F s = F(2) * sqrt(trace);
+                x = (matrix.At(1, 2) - matrix.At(2, 1)) / s;
+                y = (matrix.At(2, 0) - matrix.At(0, 2)) / s;
+                z = (matrix.At(0, 1) - matrix.At(1, 0)) / s;
+                w = F(0.25) * s;
             }
-            if (matrix.columns[2][0] < matrix.columns[0][2]) {
-                y = -y;
-            }
-            if (matrix.columns[0][1] < matrix.columns[1][0]) {
-                z = -z;
+            else {
+                int maxi = 0;
+                if (matrix.At(1, 1) > matrix.At(maxi, maxi)) maxi = 1;
+                if (matrix.At(2, 2) > matrix.At(maxi, maxi)) maxi = 2;
+
+                switch (maxi) {
+                case 0: {
+                    const F s = F(2) * sqrt(F(1) + matrix.At(0, 0) - matrix.At(1, 1) - matrix.At(2, 2));
+                    x = F(0.25) * s;
+                    y = (matrix.At(0, 1) + matrix.At(1, 0)) / s;
+                    z = (matrix.At(0, 2) + matrix.At(2, 0)) / s;
+                    w = (matrix.At(1, 2) - matrix.At(2, 1)) / s;
+                    break;
+                }
+                case 1: {
+                    const F s = F(2) * sqrt(F(1) + matrix.At(1, 1) - matrix.At(0, 0) - matrix.At(2, 2));
+                    x = (matrix.At(0, 1) + matrix.At(1, 0)) / s;
+                    y = F(0.25) * s;
+                    z = (matrix.At(1, 2) + matrix.At(2, 1)) / s;
+                    w = (matrix.At(2, 0) - matrix.At(0, 2)) / s;
+                    break;
+                }
+                default: {
+                    const F s = F(2) * sqrt(F(1) + matrix.At(2, 2) - matrix.At(0, 0) - matrix.At(1, 1));
+                    x = (matrix.At(0, 2) + matrix.At(2, 0)) / s;
+                    y = (matrix.At(1, 2) + matrix.At(2, 1)) / s;
+                    z = F(0.25) * s;
+                    w = (matrix.At(0, 1) - matrix.At(1, 0)) / s;
+                    break;
+                }
+                }
             }
         }
+
+		static LAB_constexpr Quaternion FromMatrix(Matrix<F, 4, 4> const& matrix) {
+			return Quaternion(matrix);
+		}
 
         LAB_constexpr F SquaredMagnitude() const{
             return x * x + y * y + z * z + w * w;
@@ -97,12 +129,14 @@ namespace lab{
 			w /= dividend;
 		}
 
+        //cml copy
         LAB_constexpr Quaternion operator*(Quaternion const& other) const{
             return Quaternion {
-                w * other.w - x * other.x - y * other.y - z * other.z,
-                w * other.x + x * other.w + y * other.z - z * other.y,
-                w * other.y - x * other.z + y * other.w + z * other.x,
-                w * other.z + x * other.y - y * other.x + z * other.w
+
+                (other.w * x) + (other.x * w) + (other.y * z) - (other.z * y),
+                (other.w * y) - (other.x * z) + (other.y * w) + (other.z * x),
+                (other.w * z) + (other.x * y) - (other.y * x) + (other.z * w),
+                (other.w * w) - (other.x * x) - (other.y * y) - (other.z * z)
             };
         }
         
@@ -115,58 +149,83 @@ namespace lab{
             };
         }
 
+        
         LAB_constexpr Matrix<F, 4, 4> ToMat4() const {
             Matrix<F, 4, 4> ret{};
-            Quaternion reflected = this->operator-();
+            const Quaternion reflected = this->operator-();
 
-            const F xx = reflected.x * reflected.x;
-            const F yy = reflected.y * reflected.y;
-            const F zz = reflected.z * reflected.z;
-            const F xy = reflected.x * reflected.y;
-            const F xz = reflected.x * reflected.z;
-            const F yz = reflected.y * reflected.z;
-            const F wx = reflected.w * reflected.x;
-            const F wy = reflected.w * reflected.y;
-            const F wz = reflected.w * reflected.z;
+            const F xx = F(2) * reflected.x * reflected.x;
+            const F yy = F(2) * reflected.y * reflected.y;
+            const F zz = F(2) * reflected.z * reflected.z;
+            const F xy = F(2) * reflected.x * reflected.y;
+            const F xz = F(2) * reflected.x * reflected.z;
+            const F yz = F(2) * reflected.y * reflected.z;
+            const F wx = F(2) * reflected.w * reflected.x;
+            const F wy = F(2) * reflected.w * reflected.y;
+            const F wz = F(2) * reflected.w * reflected.z;
         
-            ret.columns[0][0] = F(1) - F(2) * (yy + zz);
-            ret.columns[0][1] = F(2) * (xy + wz);
-            ret.columns[0][2] = F(2) * (xz - wy);
-            ret.columns[0][3] = F(0);
+            ret.columns[0].component[0] = F(1) - (yy + zz);
+            ret.columns[0].component[1] = (xy + wz);
+            ret.columns[0].component[2] = (xz - wy);
+            ret.columns[0].component[3] = F(0);
         
-            ret.columns[1][0] = F(2) * (xy - wz);
-            ret.columns[1][1] = F(1) - F(2) * (xx + zz);
-            ret.columns[1][2] = F(2) * (yz + wx);
-            ret.columns[1][3] = F(0);
+            ret.columns[1].component[0] = (xy - wz);
+            ret.columns[1].component[1] = F(1) - (xx + zz);
+            ret.columns[1].component[2] = (yz + wx);
+            ret.columns[1].component[3] = F(0);
         
-            ret.columns[2][0] = F(2) * (xz + wy);
-            ret.columns[2][1] = F(2) * (yz - wx);
-            ret.columns[2][2] = F(1) - F(2) * (xx + yy);
-            ret.columns[2][3] = F(0);
+            ret.columns[2].component[0] = (xz + wy);
+            ret.columns[2].component[1] = (yz - wx);
+            ret.columns[2].component[2] = F(1) - (xx + yy);
+            ret.columns[2].component[3] = F(0);
         
-            ret.columns[3][0] = F(0);
-            ret.columns[3][1] = F(0);
-            ret.columns[3][2] = F(0);
-            ret.columns[3][3] = F(1);
+            ret.columns[3].component[0] = F(0);
+            ret.columns[3].component[1] = F(0);
+            ret.columns[3].component[2] = F(0);
+            ret.columns[3].component[3] = F(1);
         
             return ret;
         }
+            
 
-
-
-        static LAB_constexpr Quaternion Mix(Quaternion const& q1, Quaternion const& q2, F const weight){
-            //copied straight from glm
-            F const cosTheta = q1.Dot(q2);
-            if(cosTheta > (F(1) - epsilon<F>)){
-                return Quaternion(
-                    lab::Mix(q1.w, q2.w, weight),
-                    lab::Mix(q1.x, q2.x, weight),
-                    lab::Mix(q1.y, q2.y, weight),
-                    lab::Mix(q1.z, q2.z, weight)
-                );
+		static LAB_constexpr Matrix<F, 4, 4> ToMat4(Quaternion const& quat) {
+			return quat.ToMat4();
+		}
+        //cml copy
+        
+        static LAB_constexpr Quaternion Mix(Quaternion q1, Quaternion q2, F const weight) {
+            if (weight <= F(0)) {
+                return q1;
             }
-            F const angle = ArcCos(cosTheta);
-            return (q1 * lab::Sin(F(1) - weight * angle) + q2 * lab::Sin(weight * angle)) / lab::Sin(angle);
+            if (weight >= F(1)) {
+                return q2;
+            }
+            F angle = q1.Dot(q2);
+            if (angle < F(0.0)) {
+                q1 = -q1;
+                angle = -angle;
+            }
+
+            if ((angle + F(1.0)) > F(0.05))  {
+                if ((F(1.0) - angle) >= F(0.05)) {  // spherical interpolation
+                    const F theta = lab::ArcCos(angle);
+                    const F invsintheta = F(1.0) / lab::Sin(theta);
+                    const F scale = lab::Sin(theta * (F(1.0)-weight)) * invsintheta;
+                    const F invscale = lab::Sin(theta * weight) * invsintheta;
+                    return (q1*scale) + (q2*invscale);
+                }
+                else { // linear interploation
+                    const F invWeight = F(1.0) - weight;
+                    return (q1 * invWeight) + (q2 * weight);
+                }
+            }
+            else  {
+                q2 = Quaternion(-q1.y, q1.x, -q1.w, q1.z);
+                const F scale = lab::Sin(lab::GetPI(F(0.5) - weight));
+                const F invscale = lab::Sin(lab::GetPI(weight));
+                return (q1*scale) + (q2*invscale);
+            }
+
         }
         //angle in radians
         static LAB_constexpr Quaternion AngleAxis(const F angle, Vector<F, 3> const axis){
@@ -184,11 +243,9 @@ namespace lab{
                 cosHalf
             };
         }
-
         static LAB_constexpr Matrix<F, 4, 4> ToMat4(Quaternion const quat){
             return quat.ToMat4();
-        }
-    
+        }   
         static LAB_constexpr Quaternion AxisToAxis(Vector<F, 3> const from, Vector<F, 3> const to){
             Vector<F, 3> vA = from.Normalized();
             Vector<F, 3> vHalf = (vA + to.Normalized()).Normalized();
@@ -201,28 +258,8 @@ namespace lab{
             );
         }
 
-        static LAB_constexpr Quaternion Slerp(Quaternion const& q1, Quaternion const& q2, F const weight){
-            F cosTheta = q1.Dot(q2);
-            Quaternion q2Copy = q2;
-            if(cosTheta < F(0)){
-                q2Copy = -q2;
-                cosTheta = -cosTheta;
-            }
-
-            const F epsilon = F(1e-6);
-            if (cosTheta > 1.0f - epsilon) {
-                // Linear interpolation and normalize
-                return Quaternion::Mix(q1, q2Copy, weight).Normalized();
-            }
-        
-            // Perform the slerp
-            const F angle = lab::ArcCos(cosTheta);
-            const F sinAngle = lab::Sin(angle);
-        
-            const F weight1 = lab::Sin((F(1) - weight) * angle) / sinAngle;
-            const F weight2 = lab::Sin(weight * angle) / sinAngle;
-        
-            return (q1 * weight1 + q2Copy * weight2).Normalized();
+        static LAB_constexpr Quaternion Slerp(Quaternion const& q1, Quaternion const& q2, F const weight) {
+            return Mix(q1, q2, weight);
         }
     };
 

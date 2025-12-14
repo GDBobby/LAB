@@ -39,11 +39,12 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
 endif()
 
 add_library(LinearAlgebra INTERFACE)
+#target_link_libraries(LinearAlgebra INTERFACE LinearAlgebra-compile-options)
 
 file(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/LAB/*.h ${PROJECT_SOURCE_DIR}/LAB/*.hpp)
 
 target_sources(LinearAlgebra PUBLIC FILE_SET HEADERS BASE_DIRS LAB FILES ${HEADER_FILES})
-target_include_directories(LinearAlgebra INTERFACE ${PROJECT_SOURCE_DIR}/LAB)
+target_include_directories(LinearAlgebra-compile-options INTERFACE ${PROJECT_SOURCE_DIR})
 
 set_target_properties(LinearAlgebra PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/Debug"
@@ -59,22 +60,25 @@ if(is_project_root)
 message(STATUS "${USE_SSE_INTERNAL} - ${USE_AVX2_INTERNAL}")
 
 
+if(MSVC)
+    target_compile_options(LinearAlgebra-compile-options INTERFACE /wd5063)
+endif()
 
   if(USE_SSE_INTERNAL)
       message(STATUS "Enabling SSE ")
-      add_compile_definitions(LAB_USING_SSE)
+      target_compile_definitions(LinearAlgebra-compile-options LAB_USING_SSE)
       if(MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
+        target_compile_options(LAB-compile-options INTERFACE /arch:SSE2)
       else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+        target_compile_options(LAB-compile-options INTERFACE -msse4.1)
     endif()
   elseif(USE_AVX2_INTERNAL)
       message(STATUS "Enabling AVX2")
-      add_compile_definitions(LAB_USING_AVX2)
+      target_compile_definitions(LinearAlgebra-compile-options LAB_USING_AVX2)
       if(MSVC)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:AVX2")
+        target_compile_options(LAB-compile-options INTERFACE /arch:AVX2)
       else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+        target_compile_options(LAB-compile-options INTERFACE -mavx2)
       endif()
   endif()
 

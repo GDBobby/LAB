@@ -5,7 +5,7 @@
 
 //swap to debugging levels
 //debug level 0 == nothing
-//debug level 1 == asserts
+//debug level 1 == input validation
 //debug level 2 == nan and inf checks
 
 #ifndef LAB_DEBUG_LEVEL

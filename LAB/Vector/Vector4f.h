@@ -1,6 +1,9 @@
 #pragma once
 #include "VectorTemplate.h"
 
+#ifdef USING_SIMD
+#include <immintrin.h>
+#endif
 
 namespace lab{
     template<>
@@ -13,6 +16,12 @@ namespace lab{
         LAB_constexpr Vector() {}
         [[nodiscard]] explicit LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
         [[nodiscard]] explicit LAB_constexpr Vector(float const all) : x{ all }, y{ all }, z{ all }, w{ all } {}
+        LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
+#ifdef USING_SIMD
+        Vector(__m128 vec) {
+            _mm_storeu_ps(&x, vec);
+        }
+#endif
 
         //constructing piece wise with vec2
         [[nodiscard]] explicit LAB_constexpr Vector(Vector<float, 2> const vec1, Vector<float, 2> const vec2) : x{vec1.x}, y{vec1.y}, z{vec2.x}, w{vec2.y} {}
@@ -28,6 +37,12 @@ namespace lab{
         [[nodiscard]] explicit  LAB_constexpr Vector(Vector<float, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ float(0) } {}
         LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ other.w } {}
 
+#ifdef USING_SIMD
+        __m128 ToSIMD() const{
+            return _mm_loadu_ps(&x);
+        }
+#endif
+        
         LAB_constexpr Vector& operator=(Vector const& other){
             x = other.x;
             y = other.y;
@@ -187,17 +202,7 @@ namespace lab{
         }
 
         LAB_constexpr float Dot(Vector const other) const {
-#ifdef USING_SIMD
-            if constexpr (std::is_constant_evaluated()){
-#endif
-                return x * other.x + y * other.y + z * other.z + w * other.w;
-#ifdef USING_SIMD
-            }
-            else{
-                Vector temp{_mm_mul_ps(vec, other.vec)};
-                return temp.x + temp.y + temp.z + temp.w;
-            }
-#endif
+            return x * other.x + y * other.y + z * other.z + w * other.w;
         }
     };
 }

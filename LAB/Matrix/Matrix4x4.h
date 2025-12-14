@@ -15,23 +15,21 @@ namespace lab {
     template<::std::floating_point F>
     struct Matrix<F, 4, 4, 4> {
 #ifdef USING_SIMD
-        union{
-            Vector<F, 4> component;
-            VectorSIMD vec;
-        } columns[4];
+        VectorSIMD columns[4];
+        using ColType = VectorSIMD;
 #else
-
-#endif
         Vector<F, 4> columns[4];
+        using ColType = Vector<F, 4>;
+#endif
         LAB_constexpr Matrix() : columns{} {}
 
         //identity matrix construction
         [[nodiscard]] explicit LAB_constexpr Matrix(F const initVal) :
             columns{
-                Vector<F, 4>(initVal, F(0), F(0), F(0)),
-                Vector<F, 4>(F(0), initVal, F(0), F(0)),
-                Vector<F, 4>(F(0), F(0), initVal, F(0)),
-                Vector<F, 4>(F(0), F(0), F(0), initVal)
+                ColType(initVal, F(0), F(0), F(0)),
+                ColType(F(0), initVal, F(0), F(0)),
+                ColType(F(0), F(0), initVal, F(0)),
+                ColType(F(0), F(0), F(0), initVal)
             }
         {}
 
@@ -51,7 +49,9 @@ namespace lab {
                 }
             }
             else {
-                memcpy(columns, other.columns, sizeof(F) * 4 * 4);
+                for (uint8_t i = 0; i < 4; i++) {
+                    columns[i] = other.columns[i];
+                }
             }
             return *this;
         }
@@ -84,7 +84,6 @@ namespace lab {
 #if LAB_DEBUGGING_ACCESS
             assert((column < 4) && (row < 4));
 #endif
-
             return columns[column][row];
         }
         LAB_constexpr F operator[](const uint8_t index) const {
@@ -99,7 +98,7 @@ namespace lab {
 
         LAB_constexpr bool operator==(Matrix<F, 4, 4, 4> const& other) const {
             for (uint8_t column = 0; column < 4; column++) {
-                if (!(columns[column].vec == other.columns[column].vec)) {
+                if (!(columns[column] == other.columns[column])) {
                     return false;
                 }
             }
@@ -247,17 +246,27 @@ namespace lab {
 #ifdef USING_SIMD
             if constexpr (std::is_constant_evaluated()) {
 #endif
-                Matrix ret{};
-                //matrix * vector operator
-                ret.columns[0] = this->operator*(other.columns[0]);
-                ret.columns[1] = this->operator*(other.columns[1]);
-                ret.columns[2] = this->operator*(other.columns[2]);
-                ret.columns[3] = this->operator*(other.columns[3]);
-                return ret;
+                return Matrix{
+                    this->operator*(other.columns[0]),
+                    this->operator*(other.columns[1]),
+                    this->operator*(other.columns[2]),
+                    this->operator*(other.columns[3])
+                };
 #ifdef USING_SIMD
             }
             else {
+
                 Matrix ret;
+                for(uint8_t i = 0; i < 4; i++){
+                    const __m128 v[4] = {
+                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(0, 0, 0, 0)),
+                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(1, 1, 1, 1)),
+                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(2, 2, 2, 2)),
+                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(3, 3, 3, 3)),
+                    };
+                    ret.columns[i].vec.vec = _mm_add_ps(_mm_add_ps(v[0], v[2]), _mm_add_ps(v[1], v[3]));
+                }
+/*
                 for (uint8_t i = 0; i < 4; ++i) {
                     //the matrix * vector operator isnt good here, im assuming because it converts from __m128 to vector to __m128 or something. idk. couldve been a benchmark error
                     const __m128 mul0 = _mm_mul_ps(columns[0].vec, _mm_set1_ps(other.columns[i].x));
@@ -267,6 +276,7 @@ namespace lab {
 
                     ret.columns[i].vec = _mm_add_ps(_mm_add_ps(mul0, mul1), _mm_add_ps(mul2, mul3));
                 }
+                */
                 return ret;
             }
 #endif
@@ -481,7 +491,7 @@ namespace lab {
     };
 
     template<std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4> IdentityTranslation(Vector<F, 3> const translation) {
+    LAB_constexpr Matrix<F, 4, 4> IdentityTranslation(Vector<F, 3> const& translation) {
         return Matrix<F, 4, 4, 4>{
             Vector<F, 4>(F(1), F(0), F(0), F(0)),
             Vector<F, 4>(F(0), F(1), F(0), F(0)),
@@ -490,7 +500,12 @@ namespace lab {
         };
     }
     template<std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4> IdentityScale(Vector<F, 3> const scale){
+    LAB_constexpr Matrix<F, 4, 4> IdentityTranslation(F const x, F const y, F const z) {
+        return IdentityTranslation(Vector<F, 3>{x, y, z});
+    }
+
+    template<std::floating_point F>
+    LAB_constexpr Matrix<F, 4, 4> IdentityScale(Vector<F, 3> const& scale){
         return Matrix<F, 4, 4, 4>{
             Vector<F, 4>(scale.x, F(0), F(0), F(0)),
             Vector<F, 4>(F(0), scale.y, F(0), F(0)),
@@ -499,26 +514,50 @@ namespace lab {
         };
     }
     template<std::floating_point F>
-    LAB_constexpr Matrix<F, 4, 4> RotateAroundAxis(F const angle, Vector<F, 3> const axis){
-#if LAB_DEBUGGING_FLOAT_ANOMALY
-        axis = axis.Normalized(); // Ensure the axis is unit length
-#endif
-    
-        F const cosine = Cos(angle);
-#ifdef LAB_LEFT_HANDED
-        F const sine = -Sin(angle);
-#else
-        F const sine = Sin(angle);
-#endif
-        F const temp = F(1) - cosine;
-    
-        return Matrix<F, 4, 4>{
-            Vector<F, 4>( temp * axis.x * axis.x + cosine,          temp * axis.x * axis.y - sine * axis.z,     temp * axis.x * axis.z + sine * axis.y,     0.0f ),
-            Vector<F, 4>( temp * axis.x * axis.y + sine * axis.z,   temp * axis.y * axis.y + cosine,            temp * axis.y * axis.z - sine * axis.x,     0.0f ),
-            Vector<F, 4>( temp * axis.x * axis.z - sine * axis.y,    temp* axis.y * axis.z + sine * axis.x,     temp * axis.z * axis.z + cosine,            0.0f ),
-            Vector<F, 4>( 0.0f,                                  0.0f,                                    0.0f,                                    1.0f )
-        };
+    LAB_constexpr Matrix<F, 4, 4> IdentityScale(F const x, F const y, F const z) {
+        return IdentityScale(Vector<F, 3>{x, y, z});
     }
+
+    template<std::floating_point F>
+    Matrix<float, 4, 4> RotateAroundAxis(F const angle, Vector<F, 3> const axis) {
+
+        const F magSq = axis.x * axis.x + axis.y * axis.y + axis.z * axis.z;
+        if (magSq == F(0)) {
+            return Matrix<F, 4, 4>{};
+        }
+        const F invLen = F(1) / Sqrt(magSq);
+        const F x = axis.x * invLen;
+        const F y = axis.y * invLen;
+        const F z = axis.z * invLen;
+
+        const F c = Cos(angle);
+        const F s = Sin(angle);
+        const F t = F(1) - c;
+
+        Matrix<F, 4, 4> m{};
+        m.At(0, 0) = t*x*x + c;
+        m.At(0, 1) = t*x*y + s*z;
+        m.At(0, 2) = t*x*z - s*y;
+        m.At(0, 3) = F(0);
+
+        m.At(1, 0) = t*x*y - s*z;
+        m.At(1, 1) = t*y*y + c;
+        m.At(1, 2) = t*y*z + s*x;
+        m.At(1, 3) = F(0);
+
+        m.At(2, 0) = t*x*z + s*y;
+        m.At(2, 1) = t*y*z - s*x;
+        m.At(2, 2) = t*z*z + c;
+        m.At(2, 3) = F(0);
+
+        m.At(3, 0) = F(0);
+        m.At(3, 1) = F(0);
+        m.At(3, 2) = F(0);
+        m.At(3, 3) = F(1);
+
+        return m;
+    }
+
     template<std::floating_point F>
     Matrix<F, 4, 4> RotateAroundX(F const angle) {
         F const cosine = Cos(angle);       
@@ -575,22 +614,27 @@ namespace lab {
         //copied from dxm
 #ifdef USING_SIMD
         if constexpr (!std::is_constant_evaluated()) {
-            lab::vec4 vResult = XM_PERMUTE_PS(vector.vec, _MM_SHUFFLE(3, 3, 3, 3)); // W
-            vResult = _mm_mul_ps(vResult.vec, matrix.columns[3].vec);
-            lab::vec4 vTemp = XM_PERMUTE_PS(vector.vec, _MM_SHUFFLE(2, 2, 2, 2)); // Z
-            vResult = XM_FMADD_PS(vTemp.vec, matrix.columns[2].vec, vResult.vec);
-            vTemp = XM_PERMUTE_PS(vector.vec, _MM_SHUFFLE(1, 1, 1, 1)); // Y
-            vResult = XM_FMADD_PS(vTemp.vec, matrix.columns[1].vec, vResult.vec);
-            vTemp = XM_PERMUTE_PS(vector.vec, _MM_SHUFFLE(0, 0, 0, 0)); // X
-            vResult = XM_FMADD_PS(vTemp.vec, matrix.columns[0].vec, vResult.vec);
+
+            __m128 vResult = XM_PERMUTE_PS(vector.ToSIMD(), _MM_SHUFFLE(3, 3, 3, 3)); // W
+            vResult = _mm_mul_ps(vResult, matrix.columns[3].vec);
+            __m128 vTemp = XM_PERMUTE_PS(vector.ToSIMD(), _MM_SHUFFLE(2, 2, 2, 2)); // Z
+            vResult = XM_FMADD_PS(vTemp, matrix.columns[2].vec, vResult);
+            vTemp = XM_PERMUTE_PS(vector.ToSIMD(), _MM_SHUFFLE(1, 1, 1, 1)); // Y
+            vResult = XM_FMADD_PS(vTemp, matrix.columns[1].vec, vResult);
+            vTemp = XM_PERMUTE_PS(vector.ToSIMD(), _MM_SHUFFLE(0, 0, 0, 0)); // X
+            vResult = XM_FMADD_PS(vTemp, matrix.columns[0].vec, vResult);
+
+            return Vector<float, 4>{vResult};
         }
         else {
 #endif
+            auto temp = matrix.columns[0];
+            auto secondTemp = temp[0];
             return Vector<float, 4>{
                 (matrix.columns[0][0] * vector.x) + (matrix.columns[1][0] * vector.y) + (matrix.columns[2][0] * vector.z) + (matrix.columns[3][0] * vector.w),
-                    (matrix.columns[0][1] * vector.x) + (matrix.columns[1][1] * vector.y) + (matrix.columns[2][1] * vector.z) + (matrix.columns[3][1] * vector.w),
-                    (matrix.columns[0][2] * vector.x) + (matrix.columns[1][2] * vector.y) + (matrix.columns[2][2] * vector.z) + (matrix.columns[3][2] * vector.w),
-                    (matrix.columns[0][3] * vector.x) + (matrix.columns[1][3] * vector.y) + (matrix.columns[2][3] * vector.z) + (matrix.columns[3][3] * vector.w)
+                (matrix.columns[0][1] * vector.x) + (matrix.columns[1][1] * vector.y) + (matrix.columns[2][1] * vector.z) + (matrix.columns[3][1] * vector.w),
+                (matrix.columns[0][2] * vector.x) + (matrix.columns[1][2] * vector.y) + (matrix.columns[2][2] * vector.z) + (matrix.columns[3][2] * vector.w),
+                (matrix.columns[0][3] * vector.x) + (matrix.columns[1][3] * vector.y) + (matrix.columns[2][3] * vector.z) + (matrix.columns[3][3] * vector.w)
             };
 #ifdef USING_SIMD
         }

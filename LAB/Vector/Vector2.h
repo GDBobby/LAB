@@ -11,35 +11,7 @@ namespace lab{
         explicit LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
         //copy constructors, including vec3 and vec4, z and w will be dropped
-        LAB_constexpr Vector(Vector<F, 3> const& vec) : x{vec.x}, y{vec.y} {
-            /* i been wanting this but i dont know if its a good idea
-            if constexpr(CoordinateSystem::up == CoordinateSystem::XNeg){
-                x = vec.y;
-                y = vec.z;
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::XPos){
-                x = vec.y;
-                y = vec.z;
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::YNeg){
-                x = vec.x;
-                y = vec.z;
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::YPos){
-                x = vec.x;
-                y = vec.z;
-            }
-            else if constexpr(CoordinateSystem::up == CoordinateSystem::ZNeg){
-                x = vec.x;
-                y = vec.y;
-            }
-            //itll never not be one of these or its an error. id make it explicitly else if but i dont feel like dealing with the warning
-            else {//if constexpr(CoordinateSystem::up == CoordinateSystem::ZNeg){
-                x = vec.x;
-                y = vec.y;
-            }
-            */
-        }
+        LAB_constexpr Vector(Vector<F, 3> const& vec) : x{vec.x}, y{vec.y} {}
         LAB_constexpr Vector(Vector<F, 4> const& vec) : x{vec.x}, y{vec.y} {}
         LAB_constexpr Vector(Vector const& other) : x{ other.x }, y{ other.y } {}
 

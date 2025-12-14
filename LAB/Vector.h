@@ -83,6 +83,15 @@ namespace lab{
 		return vec.Normalized();
 	}
 
+	template<std::floating_point F, uint8_t Dimensions>
+	LAB_constexpr auto MagnitudeSqrd(Vector<F, Dimensions> const& vec){
+		return vec.SquaredMagnitude();
+	}
+	template<std::floating_point F, uint8_t Dimensions>
+	LAB_constexpr F Magnitude(Vector<F, Dimensions> const& vec){
+		return vec.Magnitude();
+	}
+
 	//according to my testing, this is 28% faster than a conventional Dot(Normalize, Normalize)
     //it saves a single sqrt call
 	template<std::floating_point F, uint8_t Dimensions>
@@ -102,19 +111,18 @@ namespace lab{
 	}
 
 
-	template<std::floating_point F>
-	LAB_constexpr F Cross(Vector<F, 2> const first, Vector<F, 2> const second) {
-		return first.x * second.y - first.y * second.x;
-	}
-
-	template<std::floating_point F>
-	LAB_constexpr Vector<F, 3> Cross(Vector<F, 3> const first, Vector<F, 3> const second) {
-		//inlining matrix
-		return Vector<F, 3>{
-			first.y * second.z - first.z * second.y,
-			first.z * second.x - first.x * second.z,
-			first.x * second.y - first.y * second.x
-		};
+	template<std::floating_point F, uint8_t Dimensions>
+	LAB_constexpr auto Cross(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {
+		if constexpr(Dimensions == 2){
+			return first.x * second.y - first.y * second.x;
+		}
+		else if constexpr(Dimensions == 3){
+			return Vector<F, 3>{
+				first.y * second.z - first.z * second.y,
+				first.z * second.x - first.x * second.z,
+				first.x * second.y - first.y * second.x
+			};
+		}
 	}
 
 	//look up https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process for the 4th dimensional Orthogonal

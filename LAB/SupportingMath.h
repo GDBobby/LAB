@@ -6,9 +6,13 @@
 //#define USING_CMATH
 
 #include "qt_sine_table.h"
-
 #include "Debugging.h"
 
+
+#if defined(LAB_USING_SSE) || defined(LAB_USING_AVX2)
+#define USING_SIMD
+#include <immintrin.h>
+#endif
 
 namespace lab {
 	template<std::floating_point F>
@@ -57,10 +61,31 @@ namespace lab {
 	}
 	template<std::floating_point F>
 	LAB_constexpr F Mix(F const lhs, F const rhs, F const weight){
+		if (weight < F(0)) {
+			return lhs;
+		}
+		else if (weight > F(0)) {
+			return rhs;
+		}
+		else {
 #if DEBUGGING_FLOAT_ANOMALY
 		//assert weight > 0 < 1
 #endif
-		return lhs * (F(1) - weight) + rhs * weight;
+			return lhs * (F(1) - weight) + rhs * weight;
+		}
+	}
+
+	template<typename T, std::floating_point F>
+	LAB_constexpr T Mix(T const& lhs, T const& rhs, F const weight) {
+		if (weight < F(0)) {
+			return lhs;
+		}
+		else if (weight > F(0)) {
+			return rhs;
+		}
+		else {
+			return lhs * (F(1) - weight) + rhs * weight;
+		}
 	}
 
 

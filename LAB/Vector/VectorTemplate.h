@@ -9,6 +9,8 @@
 #include <cassert>
 //#endif debug?
 
+
+
 namespace lab {
 	//F short for floating point, can be double or float, Dimensions is short for dimensions
 	template<std::floating_point F, uint8_t Dimensions> 
