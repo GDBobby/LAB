@@ -16,7 +16,6 @@ namespace lab{
         LAB_constexpr Vector() {}
         [[nodiscard]] explicit LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
         [[nodiscard]] explicit LAB_constexpr Vector(float const all) : x{ all }, y{ all }, z{ all }, w{ all } {}
-        LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
 #ifdef USING_SIMD
         Vector(__m128 vec) {
             _mm_storeu_ps(&x, vec);
