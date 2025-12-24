@@ -9,15 +9,8 @@
 namespace lab{
     //https://www.scratchapixel.com/lessons/3d-basic-rendering/perspective-and-orthographic-projection-matrix/projection-matrices-what-you-need-to-know-first.html
     //both Projection and Ortho functions copied from here
-    namespace Perspective { 
-        enum API{
-            Vulkan = 0,
-            DirectX = 1,
-            OpenGL = 2,
-        };
-    }
     //idk if this is correct
-    template<Perspective::API PerspectiveAPI, std::floating_point F>
+    template<std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> ProjectionMatrix(F const field_of_view_radians, F const aspectRatio, F const close_distance, F const far_distance)  { 
         Matrix<F, 4, 4> ret{F(0)};
 
@@ -31,22 +24,22 @@ namespace lab{
         return ret;
     }
 
-    template<Perspective::API PerspectiveAPI, std::floating_point F>
+    template<std::floating_point F>
     LAB_constexpr void ProjectionMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const close_distance, F const far_distance)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        projMat = ProjectionMatrix<PerspectiveAPI>(field_of_view_radians, aspectRatio, close_distance, far_distance);
+        projMat = ProjectionMatrix(field_of_view_radians, aspectRatio, close_distance, far_distance);
     }
-    template<Perspective::API PerspectiveAPI, std::floating_point F>
+    template<std::floating_point F>
     LAB_constexpr Matrix<F, 4, 4> PerspectiveMatrix(F const field_of_view_radians, F const aspectRatio, F const close_distance, F const far_distance)  { 
-        return ProjectionMatrix<PerspectiveAPI>(field_of_view_radians, aspectRatio, close_distance, far_distance);
+        return ProjectionMatrix(field_of_view_radians, aspectRatio, close_distance, far_distance);
     }
 
-    template<Perspective::API PerspectiveAPI, std::floating_point F>
+    template<std::floating_point F>
     LAB_constexpr void PerspectiveMatrix(Matrix<F, 4, 4>& projMat, F const field_of_view_radians, F const aspectRatio, F const close_distance, F const far_distance)  {
         //if the projection mat is gonna be created over and over, resetting every value to 0 is inefficient
         //but realistically, projection should be changed maybe once per scene? less? not a big deal
-        projMat = ProjectionMatrix<PerspectiveAPI>(field_of_view_radians, aspectRatio, close_distance, far_distance);
+        projMat = ProjectionMatrix(field_of_view_radians, aspectRatio, close_distance, far_distance);
     }
 
     template<std::floating_point F>
