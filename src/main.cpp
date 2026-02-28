@@ -241,9 +241,9 @@ int main() {
 		LAB_constexpr auto sinRet = lab::Sin(trigInput);
 		LAB_constexpr auto tanRet = lab::Tan(trigInput);
 
-		outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
-		outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
-		outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
+		//outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
+		//outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
+		//outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
 
 		printf("cos comparison : (%.10f) - (%.10f)\n", cosRet, std::cos(trigInput));
 		printf("sin comparison : (%.10f) - (%.10f)\n", sinRet, std::sin(trigInput));
