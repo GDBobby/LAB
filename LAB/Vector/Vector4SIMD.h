@@ -15,10 +15,10 @@ namespace lab{
             __m128 vec;
         };
         //simd cant be constexpr (currently)
-        LAB_constexpr VectorSIMD() : vec{} {}
-        VectorSIMD(__m128 const& vec) : vec{vec} {}
-        LAB_constexpr VectorSIMD(const float x, const float y, const float z, const float w) : component{x, y, z, w} {}
-        LAB_constexpr VectorSIMD(Vector<float, 4> const& vec) : component{ vec } {}
+        [[nodiscard]] constexpr VectorSIMD() : component{} {}
+        [[nodiscard]] VectorSIMD(__m128 const& vec) : vec{vec} {}
+        [[nodiscard]] LAB_constexpr VectorSIMD(const float x, const float y, const float z, const float w) : component{x, y, z, w} {}
+        [[nodiscard]] LAB_constexpr VectorSIMD(Vector<float, 4> const& vec) : component{ vec } {}
 
         LAB_constexpr VectorSIMD(VectorSIMD const& other) noexcept {
             if consteval{

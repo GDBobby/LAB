@@ -521,7 +521,7 @@ namespace lab {
 
     //this doesnt' have a SIMD branch
     template<std::floating_point F>
-    LAB_constexpr Matrix<float, 4, 4> RotateAroundAxis(F const angle, Vector<F, 3> const axis) {
+    LAB_constexpr Matrix<F, 4, 4> RotateAroundAxis(F const angle, Vector<F, 3> const axis) {
 
         const F magSq = axis.x * axis.x + axis.y * axis.y + axis.z * axis.z;
         if (magSq == F(0)) {
@@ -536,28 +536,12 @@ namespace lab {
         const F s = Sin(angle);
         const F t = F(1) - c;
 
-        Matrix<F, 4, 4> m{};
-        m.At(0, 0) = t*x*x + c;
-        m.At(0, 1) = t*x*y + s*z;
-        m.At(0, 2) = t*x*z - s*y;
-        m.At(0, 3) = F(0);
-
-        m.At(1, 0) = t*x*y - s*z;
-        m.At(1, 1) = t*y*y + c;
-        m.At(1, 2) = t*y*z + s*x;
-        m.At(1, 3) = F(0);
-
-        m.At(2, 0) = t*x*z + s*y;
-        m.At(2, 1) = t*y*z - s*x;
-        m.At(2, 2) = t*z*z + c;
-        m.At(2, 3) = F(0);
-
-        m.At(3, 0) = F(0);
-        m.At(3, 1) = F(0);
-        m.At(3, 2) = F(0);
-        m.At(3, 3) = F(1);
-
-        return m;
+        return Matrix<F, 4, 4>{
+            Vector<F, 4>{t*x*x + c,     t*x*y + s*z,    t*x*z - s*y,    F(0)},
+            Vector<F, 4>{t*x*y - s*z,   t*y*y + c,      t*y*z + s*x,    F(0)},
+            Vector<F, 4>{t*x*z + s*y,   t*y*z - s*x,    t*z*z + c,      F(0)},
+            Vector<F, 4>{F(0),          F(0),           F(0),           F(1)}
+        };
     }
 
     template<std::floating_point F>

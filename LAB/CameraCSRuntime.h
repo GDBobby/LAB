@@ -243,7 +243,7 @@ namespace lab {
             //warning for target == position
     #endif
             const lab::Vector<F, 3> direction = (target - position).Normalize();
-            return ViewDirection(position, direction, up);
+            return ViewDirection(csR, position, direction, up);
         }
         
         template<std::floating_point F>
@@ -252,7 +252,7 @@ namespace lab {
             //warning for target == position
     #endif
             const lab::Vector<F, 3> direction = (target - position).Normalize();
-            ViewDirection(viewMat, position, direction, up);
+            ViewDirection(csR, viewMat, position, direction, up);
         }
     } //namespace Runtime
 } // namespace lab

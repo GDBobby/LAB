@@ -220,6 +220,7 @@ int main() {
 		lab::ViewRotation<MyCS>(tempMat, lab::vec3(0.f), MyCS::unitForwardVector);
 		LAB_constexpr lab::mat4 tempMat2 = lab::ViewRotation<MyCS>(lab::vec3(0.f), MyCS::unitForwardVector);
 		outFile.write(reinterpret_cast<const char*>(&tempMat), sizeof(tempMat));
+		outFile.write(reinterpret_cast<const char*>(&tempMat2), sizeof(tempMat2));
 
 		lab::Runtime::CoordinateSystem rCS;
 		lab::Runtime::ViewRotation(rCS, lab::vec3(0.f), MyCS::unitForwardVector);
