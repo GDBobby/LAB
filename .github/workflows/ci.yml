@@ -128,61 +128,54 @@ jobs:
           name: msvc_output_avx2.txt
           path: msvc_output_avx2.txt
 
-  compare-results:
-    name: Compare Outputs
-    needs: [build-gcc-sse, build-gcc-avx2, build-clang-sse, build-clang-avx2, build-windows-avx2, build-windows-sse]
+  compare-msvc:
+    runs-on: windows-latest
+    name: Compare MSVC (SSE vs AVX2)
+    needs: [build-windows-sse, build-windows-avx2]
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: msvc_output_sse.txt }
+      - uses: actions/download-artifact@v4
+        with: { name: msvc_output_avx2.txt }
+      - run: diff -u msvc_output_sse.txt msvc_output_avx2.txt
 
-      - name: Download Windows msvc avx2 Output
-        uses: actions/download-artifact@v4
-        with:
-          name: msvc_output_avx2.txt
-      
-      - name: Download Windows msvc sse Output
-        uses: actions/download-artifact@v4
-        with:
-          name: msvc_output_sse.txt
+  compare-gcc:
+    name: Compare GCC (SSE vs AVX2)
+    needs: [build-gcc-sse, build-gcc-avx2]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: gcc_output_sse.txt }
+      - uses: actions/download-artifact@v4
+        with: { name: gcc_output_avx2.txt }
+      - run: diff -u gcc_output_sse.txt gcc_output_avx2.txt
 
-      - name: Download Linux gcc sse Output
-        uses: actions/download-artifact@v4
-        with:
-          name: gcc_output_sse.txt
+  compare-clang:
+    name: Compare Clang (SSE vs AVX2)
+    needs: [build-clang-sse, build-clang-avx2]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: clang_output_sse.txt }
+      - uses: actions/download-artifact@v4
+        with: { name: clang_output_avx2.txt }
+      - run: diff -u clang_output_sse.txt clang_output_avx2.txt
 
-      - name: Download Linux gcc avx2 Output
-        uses: actions/download-artifact@v4
-        with:
-          name: gcc_output_avx2.txt
-          
-      - name: compare msvc SSE and AVX2 outputs
-        run: |
-          diff -u msvc_output_sse.txt msvc_output_avx2.txt || (echo "Mismatch detected between msvc sse and avx2!" && exit 1)
-
-      - name: Compare gcc and msvc Outputs
-        run: |
-          diff -u gcc_output_avx2.txt msvc_output_avx2.txt || (echo "Mismatch detected between gcc and msvc!" && exit 1)
-      
-      - name: Compare gcc sse and AVX2
-        run: |
-          diff -u gcc_output_sse.txt gcc_output_avx2.txt || (echo "Mismatch detected between gcc sse and avx2!" && exit 1)
-
-          
-      - name: Download Linux clang sse Output
-        uses: actions/download-artifact@v4
-        with:
-          name: clang_output_sse.txt
-      
-      - name: Download Linux clang avx2 Output
-        uses: actions/download-artifact@v4
-        with:
-          name: clang_output_avx2.txt
-      
-      - name: Compare gcc sse and AVX2
-        run: |
-          diff -u clang_output_sse.txt clang_output_avx2.txt || (echo "Mismatch detected between clang sse and avx2!" && exit 1)
-      - name: Compare clang msvc Outputs
-        run: |
-          diff -u clang_output_avx2.txt msvc_output_avx2.txt || (echo "Mismatch detected between clang and msvc!" && exit 1)
+  compare-cross-compiler:
+    name: Cross-Compiler Validation (AVX2)
+    needs: [build-gcc-avx2, build-clang-avx2, build-windows-avx2]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: gcc_output_avx2.txt }
+      - uses: actions/download-artifact@v4
+        with: { name: clang_output_avx2.txt }
+      - uses: actions/download-artifact@v4
+        with: { name: msvc_output_avx2.txt }
+      - name: GCC vs MSVC
+        run: diff -u gcc_output_avx2.txt msvc_output_avx2.txt
+      - name: Clang vs MSVC
+        run: diff -u clang_output_avx2.txt msvc_output_avx2.txt
+      - name: GCC vs Clang
+        run: diff -u gcc_output_avx2.txt clang_output_avx2.txt
