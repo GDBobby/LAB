@@ -19,3 +19,8 @@ cmakefiles/
 cmake_install.cmake
 *.sln
 *.user
+
+compile_commands.json
+Makefile
+
+.gitignore
