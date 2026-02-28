@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: configure gcc
-        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13 -DUSE_SSE=ON -DUSE_AVX2=OFF
+        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13 -DUSE_SSE_INTERNAL=ON -DUSE_AVX2_INTERNAL=OFF
       - name: check gcc version
         run: g++ --version
       - name: build gcc
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: configure gcc
-        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13 -DUSE_SSE=OFF -DUSE_AVX2=ON
+        run: cmake -S . --preset=default -B build -DCMAKE_CXX_COMPILER=g++-13 -DUSE_SSE_INTERNAL=OFF -DUSE_AVX2_INTERNAL=ON
       - name: check gcc version
         run: g++ --version
       - name: build gcc
@@ -52,7 +52,7 @@ jobs:
       - name: init
         run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
       - name: configure clang
-        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18 -DUSE_SSE=ON -DUSE_AVX2=OFF
+        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18 -DUSE_SSE_INTERNAL=ON -DUSE_AVX2_INTERNAL=OFF
       - name: check clang version
         run: clang++ --version
       - name: build clang
@@ -74,7 +74,7 @@ jobs:
       - name: init
         run: sudo apt update -yqq && sudo apt install -yqq ninja-build clang-18
       - name: configure clang
-        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18 -DUSE_SSE=OFF -DUSE_AVX2=ON
+        run: cmake -S . --preset=ninja-clang -B clang -DCMAKE_CXX_COMPILER=clang++-18 -DUSE_SSE_INTERNAL=OFF -DUSE_AVX2_INTERNAL=ON
       - name: check clang version
         run: clang++ --version
       - name: build clang
@@ -94,7 +94,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: configure
-        run: cmake -S . --preset=vs22 -B build -DUSE_SSE=ON -DUSE_AVX2=OFF
+        run: cmake -S . --preset=vs22 -B build -DUSE_SSE_INTERNAL=ON -DUSE_AVX2_INTERNAL=OFF
       - name: build
         run: cmake --build build --config=Release 
 
@@ -114,7 +114,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: configure
-        run: cmake -S . --preset=vs22 -B build -DUSE_SSE=OFF -DUSE_AVX2=ON
+        run: cmake -S . --preset=vs22 -B build -DUSE_SSE_INTERNAL=OFF -DUSE_AVX2_INTERNAL=ON
       - name: build
         run: cmake --build build --config=Release
 
