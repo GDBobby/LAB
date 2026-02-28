@@ -47,6 +47,38 @@ int main() {
 	outFile << 2.0;
 #endif
 #endif
+
+
+/*
+	{
+		LAB_constexpr float trigInput = 50.f;
+		LAB_constexpr auto cosRet = lab::Cos(trigInput);
+		LAB_constexpr auto sinRet = lab::Sin(trigInput);
+		LAB_constexpr auto tanRet = lab::Tan(trigInput);
+		outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
+	}
+*/
+
+	{ //matrix multiplcation, inverse transpose
+		LAB_constexpr lab::Matrix<float, 4, 4> test1(0.f);
+		LAB_constexpr lab::Matrix<float, 4, 4> test2(1.f);
+
+		LAB_constexpr lab::Matrix<float, 4 ,4> test3 = test1 * test2;
+		LAB_constexpr lab::Vector<float, 4> test4 = test1 * lab::Vector<float, 4>{1.f};
+		printf("test mat multiplpication print : %.2f - %.2f\n", test3.columns[0].component[0], test4.x);
+
+		lab::Matrix<float, 4, 4> crossTest{1.f};
+		lab::Matrix<float, 4, 4> crossTest2{2.f};
+		lab::Matrix<float, 4, 4> crossTestOut = crossTest * crossTest2;
+		outFile.write(reinterpret_cast<const char*>(&crossTestOut.columns), sizeof(float) * 4 * 4);
+
+		const auto normalMat = lab::Matrix<float, 3, 3>(5.f).GetInverse().Transposed();
+		outFile.write(reinterpret_cast<const char*>(&normalMat), sizeof(normalMat));
+	}
+
+	/*
 	{//hash test
 		std::size_t seed = 0;
 		seed ^= std::hash<lab::vec2>{}(lab::vec2(1.f, 0.f));
@@ -69,23 +101,6 @@ int main() {
 
 		lab::Vector<float, 3> truncCon{lab::Vector<float, 4>{1.f}};
 		printf("trunc con - %.2f\n", truncCon.x);
-	}
-
-	{ //matrix multiplcation, inverse transpose
-		LAB_constexpr lab::Matrix<float, 4, 4> test1(0.f);
-		LAB_constexpr lab::Matrix<float, 4, 4> test2(1.f);
-
-		LAB_constexpr lab::Matrix<float, 4 ,4> test3 = test1 * test2;
-		LAB_constexpr lab::Vector<float, 4> test4 = test1 * lab::Vector<float, 4>{1.f};
-		printf("test mat multiplpication print : %.2f - %.2f\n", test3.columns[0].component[0], test4.x);
-
-		lab::Matrix<float, 4, 4> crossTest{1.f};
-		lab::Matrix<float, 4, 4> crossTest2{2.f};
-		lab::Matrix<float, 4, 4> crossTestOut = crossTest * crossTest2;
-		outFile.write(reinterpret_cast<const char*>(&crossTestOut.columns), sizeof(float) * 4 * 4);
-
-		const auto normalMat = lab::Matrix<float, 3, 3>(5.f).GetInverse().Transposed();
-		outFile.write(reinterpret_cast<const char*>(&normalMat), sizeof(normalMat));
 	}
 
 	{ //vectors
@@ -127,25 +142,6 @@ int main() {
 		//checkMatNonConst.columns[0] = vecArray[0];
 
 		//LAB_constexpr lab::Matrix<float, 3, 3, 4> mat1(vecArray);
-		/*
-		LAB_constexpr lab::Matrix<float, 3, 3> mat2{ lab::Vector<float, 3>(10.f, 11.f, 12.f), lab::Vector<float, 3>(22.f, 23.f, 24.f), lab::Vector<float, 3>(33.f, 34.f, 35.f) };
-
-		LAB_static_assert(mat1.At(0, 0) == 0.f);
-		LAB_constexpr auto intermediate = mat1 * mat2;
-		LAB_constexpr auto intermediateReverse = mat2 * mat1;
-		LAB_static_assert(intermediate.At(0, 0) != intermediateReverse.At(0, 0));
-
-		for(uint8_t x = 0; x < 3; x++){
-			for(uint8_t y = 0; y < 3; y++){
-				const float first = intermediate.At(x, y);
-				const float second = intermediateReverse.At(x, y);
-				outFile.write(reinterpret_cast<const char*>(&first), sizeof(float));
-				outFile.write(reinterpret_cast<const char*>(&second), sizeof(float));
-			}
-		}
-		*/
-		
-		outFile.close();
 	}
 	{ //rotation, scale, and translate of matrices
 		LAB_constexpr lab::Vector<float, 3> testVec{ 0.f, 1.f, 2.f };
@@ -241,9 +237,9 @@ int main() {
 		LAB_constexpr auto sinRet = lab::Sin(trigInput);
 		LAB_constexpr auto tanRet = lab::Tan(trigInput);
 
-		//outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
-		//outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
-		//outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&cosRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
+		outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
 
 		printf("cos comparison : (%.10f) - (%.10f)\n", cosRet, std::cos(trigInput));
 		printf("sin comparison : (%.10f) - (%.10f)\n", sinRet, std::sin(trigInput));
@@ -290,6 +286,9 @@ int main() {
 	}
 	float testBreak = lab::InverseSqrt(1.f);
 	printf("result : %.2f\n", testBreak);
+	*/
+
+	outFile.close();
 
 	printf("made it to the end\n");
 	return EXIT_SUCCESS;
