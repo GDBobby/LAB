@@ -16,7 +16,7 @@ namespace lab{
         };
         //simd cant be constexpr (currently)
         LAB_constexpr VectorSIMD() : vec{} {}
-        LAB_constexpr VectorSIMD(__m128 const& vec) : vec{vec} {}
+        VectorSIMD(__m128 const& vec) : vec{vec} {}
         LAB_constexpr VectorSIMD(const float x, const float y, const float z, const float w) : component{x, y, z, w} {}
         LAB_constexpr VectorSIMD(Vector<float, 4> const& vec) : component{ vec } {}
 
@@ -28,7 +28,14 @@ namespace lab{
                 vec = other.vec;
             }
         }
-        LAB_constexpr VectorSIMD(VectorSIMD&& other) noexcept : vec{ other.vec } {} //move
+        LAB_constexpr VectorSIMD(VectorSIMD&& other) noexcept {
+            if consteval{
+                std::construct_at(&component, other.component);
+            }
+            else{
+                vec = other.vec;
+            }
+        }
         LAB_constexpr VectorSIMD& operator=(VectorSIMD const& other){ //copy assignment
             if consteval {
                 component = other.component;

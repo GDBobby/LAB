@@ -109,10 +109,12 @@ namespace lab {
 			return ret;
 		}
 
+		/*
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix operator*(Matrix<F, Columns, Rows, Alignment> const& other) const {
 			
 		}
+		*/
 
 		template<uint8_t Alignment>
 		LAB_constexpr Matrix& operator*=(Matrix<F, Columns, Rows, Alignment> const& other) const {

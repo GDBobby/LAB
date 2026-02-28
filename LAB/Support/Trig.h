@@ -30,7 +30,11 @@ namespace lab {
 	//chebyshev implementation
 	template<std::floating_point F>
 	LAB_constexpr F Sin(F const input) {
-		F const phased = lab::PhaseTo(input, -GetPI_DividedBy(2.f), GetPI_DividedBy(2.f));
+		F phased = lab::PhaseTo(input, -GetPI_DividedBy(F(2)), GetPI(F(1.5)));
+
+		if(phased > GetPI_DividedBy(F(2))){
+			phased = PI<F> - phased;
+		}
 
 		const F pow_val = phased * phased;
 		return phased * (F(1.0) 
@@ -51,7 +55,36 @@ namespace lab {
 
 	template<std::floating_point F>
 	LAB_constexpr F Tan(F const input) {
-		return Sin(input) / Cos(input);
+		//return Sin(input) / Cos(input);
+
+		constexpr F half_pi = GetPI_DividedBy(F(2));
+		constexpr F quarter_pi = GetPI_DividedBy(F(4));
+
+		F phased = PhaseTo(input, -half_pi, half_pi);
+
+		bool reflected = false;
+		if(phased > quarter_pi){
+			reflected = true;
+			phased = half_pi - phased;
+		}
+		else if (phased < -quarter_pi){
+			reflected = true;
+			phased = -half_pi - phased;
+		}
+
+		const F p2 = phased * phased;
+		F result = phased * (F(1.0) + p2 * (F(0.33333333333) + 
+                    p2 * (F(0.13333333337) + 
+                    p2 * (F(0.0539682539) + 
+                    p2 * (F(0.0218694885) + 
+                    p2 * (F(0.0088632355) + 
+                    p2 * (F(0.0035920791))))))));
+
+		if (reflected) {
+			return F(1.0) / result;
+		}
+
+		return result;
 	}
 
 

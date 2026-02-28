@@ -119,10 +119,10 @@ namespace lab {
             }
             else {
                 //copying glm implementation, minor tweaks
-                const VectorSIMD Mul0 = (columns[0].vec * vector.x);
-                const VectorSIMD Mul1 = (columns[1].vec * vector.y);
-                const VectorSIMD Mul2 = (columns[2].vec * vector.z);
-                const VectorSIMD Mul3 = (columns[3].vec * vector.w);
+                const VectorSIMD Mul0 = (columns[0] * vector.x);
+                const VectorSIMD Mul1 = (columns[1] * vector.y);
+                const VectorSIMD Mul2 = (columns[2] * vector.z);
+                const VectorSIMD Mul3 = (columns[3] * vector.w);
                 Vector<F, 4> ret;
                 _mm_storeu_ps(&ret.x, (Mul0 + Mul1) + (Mul2 + Mul3));
                 return ret;
