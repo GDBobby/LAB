@@ -49,7 +49,7 @@ int main() {
 #endif
 
 
-/*
+
 	{
 		LAB_constexpr float trigInput = 50.f;
 		LAB_constexpr auto cosRet = lab::Cos(trigInput);
@@ -59,7 +59,7 @@ int main() {
 		outFile.write(reinterpret_cast<const char*>(&sinRet), sizeof(float));
 		outFile.write(reinterpret_cast<const char*>(&tanRet), sizeof(float));
 	}
-*/
+
 
 	{ //matrix multiplcation, inverse transpose
 		LAB_constexpr lab::Matrix<float, 4, 4> test1(0.f);
