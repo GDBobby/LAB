@@ -78,7 +78,6 @@ int main() {
 		outFile.write(reinterpret_cast<const char*>(&normalMat), sizeof(normalMat));
 	}
 
-	/*
 	{//hash test
 		std::size_t seed = 0;
 		seed ^= std::hash<lab::vec2>{}(lab::vec2(1.f, 0.f));
@@ -143,6 +142,7 @@ int main() {
 
 		//LAB_constexpr lab::Matrix<float, 3, 3, 4> mat1(vecArray);
 	}
+	/*
 	{ //rotation, scale, and translate of matrices
 		LAB_constexpr lab::Vector<float, 3> testVec{ 0.f, 1.f, 2.f };
 		LAB_constexpr float testFloat0 = testVec[0];
