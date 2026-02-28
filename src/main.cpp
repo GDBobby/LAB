@@ -16,14 +16,24 @@
 using MyCS = lab::CoordinateSystem<lab::Direction::XDir<true>, lab::Direction::YDir<true>, lab::Direction::ZDir<true>>;
 
 
-int main() {
-#ifdef _MSC_VER
-	std::ofstream outFile{ "msvc_output.txt", std::ios::binary };
-#elif defined(__clang__)
-	std::ofstream outFile{ "clang_output.txt", std::ios::binary };
-#elif defined(__GNUC__)
-	std::ofstream outFile{ "gcc_output.txt", std::ios::binary };
+#if LAB_USING_AVX2
+    std::string SIMD_TYPE{"_avx2"};
+#elif LAB_USING_SSE
+    std::string SIMD_TYPE{"_sse"};
+#else
+    std::string SIMD_TYPE{"_scalar"};
 #endif
+#if defined(_MSC_VER)
+    std::string FILENAME = std::string("msvc_output") + SIMD_TYPE + ".txt";
+#elif defined(__clang__)
+    std::string FILENAME = std::string("clang_output") + SIMD_TYPE + ".txt";
+#elif defined(__GNUC__)
+    std::string FILENAME = std::string("gcc_output") + SIMD_TYPE + ".txt";
+#endif
+
+int main() {
+
+	std::ofstream outFile{ FILENAME, std::ios::binary };
 	if (!outFile.is_open()) {
 		return EXIT_FAILURE;
 	}
