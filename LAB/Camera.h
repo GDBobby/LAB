@@ -1,6 +1,6 @@
 #pragma once
 #include "Matrix.h"
-#include "SupportingMath.h"
+#include "Support/Trig.h"
 #include "CoordinateSystems.h"
 #include "Debugging.h"
 

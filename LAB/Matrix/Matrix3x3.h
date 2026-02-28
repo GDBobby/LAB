@@ -31,7 +31,7 @@ namespace lab {
         {}
 
 		LAB_constexpr Matrix& operator=(Matrix const& other){
-			if(std::is_constant_evaluated()){
+			if consteval{
 				for (uint8_t i = 0; i < 3; i++){
 					columns[i] = other.columns[i];
 				}
@@ -249,7 +249,7 @@ namespace lab {
         {}
 
 		LAB_constexpr Matrix& operator=(Matrix const& other){
-			if(std::is_constant_evaluated()){
+			if consteval{
 				for (uint8_t i = 0; i < 3; i++){
 					columns[i] = other.columns[i];
 				}
@@ -386,7 +386,7 @@ namespace lab {
 					ret.columns[row][column] = columns[column][row];
 				}
 			}
-			if constexpr (std::is_constant_evaluated()){
+			if consteval {
 				//cant leave these undefined in const eval
 				ret.columns[0][3] = F(0);
 				ret.columns[1][3] = F(0);

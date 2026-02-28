@@ -97,10 +97,7 @@ namespace lab{
             if constexpr (DimensionsOther == 3) {
                 z = other.z;
             }
-            else if constexpr (DimensionsOther == 4) {
-                //this should be getting caught by the copy assignment operator
-                assert(false);
-            }
+            static_assert(DimensionsOther != 4 && "this should be getting caught by the copy assignment operator");
             return *this;
         }
 

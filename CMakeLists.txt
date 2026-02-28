@@ -20,10 +20,11 @@ option(USE_SSE_INTERNAL "Enable SSE optimizations" OFF)
 option(USE_AVX2_INTERNAL "Enable AVX2 optimizations" ON)
 
 add_library(LinearAlgebra-compile-options INTERFACE)
+set(LAB_INTERFACE "LinearAlgebra-compile-options")
 add_library(LinearAlgebra::LinearAlgebra-compile-options ALIAS LinearAlgebra-compile-options)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU)
-  target_compile_options(LinearAlgebra-compile-options INTERFACE
+  target_compile_options(${LAB_INTERFACE} INTERFACE
     -Wall 
     -Wextra 
     -Wpedantic 
@@ -33,7 +34,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL Clang OR CMAKE_CXX_COMPILER_ID STREQUAL GNU)
     #$<$<NOT:$<CONFIG:Debug>>:-Werror>
   )
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL MSVC)
-  target_compile_options(LinearAlgebra-compile-options INTERFACE
+  target_compile_options(${LAB_INTERFACE} INTERFACE
     $<$<NOT:$<CONFIG:Debug>>:/WX>
   )
 endif()
@@ -44,7 +45,7 @@ add_library(LinearAlgebra INTERFACE)
 file(GLOB_RECURSE HEADER_FILES ${PROJECT_SOURCE_DIR}/LAB/*.h ${PROJECT_SOURCE_DIR}/LAB/*.hpp)
 
 target_sources(LinearAlgebra PUBLIC FILE_SET HEADERS BASE_DIRS LAB FILES ${HEADER_FILES})
-target_include_directories(LinearAlgebra-compile-options INTERFACE ${PROJECT_SOURCE_DIR})
+target_include_directories(${LAB_INTERFACE} INTERFACE ${PROJECT_SOURCE_DIR})
 
 set_target_properties(LinearAlgebra PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_SOURCE_DIR}/Debug"
@@ -57,28 +58,29 @@ set_target_properties(LinearAlgebra PROPERTIES
 
 if(is_project_root)
 
-message(STATUS "${USE_SSE_INTERNAL} - ${USE_AVX2_INTERNAL}")
+  message(STATUS "${USE_SSE_INTERNAL} - ${USE_AVX2_INTERNAL}")
 
 
-if(MSVC)
-    target_compile_options(LinearAlgebra-compile-options INTERFACE /wd5063)
-endif()
+  if(MSVC)
+      target_compile_options(${LAB_INTERFACE} INTERFACE /wd5063)
+      #^thats consteval warnings
+  endif()
 
   if(USE_SSE_INTERNAL)
       message(STATUS "Enabling SSE ")
-      target_compile_definitions(LinearAlgebra-compile-options LAB_USING_SSE)
+      target_compile_definitions(${LAB_INTERFACE} INTERFACE LAB_USING_SSE)
       if(MSVC)
-        target_compile_options(LAB-compile-options INTERFACE /arch:SSE2)
+        target_compile_options(${LAB_INTERFACE} INTERFACE /arch:SSE2)
       else()
-        target_compile_options(LAB-compile-options INTERFACE -msse4.1)
+        target_compile_options(${LAB_INTERFACE} INTERFACE -msse4.1)
     endif()
   elseif(USE_AVX2_INTERNAL)
       message(STATUS "Enabling AVX2")
-      target_compile_definitions(LinearAlgebra-compile-options LAB_USING_AVX2)
+      target_compile_definitions(${LAB_INTERFACE} INTERFACE LAB_USING_AVX2)
       if(MSVC)
-        target_compile_options(LAB-compile-options INTERFACE /arch:AVX2)
+        target_compile_options(${LAB_INTERFACE} INTERFACE /arch:AVX2)
       else()
-        target_compile_options(LAB-compile-options INTERFACE -mavx2)
+        target_compile_options(${LAB_INTERFACE} INTERFACE -mavx2)
       endif()
   endif()
 

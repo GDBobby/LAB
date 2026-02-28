@@ -109,7 +109,7 @@ int main() {
 
 		LAB_constexpr lab::Vector<float, 2> checkVec3(3.f, 4.f);
 
-		LAB_constexpr lab::Matrix<float, 2, 2> checkMat{{checkVec1, checkVec3 }};
+		LAB_constexpr lab::Matrix<float, 2, 2> checkMat{checkVec1, checkVec3 };
 		LAB_static_assert(checkMat.At(1, 1) == checkVec3.y);
 		printf("chekc mat print : %.2f\n", checkMat.At(1, 1));
 		//LAB_constexpr std::array<lab::Vector<float, 3>, 3> vecArray{ lab::Vector<float, 3>(0.f, 1.f, 2.f), lab::Vector<float, 3>(2.f, 3.f, 4.f), lab::Vector<float, 3>(3.f, 4.f, 5.f) };
@@ -199,7 +199,7 @@ int main() {
 		printf("normMat 0,0 - %.2f\n", normMat.At(0, 0));
 	}
 	{ //camera functions
-		LAB_constexpr auto proj = lab::ProjectionMatrix<lab::Perspective::Vulkan>(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
+		LAB_constexpr auto proj = lab::ProjectionMatrix(lab::DegreesToRadians(70.f), 1.44f, 0.f, 100.f);
 	
 		for(uint8_t x = 0; x < 4; x++){
 			for(uint8_t y = 0; y < 4; y++){

@@ -2,6 +2,8 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+#include "Support/Trig.h"
+
 #include <concepts>
 
 

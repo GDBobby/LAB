@@ -3,6 +3,7 @@
 
 #include "../Vector.h"
 #include "../Debugging.h"
+#include "../Support/Trig.h"
 
 #include <concepts>
 
@@ -43,7 +44,7 @@ namespace lab {
         {}
 
         LAB_constexpr Matrix& operator=(Matrix const& other) {
-            if (std::is_constant_evaluated()) {
+            if consteval {
                 for (uint8_t i = 0; i < 4; i++) {
                     columns[i] = other.columns[i];
                 }
@@ -107,12 +108,12 @@ namespace lab {
 #ifndef LAB_ROW_MAJOR
         LAB_constexpr Vector<F, 4> operator*(Vector<F, 4> const vector) const {
 #ifdef USING_SIMD
-            if constexpr (std::is_constant_evaluated()) {
+            if consteval {
 #endif
-                const Vector<F, 4> mul0 = columns[0] * vector.x;
-                const Vector<F, 4> mul1 = columns[1] * vector.y;
-                const Vector<F, 4> mul2 = columns[2] * vector.z;
-                const Vector<F, 4> mul3 = columns[3] * vector.w;
+                const auto mul0 = columns[0] * vector.x;
+                const auto mul1 = columns[1] * vector.y;
+                const auto mul2 = columns[2] * vector.z;
+                const auto mul3 = columns[3] * vector.w;
                 return mul0 + mul1 + mul2 + mul3;
 #ifdef USING_SIMD
             }
@@ -123,17 +124,28 @@ namespace lab {
                 const VectorSIMD Mul2 = (columns[2].vec * vector.z);
                 const VectorSIMD Mul3 = (columns[3].vec * vector.w);
                 Vector<F, 4> ret;
-                _mm_storeu_ps(&ret, (Mul0 + Mul1) + (Mul2 + Mul3));
+                _mm_storeu_ps(&ret.x, (Mul0 + Mul1) + (Mul2 + Mul3));
                 return ret;
             }
 #endif
         }
+   
+#ifdef USING_SIMD
+        LAB_constexpr VectorSIMD operator*(VectorSIMD const vector) const {
+            const auto mul0 = columns[0] * vector.component.x;
+            const auto mul1 = columns[1] * vector.component.y;
+            const auto mul2 = columns[2] * vector.component.z;
+            const auto mul3 = columns[3] * vector.component.w;
+            return mul0 + mul1 + mul2 + mul3;
+        }
 #endif
+#endif
+
 
         LAB_constexpr Matrix operator*(Matrix<F, 4, 4, 4> const& other) const {
 #ifdef LAB_ROW_MAJOR
 #ifdef USING_SIMD
-            if constexpr (!std::is_constant_evaluated()) {
+            if !consteval {
                 Matrix mResult;
                 Vector<F, 4> vW = columns[0];
                 Vector<F, 4> vX = XM_PERMUTE_PS(vW.vec, _MM_SHUFFLE(0, 0, 0, 0));
@@ -244,7 +256,7 @@ namespace lab {
 #endif
 #else
 #ifdef USING_SIMD
-            if constexpr (std::is_constant_evaluated()) {
+            if consteval {
 #endif
                 return Matrix{
                     this->operator*(other.columns[0]),
@@ -259,24 +271,13 @@ namespace lab {
                 Matrix ret;
                 for(uint8_t i = 0; i < 4; i++){
                     const __m128 v[4] = {
-                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(0, 0, 0, 0)),
-                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(1, 1, 1, 1)),
-                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(2, 2, 2, 2)),
-                        XM_PERMUTE_PS(columns[i].vec.vec, _MM_SHUFFLE(3, 3, 3, 3)),
+                        _mm_shuffle_ps(columns[i].vec, columns[i].vec, _MM_SHUFFLE(0, 0, 0, 0)),
+                        _mm_shuffle_ps(columns[i].vec, columns[i].vec, _MM_SHUFFLE(1, 1, 1, 1)),
+                        _mm_shuffle_ps(columns[i].vec, columns[i].vec, _MM_SHUFFLE(2, 2, 2, 2)),
+                        _mm_shuffle_ps(columns[i].vec, columns[i].vec, _MM_SHUFFLE(3, 3, 3, 3)),
                     };
-                    ret.columns[i].vec.vec = _mm_add_ps(_mm_add_ps(v[0], v[2]), _mm_add_ps(v[1], v[3]));
+                    ret.columns[i].vec = _mm_add_ps(_mm_add_ps(v[0], v[2]), _mm_add_ps(v[1], v[3]));
                 }
-/*
-                for (uint8_t i = 0; i < 4; ++i) {
-                    //the matrix * vector operator isnt good here, im assuming because it converts from __m128 to vector to __m128 or something. idk. couldve been a benchmark error
-                    const __m128 mul0 = _mm_mul_ps(columns[0].vec, _mm_set1_ps(other.columns[i].x));
-                    const __m128 mul1 = _mm_mul_ps(columns[1].vec, _mm_set1_ps(other.columns[i].y));
-                    const __m128 mul2 = _mm_mul_ps(columns[2].vec, _mm_set1_ps(other.columns[i].z));
-                    const __m128 mul3 = _mm_mul_ps(columns[3].vec, _mm_set1_ps(other.columns[i].w));
-
-                    ret.columns[i].vec = _mm_add_ps(_mm_add_ps(mul0, mul1), _mm_add_ps(mul2, mul3));
-                }
-                */
                 return ret;
             }
 #endif
@@ -518,8 +519,9 @@ namespace lab {
         return IdentityScale(Vector<F, 3>{x, y, z});
     }
 
+    //this doesnt' have a SIMD branch
     template<std::floating_point F>
-    Matrix<float, 4, 4> RotateAroundAxis(F const angle, Vector<F, 3> const axis) {
+    LAB_constexpr Matrix<float, 4, 4> RotateAroundAxis(F const angle, Vector<F, 3> const axis) {
 
         const F magSq = axis.x * axis.x + axis.y * axis.y + axis.z * axis.z;
         if (magSq == F(0)) {
@@ -613,7 +615,7 @@ namespace lab {
     LAB_constexpr Vector<float, 4> operator*(Vector<float, 4> const& vector, Matrix<float, 4, 4, 4> const& matrix) {
         //copied from dxm
 #ifdef USING_SIMD
-        if constexpr (!std::is_constant_evaluated()) {
+        if !consteval {
 
             __m128 vResult = XM_PERMUTE_PS(vector.ToSIMD(), _MM_SHUFFLE(3, 3, 3, 3)); // W
             vResult = _mm_mul_ps(vResult, matrix.columns[3].vec);
