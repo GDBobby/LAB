@@ -83,6 +83,7 @@ int main() {
 		seed ^= std::hash<lab::vec2>{}(lab::vec2(1.f, 0.f));
 		outFile.write(reinterpret_cast<const char*>(&seed), sizeof(std::size_t));
 	}
+	/*
 	{ //oblong matrix
 		lab::Matrix<float, 3, 2> mat32{std::array{lab::Vector<float, 2>(1.f), lab::Vector<float, 2>{2.f}, lab::Vector<float, 2>(3.f)}};
 		lab::Matrix<float, 2, 3> mat23 = mat32.Transposed();
@@ -142,7 +143,6 @@ int main() {
 
 		//LAB_constexpr lab::Matrix<float, 3, 3, 4> mat1(vecArray);
 	}
-	/*
 	{ //rotation, scale, and translate of matrices
 		LAB_constexpr lab::Vector<float, 3> testVec{ 0.f, 1.f, 2.f };
 		LAB_constexpr float testFloat0 = testVec[0];
