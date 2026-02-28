@@ -129,7 +129,6 @@ jobs:
           path: msvc_output_avx2.txt
 
   compare-msvc:
-    runs-on: windows-latest
     name: Compare MSVC (SSE vs AVX2)
     needs: [build-windows-sse, build-windows-avx2]
     runs-on: ubuntu-latest
