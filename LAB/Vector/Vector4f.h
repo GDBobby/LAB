@@ -14,7 +14,7 @@ namespace lab{
         float w;
 
         LAB_constexpr Vector() {}
-        [[nodiscard]] explicit LAB_constexpr Vector(float const x, float const y, float const z, float const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
+        [[nodiscard]] explicit LAB_constexpr Vector(float const _x, float const _y, float const _z, float const _w) : x{ _x }, y{ _y }, z{ _z }, w{ _w } {}
         [[nodiscard]] explicit LAB_constexpr Vector(float const all) : x{ all }, y{ all }, z{ all }, w{ all } {}
 #ifdef USING_SIMD
         Vector(__m128 vec) {
@@ -24,12 +24,12 @@ namespace lab{
 
         //constructing piece wise with vec2
         [[nodiscard]] explicit LAB_constexpr Vector(Vector<float, 2> const vec1, Vector<float, 2> const vec2) : x{vec1.x}, y{vec1.y}, z{vec2.x}, w{vec2.y} {}
-        [[nodiscard]] explicit LAB_constexpr Vector(Vector<float, 2> const vec, float const z, float const w) : x{vec.x}, y{vec.y}, z{z}, w{w} {}
-        [[nodiscard]] explicit LAB_constexpr Vector(float const x, Vector<float, 2> const vec, float const w) : x{x}, y{vec.x}, z{vec.y}, w{w} {}
-        [[nodiscard]] explicit LAB_constexpr Vector(float const x, float const y, Vector<float, 2> const vec) : x{x}, y{y}, z{vec.x}, w{vec.y} {}
+        [[nodiscard]] explicit LAB_constexpr Vector(Vector<float, 2> const vec, float const _z, float const _w) : x{vec.x}, y{vec.y}, z{_z}, w{_w} {}
+        [[nodiscard]] explicit LAB_constexpr Vector(float const _x, Vector<float, 2> const vec, float const _w) : x{_x}, y{vec.x}, z{vec.y}, w{_w} {}
+        [[nodiscard]] explicit LAB_constexpr Vector(float const _x, float const _y, Vector<float, 2> const vec) : x{_x}, y{_y}, z{vec.x}, w{vec.y} {}
         //constructing piecewise with vec3
-        [[nodiscard]] explicit LAB_constexpr Vector(Vector<float, 3> const vec, float const w) : x{vec.x}, y{vec.y}, z{vec.z}, w{w} {}
-        [[nodiscard]] explicit LAB_constexpr Vector(float const x, Vector<float, 3> const vec) : x{x}, y{vec.x}, z{vec.y}, w{vec.z} {}
+        [[nodiscard]] explicit LAB_constexpr Vector(Vector<float, 3> const vec, float const _w) : x{vec.x}, y{vec.y}, z{vec.z}, w{_w} {}
+        [[nodiscard]] explicit LAB_constexpr Vector(float const _x, Vector<float, 3> const vec) : x{_x}, y{vec.x}, z{vec.y}, w{vec.z} {}
         //copy constructors, including vec2 and vec3
         //do i need to make these explicit?
         [[nodiscard]] explicit  LAB_constexpr Vector(Vector<float, 2> const& other) : x{ other.x }, y{ other.y }, z{ float(0)}, w{float(0)} {}

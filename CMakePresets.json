@@ -40,7 +40,7 @@
       "inherits": "ninja-ubsan",
       "binaryDir": "${sourceDir}/build/asan",
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-fsanitize=address -O1"
+        "CMAKE_CXX_FLAGS": "-fsanitize=address"
       }
     },
     {
@@ -49,7 +49,7 @@
       "description": "TSan build configuration using Ninja Multi-config",
       "binaryDir": "${sourceDir}/build/tsan",
       "cacheVariables": {
-        "CMAKE_CXX_FLAGS": "-fsanitize=thread -O1"
+        "CMAKE_CXX_FLAGS": "-fsanitize=thread"
       }
     },
     {
@@ -61,6 +61,35 @@
         "value": "x64",
         "strategy": "external"
       }
+    },
+    {
+        "name": "gcc-trunk-base",
+        "inherits": "default",
+        "hidden": true,
+        "cacheVariables": {
+            "CMAKE_CXX_FLAGS": "-freflection", 
+            "CMAKE_C_COMPILER": "/home/corey/gcc-trunk/bin/gcc",
+            "CMAKE_CXX_COMPILER": "/home/corey/gcc-trunk/bin/g++",
+            "CMAKE_CXX_STANDARD": "26",
+            "CMAKE_EXE_LINKER_FLAGS": "-L/home/corey/gcc-trunk/lib64 -Wl,-rpath,/home/corey/gcc-trunk/lib64 -static-libgcc -static-libstdc++",
+            "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        }
+    },
+    {
+        "name": "gcc-trunk-debug",
+        "inherits": "gcc-trunk-base",
+        "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Debug",
+            "CMAKE_CXX_FLAGS": "-DEWE_DEBUG -freflection",
+            "OUTPUT_POSTFIX": "-d"
+        }
+    },
+    {
+        "name": "gcc-trunk-release",
+        "inherits": "gcc-trunk-base",
+        "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Release"
+        }
     }
   ],
   "buildPresets": [
@@ -115,6 +144,14 @@
       "name": "ASan Debug",
       "configurePreset": "ninja-asan",
       "configuration": "Debug"
+    },
+    {
+        "name": "gcc-trunk-debug",
+        "configurePreset": "gcc-trunk-debug"
+    },
+    {
+        "name": "gcc-trunk-release",
+        "configurePreset": "gcc-trunk-release"
     }
   ]
 }

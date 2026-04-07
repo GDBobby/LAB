@@ -42,11 +42,11 @@ namespace lab {
 			return *this;
 		}
 
-		LAB_constexpr explicit Matrix(Vector<F, 3> const vec0, Vector<F, 3> const vec1, Vector<F, 3> const vec2) : 
+		LAB_constexpr explicit Matrix(Vector<F, 3> const _vec0, Vector<F, 3> const _vec1, Vector<F, 3> const _vec2) : 
         columns{
-            vec0,
-            vec1,
-            vec2
+            _vec0,
+            _vec1,
+            _vec2
         }
         {}
 
@@ -260,11 +260,11 @@ namespace lab {
 			return *this;
 		}
 
-		LAB_constexpr explicit Matrix(Vector<F, 3> const vec0, Vector<F, 3> const vec1, Vector<F, 3> const vec2) : 
+		LAB_constexpr explicit Matrix(Vector<F, 3> const _vec0, Vector<F, 3> const _vec1, Vector<F, 3> const _vec2) : 
         columns{
-            Vector<F, 4>(vec0, F(0)),
-            Vector<F, 4>(vec1, F(0)),
-            Vector<F, 4>(vec2, F(0))
+            Vector<F, 4>(_vec0, F(0)),
+            Vector<F, 4>(_vec1, F(0)),
+            Vector<F, 4>(_vec2, F(0))
         }
         {}
 

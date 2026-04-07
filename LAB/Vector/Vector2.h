@@ -7,7 +7,7 @@ namespace lab{
         F x;
         F y;
         LAB_constexpr Vector() {}
-        LAB_constexpr Vector(F const x, F const y) : x{ x }, y{ y } {}
+        LAB_constexpr Vector(F const _x, F const _y) : x{ _x }, y{ _y } {}
         explicit LAB_constexpr Vector(F const all) : x{ all }, y{ all } {}
 
         //copy constructors, including vec3 and vec4, z and w will be dropped

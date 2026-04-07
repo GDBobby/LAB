@@ -13,6 +13,13 @@
 #include <immintrin.h>
 #endif
 
+
+/*
+ * https://arxiv.org/pdf/2502.10831
+ * new paper
+ * not implemented yet (need to benchmark the current, then that one)
+ */
+
 namespace lab {
 
 	template<std::floating_point F>

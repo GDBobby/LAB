@@ -14,7 +14,7 @@ namespace lab {
         I x;
         I y;
 		LAB_constexpr IntVector() {}
-		LAB_constexpr IntVector(I const x, I const y) : x{ x }, y{ y } {}
+		LAB_constexpr IntVector(I const _x, I const _y) : x{ _x }, y{ _y } {}
 		LAB_constexpr IntVector(I const all) : x{ all }, y{ all } {}
     };
 	template<std::integral I>
@@ -23,7 +23,7 @@ namespace lab {
         I y;
         I z;
 		LAB_constexpr IntVector() {}
-		LAB_constexpr IntVector(I const x, I const y, I const z) : x{ x }, y{ y }, z{z} {}
+		LAB_constexpr IntVector(I const _x, I const _y, I const _z) : x{ _x }, y{ _y }, z{_z} {}
 		LAB_constexpr IntVector(I const all) : x{ all }, y{ all }, z{all} {}
     };
 	template<std::integral I>
@@ -33,7 +33,7 @@ namespace lab {
         I z;
         I w;
 		LAB_constexpr IntVector() {}
-		LAB_constexpr IntVector(I const x, I const y, I const z, I const w) : x{ x }, y{ y }, z{z}, w{w} {}
+		LAB_constexpr IntVector(I const _x, I const _y, I const _z, I const _w) : x{ _x }, y{ _y }, z{_z}, w{_w} {}
 		LAB_constexpr IntVector(I const all) : x{ all }, y{ all }, z{all}, w{all} {}
     };
 

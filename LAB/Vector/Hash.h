@@ -35,7 +35,7 @@ namespace lab{
             return p[i];
         }
 
-        void MurmurHash3_x86_32 ( const void * key, int len, uint32_t seed, void * out ) {
+        uint32_t MurmurHash3_x86_32 ( const void * key, int len, uint32_t seed) {
             const uint8_t * data = (const uint8_t*)key;
             const int nblocks = len / 4;
 
@@ -82,7 +82,7 @@ namespace lab{
 
             h1 = fmix32(h1);
 
-            *(uint32_t*)out = h1;
+            return h1;
         } 
 
 
@@ -95,10 +95,7 @@ namespace lab{
                 f = std::numeric_limits<float>::quiet_NaN();
             }
 
-            uint32_t out;
-            MurmurHash3_x86_32(&f, sizeof(float), seed, &out);
-            
-            return out;
+            return MurmurHash3_x86_32(&f, sizeof(float), seed);
         }
     }
 }
@@ -109,13 +106,13 @@ namespace std {
         std::size_t operator()(lab::Vector<F, Dimensions> const& v) const {
             std::size_t seed = 0;
 
-            lab::detail::hash_combine(seed, lab::detail::HashFloat(v.x, seed));
-            lab::detail::hash_combine(seed, lab::detail::HashFloat(v.y, seed));
+            lab::detail::hash_combine(seed, lab::detail::HashFloat(v.x));
+            lab::detail::hash_combine(seed, lab::detail::HashFloat(v.y));
             if constexpr (Dimensions >= 3) {
-                lab::detail::hash_combine(seed, lab::detail::HashFloat(v.z, seed));
+                lab::detail::hash_combine(seed, lab::detail::HashFloat(v.z));
             }
             if constexpr (Dimensions == 4) {
-                lab::detail::hash_combine(seed, lab::detail::HashFloat(v.w, seed));
+                lab::detail::hash_combine(seed, lab::detail::HashFloat(v.w));
             }
 
             return seed;

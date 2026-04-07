@@ -8,11 +8,11 @@ namespace lab{
         F y;
         F z;
         LAB_constexpr Vector() {}
-        LAB_constexpr Vector(F const x, F const y, F const z) : x{ x }, y{ y }, z{ z } {}
+        LAB_constexpr Vector(F const _x, F const _y, F const _z) : x{ _x }, y{ _y }, z{ _z } {}
         explicit LAB_constexpr Vector(F const all) : x{ all }, y{ all }, z{ all } {}
         //constructing piecewise with vec2
-        LAB_constexpr Vector(Vector<F, 2> const vec, F const z) : x{vec.x}, y{vec.y}, z{z}{}
-        LAB_constexpr Vector(F const x, Vector<F, 2> const vec) : x{x}, y{vec.x}, z{vec.y}{}
+        LAB_constexpr Vector(Vector<F, 2> const vec, F const _z) : x{vec.x}, y{vec.y}, z{_z}{}
+        LAB_constexpr Vector(F const _x, Vector<F, 2> const vec) : x{_x}, y{vec.x}, z{vec.y}{}
         //constructing with vec4, dropping vec4.w
         explicit LAB_constexpr Vector(Vector<F, 4> const vec) : x{vec.x}, y{vec.y}, z{vec.z}{}
         //copy constructors, including vec2

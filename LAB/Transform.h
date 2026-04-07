@@ -21,9 +21,9 @@ namespace lab {
 
 		//Transform() {}
         LAB_constexpr Transform() : translation{F(0)}, scale{F(1)}, rotation{F(0)} {}
-        LAB_constexpr Transform(Vector<F, 2> const translation) : translation{translation}, scale{F(1)}, rotation{F(0)}{}
-        LAB_constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale) : translation{translation}, scale{scale}, rotation{F(0)}{}
-        LAB_constexpr Transform(Vector<F, 2> const translation, Vector<F, 2> const scale, F const rotation) : translation{translation}, scale{scale}, rotation{rotation}{}
+        LAB_constexpr Transform(Vector<F, 2> const _translation) : translation{translation}, scale{F(1)}, rotation{F(0)}{}
+        LAB_constexpr Transform(Vector<F, 2> const _translation, Vector<F, 2> const _scale) : translation{_translation}, scale{_scale}, rotation{F(0)}{}
+        LAB_constexpr Transform(Vector<F, 2> const _translation, Vector<F, 2> const _scale, F const _rotation) : translation{_translation}, scale{_scale}, rotation{_rotation}{}
 
     
 		template<uint8_t Alignment = 4> requires(Alignment >= 3)
@@ -71,9 +71,9 @@ namespace lab {
 
 
 		LAB_constexpr Transform() : translation{ F(0) }, scale{ F(1) }, rotation{ F(0) } {}
-		LAB_constexpr Transform(Vector<F, 3> const translation) : translation{ translation }, scale{ F(1) }, rotation{ F(0) } {}
-		LAB_constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale) : translation{ translation }, scale{ scale }, rotation{ F(0) } {}
-		LAB_constexpr Transform(Vector<F, 3> const translation, Vector<F, 3> const scale, Vector<F, 3> const rotation) : translation{ translation }, scale{ scale }, rotation{ rotation } {}
+		LAB_constexpr Transform(Vector<F, 3> const _translation) : translation{ _translation }, scale{ F(1) }, rotation{ F(0) } {}
+		LAB_constexpr Transform(Vector<F, 3> const _translation, Vector<F, 3> const _scale) : translation{ _translation }, scale{ _scale }, rotation{ F(0) } {}
+		LAB_constexpr Transform(Vector<F, 3> const _translation, Vector<F, 3> const _scale, Vector<F, 3> const _rotation) : translation{ _translation }, scale{ _scale }, rotation{ _rotation } {}
 
 		template<uint8_t Alignment = 4> requires(Alignment >= 4)
 		LAB_constexpr Matrix<F, 4, 4, Alignment> GetRotationXMatrix() const {

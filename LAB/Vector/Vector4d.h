@@ -10,7 +10,7 @@ namespace lab{
         double w;
 
         LAB_constexpr Vector() {}
-        LAB_constexpr Vector(double const x, double const y, double const z, double const w) : x{ x }, y{ y }, z{ z }, w{ w } {}
+        LAB_constexpr Vector(double const _x, double const _y, double const _z, double const _w) : x{ _x }, y{ _y }, z{ _z }, w{ _w } {}
         explicit LAB_constexpr Vector(double const all) : x{ all }, y{ all }, z{ all }, w{ all } {}
         LAB_constexpr Vector(Vector<double, 2> const& other) : x{ other.x }, y{ other.y }, z{ double(0)}, w{double(0)} {}
         LAB_constexpr Vector(Vector<double, 3> const& other) : x{ other.x }, y{ other.y }, z{ other.z }, w{ double(0) } {}
