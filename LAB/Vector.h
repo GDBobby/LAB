@@ -3,9 +3,8 @@
 
 #include "Vector/Vector2.h"
 #include "Vector/Vector3.h"
-#include "Vector/Vector4f.h"
+#include "Vector/Vector4.h"
 #include "Vector/Vector4SIMD.h"
-#include "Vector/Vector4d.h"
 #include "Vector/IntVector.h"
 
 namespace lab{
@@ -21,7 +20,7 @@ namespace lab{
     }
     //minus and divide operators are per dimension since order of operations matters
 	template<std::floating_point F, uint8_t Dimensions>
-    Vector<F, Dimensions> operator/(F const f, Vector<F, 3> const vec){
+    Vector<F, Dimensions> operator/(F const f, Vector<F, Dimensions> const vec){
 		if constexpr(Dimensions == 2){
 			return Vector<F, 2>{
 				f / vec.x,
@@ -46,7 +45,7 @@ namespace lab{
     }
     
     template<std::floating_point F, uint8_t Dimensions>
-    Vector<F, 3> operator-(F const f, Vector<F, 3> const vec){
+    Vector<F, 3> operator-(F const f, Vector<F, Dimensions> const vec){
 		if constexpr(Dimensions == 2){
 			return Vector<F, 2>{
 				f - vec.x,
@@ -68,11 +67,7 @@ namespace lab{
 			};
 		}
     }
-
-
-
-
-
+	
 
     template<std::floating_point F, uint8_t Dimensions>
 	LAB_constexpr F Dot(Vector<F, Dimensions> const first, Vector<F, Dimensions> const second) {

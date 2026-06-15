@@ -164,25 +164,25 @@ namespace lab{
             const F wy = F(2) * reflected.w * reflected.y;
             const F wz = F(2) * reflected.w * reflected.z;
         
-            ret.columns[0].component[0] = F(1) - (yy + zz);
-            ret.columns[0].component[1] = (xy + wz);
-            ret.columns[0].component[2] = (xz - wy);
-            ret.columns[0].component[3] = F(0);
+            ret.columns[0][0] = F(1) - (yy + zz);
+            ret.columns[0][1] = (xy + wz);
+            ret.columns[0][2] = (xz - wy);
+            ret.columns[0][3] = F(0);
         
-            ret.columns[1].component[0] = (xy - wz);
-            ret.columns[1].component[1] = F(1) - (xx + zz);
-            ret.columns[1].component[2] = (yz + wx);
-            ret.columns[1].component[3] = F(0);
+            ret.columns[1][0] = (xy - wz);
+            ret.columns[1][1] = F(1) - (xx + zz);
+            ret.columns[1][2] = (yz + wx);
+            ret.columns[1][3] = F(0);
         
-            ret.columns[2].component[0] = (xz + wy);
-            ret.columns[2].component[1] = (yz - wx);
-            ret.columns[2].component[2] = F(1) - (xx + yy);
-            ret.columns[2].component[3] = F(0);
+            ret.columns[2][0] = (xz + wy);
+            ret.columns[2][1] = (yz - wx);
+            ret.columns[2][2] = F(1) - (xx + yy);
+            ret.columns[2][3] = F(0);
         
-            ret.columns[3].component[0] = F(0);
-            ret.columns[3].component[1] = F(0);
-            ret.columns[3].component[2] = F(0);
-            ret.columns[3].component[3] = F(1);
+            ret.columns[3][0] = F(0);
+            ret.columns[3][1] = F(0);
+            ret.columns[3][2] = F(0);
+            ret.columns[3][3] = F(1);
         
             return ret;
         }

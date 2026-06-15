@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector4f.h"
+#include "Vector4.h"
 
 #include <memory>
 
@@ -54,7 +54,12 @@ namespace lab{
             }
             return *this;
         }
-
+        LAB_constexpr float& operator[](uint8_t const row) {
+            return component[row];
+        }
+        LAB_constexpr float operator[](uint8_t const row) const {
+            return component[row];
+        }
 
         LAB_constexpr operator __m128() const {
             return vec;

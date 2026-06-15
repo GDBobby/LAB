@@ -47,7 +47,7 @@ namespace lab {
 			return *this;
 		}
 
-		LAB_constexpr explicit Matrix(std::array<Vector<F, Rows>, Columns> const& vectors) {
+		[[nodiscard]] LAB_constexpr explicit Matrix(std::array<Vector<F, Rows>, Columns> const& vectors) {
 			//assert(vectors.size() == Columns);
 
 			for (uint8_t column = 0; column < Columns; ++column) {

@@ -16,12 +16,12 @@ namespace lab {
     template<::std::floating_point F>
     struct Matrix<F, 4, 4, 4> {
 #ifdef USING_SIMD
-        VectorSIMD columns[4];
         using ColType = VectorSIMD;
 #else
-        Vector<F, 4> columns[4];
         using ColType = Vector<F, 4>;
 #endif
+        ColType columns[4];
+
         LAB_constexpr Matrix() : columns{} {}
 
         //identity matrix construction

@@ -2,6 +2,7 @@
 #include <concepts>
 #include <cstdint>
 #include <bit>
+#include <type_traits>
 
 //#define USING_CMATH
 
@@ -81,6 +82,24 @@ namespace lab {
 		//https://quick-bench.com/q/SzfiLPh2admpveSGNjQrUV5D6Qg
 		return x - (Trunc(x / y) * y);
 	}
+	template<std::floating_point F>
+	LAB_constexpr F Ceil(F const input){
+		F const truncated = Trunc(input);
+		F const diff = truncated - input;
+		if(diff == F(0) || input <= F(0)){
+			return truncated;
+		}
+		return truncated + F(1);
+	}
+	template<std::floating_point F>
+	LAB_constexpr F Floor(F const input){
+		F const truncated = Trunc(input);
+		F const diff = truncated - input;
+		if(diff == F(0) || input >= F(0)){
+			return truncated;
+		}
+		return truncated - F(1);
+	}
 	
 
 	template<typename T>
@@ -129,5 +148,6 @@ namespace lab {
 			return lhs * (F(1) - weight) + rhs * weight;
 		}
 	}
+
 }
 
